@@ -4,26 +4,22 @@ This file defines commonly used functions for using networks
 
 # Built-in
 import os
-import re
 import copy
 import timeit
 from collections import OrderedDict
 
 
 # Libs
-import numpy as np
 
 # PyTorch
 import torch
 import torchvision
-import torch.nn.functional as F
 from torch import nn
 from torchsummary import summary
 
 
 # Own modules
-from data import patch_extractor, data_utils
-from mrs_utils import misc_utils, metric_utils
+from mrs_utils import misc_utils
 
 
 def write_and_print(writer, phase, current_epoch, total_epoch, loss_dict, s_time):
@@ -77,7 +73,7 @@ def network_summary(network, input_size, **kwargs):
     summary(net, input_size, device='cpu')
 
 
-def load_epoch(save_dir, resume_epoch, model, optm):
+def load_epoch(save_dir, resume_epoch, model, optm, device):
     """
     Load model from a snapshot, this function can be used to resume training
     :param save_dir: directory that saved the model
@@ -93,6 +89,12 @@ def load_epoch(save_dir, resume_epoch, model, optm):
         os.path.join(save_dir, 'epoch-' + str(resume_epoch - 1) + '.pth.tar')))
     model.load_state_dict(checkpoint['state_dict'])
     optm.load_state_dict(checkpoint['opt_dict'])
+    # individually transfer the optimizer parts, this part comes from
+    # https://discuss.pytorch.org/t/loading-a-saved-model-for-continue-training/17244/4
+    for state in optm.state.values():
+        for k, v in state.items():
+            if isinstance(v, torch.Tensor):
+                state[k] = v.to(device)
 
 
 def sequential_load(target, source_state):
@@ -206,6 +208,10 @@ def load(model, model_path, relax_load=False, disable_parallel=False):
     except RuntimeError:
         pretrained_state = flex_load(model.state_dict(), checkpoint['state_dict'], relax_load, disable_parallel)
         model.load_state_dict(pretrained_state, strict=False)
+    except KeyError:
+        # FIXME this is a adhoc fix to be compatible with RSMoCo
+        pretrained_state = flex_load(model.state_dict(), checkpoint['model'], relax_load, disable_parallel)
+        model.load_state_dict(pretrained_state, strict=False)
 
 
 def save(model, epochs, optm, loss_dict, save_name):
@@ -227,123 +233,40 @@ def save(model, epochs, optm, loss_dict, save_name):
     print('Saved model at {}'.format(save_name))
 
 
+def make_criterion_str(cfg):
+    """
+    Make a string for criterion used, the format will be [criterion a][weight]_[criterion b][weight]
+    :param cfg: config dictionary
+    :return:
+    """
+    criterion = cfg['trainer']['criterion_name'].split(',')
+    if not isinstance(cfg['trainer']['bp_loss_idx'], list):
+        bp_idx = [int(a) for a in eval(cfg['trainer']['bp_loss_idx'])]
+    else:
+        bp_idx = [int(a) for a in cfg['trainer']['bp_loss_idx']]
+    bp_criterion = [criterion[a] for a in bp_idx]
+    try:
+        loss_weights = [misc_utils.float2str(float(a)) for a in eval(cfg['trainer']['loss_weights'])]
+        return '_'.join('{}{}'.format(a, b) for (a, b) in zip(bp_criterion, loss_weights))
+    except TypeError:
+        assert len(bp_criterion) == 1
+        return '_'.join('{}'.format(a) for a in bp_criterion)
+
+
 def unique_model_name(cfg):
     """
     Make a unique model name based on the config file arguments
     :param cfg: config dictionary
     :return: unique model string
     """
+    criterion_str = make_criterion_str(cfg)
     decay_str = '_'.join(str(ds) for ds in eval(cfg['optimizer']['decay_step']))
     dr_str = str(cfg['optimizer']['decay_rate']).replace('.', 'p')
-    return 'ec{}_dc{}_ds{}_lre{:.0e}_lrd{:.0e}_ep{}_bs{}_ds{}_dr{}'.format(
+    if cfg['optimizer']['aux_loss']:
+        aux_str = '_aux{}'.format(misc_utils.float2str(cfg['optimizer']['aux_loss_weight']))
+    else:
+        aux_str = ''
+    return 'ec{}_dc{}_ds{}_lre{:.0e}_lrd{:.0e}_ep{}_bs{}_ds{}_dr{}_cr{}{}'.format(
         cfg['encoder_name'], cfg['decoder_name'], cfg['dataset']['ds_name'], cfg['optimizer']['learn_rate_encoder'],
         cfg['optimizer']['learn_rate_decoder'], cfg['trainer']['epochs'], cfg['dataset']['batch_size'],
-        decay_str, dr_str)
-
-
-class Evaluator:
-    def __init__(self, ds_name, data_dir, tsfm, device, load_func=None, **kwargs):
-        ds_name = misc_utils.stem_string(ds_name)
-        self.tsfm = tsfm
-        self.device = device
-        if ds_name == 'inria':
-            from data.inria import preprocess
-            self.rgb_files, self.lbl_files = preprocess.get_images(data_dir, **kwargs)
-            assert len(self.rgb_files) == len(self.lbl_files)
-            self.truth_val = 255
-        elif ds_name == 'deepglobe':
-            from data.deepglobe import preprocess
-            self.rgb_files, self.lbl_files = preprocess.get_images(data_dir)
-            assert len(self.rgb_files) == len(self.lbl_files)
-            self.truth_val = 1
-        elif ds_name == 'deepgloberoad':
-            from data.deepgloberoad import preprocess
-            self.rgb_files, self.lbl_files = preprocess.get_images(data_dir, **kwargs)
-            assert len(self.rgb_files) == len(self.lbl_files)
-            self.truth_val = 255
-        elif ds_name == 'mnih':
-            from data.mnih import preprocess
-            self.rgb_files, self.lbl_files = preprocess.get_images(data_dir, **kwargs)
-            assert len(self.rgb_files) == len(self.lbl_files)
-            self.truth_val = 255
-        elif load_func:
-            self.truth_val = kwargs.pop('truth_val', 1)
-            self.rgb_files, self.lbl_files = load_func(data_dir, **kwargs)
-            assert len(self.rgb_files) == len(self.lbl_files)
-        else:
-            raise NotImplementedError('Dataset {} is not supported')
-
-    def evaluate(self, model, patch_size, overlap, pred_dir=None, report_dir=None, save_conf=False, delta=1e-6):
-        iou_a, iou_b = 0, 0
-        report = []
-        if pred_dir:
-            misc_utils.make_dir_if_not_exist(pred_dir)
-        for rgb_file, lbl_file in zip(self.rgb_files, self.lbl_files):
-            file_name = os.path.splitext(os.path.basename(lbl_file))[0]
-
-            # read data
-            rgb = misc_utils.load_file(rgb_file)[:, :, :3]
-            lbl = misc_utils.load_file(lbl_file)
-            # if label has multiple channels, only keep the first channel, this is not elegant but it is useful to deal
-            # with deepglobe road
-            # TODO make this an option when selecting dataset
-            if len(lbl.shape) == 3:
-                lbl = lbl[:, :, 0]
-
-            # evaluate on tiles
-            tile_dim = rgb.shape[:2]
-            tile_dim_pad = [tile_dim[0]+2*model.lbl_margin, tile_dim[1]+2*model.lbl_margin]
-            grid_list = patch_extractor.make_grid(tile_dim_pad, patch_size, overlap)
-            tile_preds = []
-            for patch in patch_extractor.patch_block(rgb, model.lbl_margin, grid_list, patch_size, False):
-                for tsfm in self.tsfm:
-                    tsfm_image = tsfm(image=patch)
-                    patch = tsfm_image['image']
-                patch = torch.unsqueeze(patch, 0).to(self.device)
-                pred = F.softmax(model.forward(patch), 1).detach().cpu().numpy()
-                tile_preds.append(data_utils.change_channel_order(pred, True)[0, :, :, :])
-            # stitch back to tiles
-            tile_preds = patch_extractor.unpatch_block(
-                np.array(tile_preds),
-                tile_dim_pad,
-                patch_size,
-                tile_dim,
-                [patch_size[0]-2*model.lbl_margin, patch_size[1]-2*model.lbl_margin],
-                overlap=2*model.lbl_margin
-            )
-            if save_conf:
-                misc_utils.save_file(os.path.join(pred_dir, '{}.npy'.format(file_name)), tile_preds[:, :, 1])
-            tile_preds = np.argmax(tile_preds, -1)
-            a, b = metric_utils.iou_metric(lbl/self.truth_val, tile_preds)
-            print('{}: IoU={:.2f}'.format(file_name, a/(b+delta)*100))
-            report.append('{},{},{},{}\n'.format(file_name, a, b, a/(b+delta)*100))
-            iou_a += a
-            iou_b += b
-            if pred_dir:
-                misc_utils.save_file(os.path.join(pred_dir, '{}.png'.format(file_name)), tile_preds*self.truth_val)
-        print('Overall: IoU={:.2f}'.format(iou_a/iou_b*100))
-        report.append('Overall,{},{},{}\n'.format(iou_a, iou_b, iou_a/iou_b*100))
-        if report_dir:
-            misc_utils.make_dir_if_not_exist(report_dir)
-            misc_utils.save_file(os.path.join(report_dir, 'result.txt'), report)
-        return iou_a/iou_b*100
-
-
-def read_results(result_name, regex=None):
-    results = {}
-    result_lines = misc_utils.load_file(result_name)
-    for line in result_lines:
-        if len(line) <= 1:
-            continue
-        name, iou_a, iou_b, iou = line.strip().split(',')
-        results[name] = {'iou_a': float(iou_a), 'iou_b': float(iou_b), 'iou': float(iou)}
-    if regex:
-        pattern = re.compile(regex)
-        iou_a, iou_b = 0, 0
-        for key, val in results.items():
-            if pattern.match(key):
-                iou_a += val['iou_a']
-                iou_b += val['iou_b']
-        return iou_a / iou_b * 100
-    else:
-        return results
+        decay_str, dr_str, criterion_str, aux_str)

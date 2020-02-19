@@ -3,6 +3,7 @@ import os
 import time
 import json
 import pickle
+import collections.abc
 from functools import wraps
 
 # Libs
@@ -25,6 +26,7 @@ def set_gpu(gpu, enable_benchmark=True):
     :param enable_benchmark: if True, will let CUDNN find optimal set of algorithms for input configuration
     :return: device instance
     """
+    gpu = str(gpu)
     if len(str(gpu)) > 1:
         os.environ["CUDA_VISIBLE_DEVICES"] = gpu
         parallel = True
@@ -108,6 +110,8 @@ def load_file(file_name, **kwargs):
             except Image.DecompressionBombError:
                 Image.MAX_IMAGE_PIXELS = None
                 data = io.imread(file_name)
+            except ValueError or OSError:
+                data = np.array(Image.open(file_name).convert('RGB'))
 
         return data
     except Exception:  # so many things could go wrong, can't be more specific.
@@ -243,6 +247,23 @@ def set_random_seed(seed_):
     np.random.seed(seed_)
 
 
+def normalize_rgb(rgb):
+    """
+    Normalize rgb to 0~1 range
+    :param rgb: the rgb values to be normalized, could be a tuple or list of tuples
+    :return:
+    """
+    if isinstance(rgb, tuple):
+        return tuple([float(a)/255 for a in rgb])
+    elif isinstance(rgb, list):
+        norm_rgb = []
+        for item in rgb:
+            norm_rgb.append(normalize_rgb(item))
+        return norm_rgb
+    else:
+        raise NotImplementedError('Data type: {} not understood'.format(type(rgb)))
+
+
 def args_getter(inspect_class):
     """
     Inspect parameters inside a class
@@ -294,3 +315,97 @@ def get_default_colors():
     prop_cycle = plt.rcParams['axes.prop_cycle']
     colors = prop_cycle.by_key()['color']
     return colors
+
+
+def recursive_update(d, u):
+    """
+    Recursively update nested dictionary d with u
+    :param d: the dictionary to be updated
+    :param u: the new dictionary
+    :return:
+    """
+    for k, v in u.items():
+        if isinstance(v, collections.abc.Mapping):
+            d[k] = recursive_update(d.get(k, {}), v)
+        else:
+            d[k] = v
+    return d
+
+
+def parse_args(arg_list):
+    """
+    Parse the arguments in a recursive way
+    :param arg_list: the arguments in a list where each element is either key or val
+    :return: dictionary of arguments
+    """
+    def parse_args_helper(arg_l):
+        """
+        Recursively calling itself if it's a key or return the value otherwise
+        :param arg_l: argument list
+        :return:
+        """
+        while len(arg_l) > 0:
+            item = arg_list.pop(0)
+            if '--' in item:
+                return {item[2:]: parse_args_helper(arg_l)}
+            else:
+                try:
+                    return float(item)
+                except ValueError:
+                    return item
+
+    arg_dict = {}
+    while len(arg_list) > 0:
+        item = parse_args_helper(arg_list)
+        recursive_update(arg_dict, item)
+    return arg_dict
+
+
+def update_flags(flags, cf_dict):
+    """
+    Overwrite the configs in flags if it is given by cf_dict
+    :param flags: dictionary of configurations, this is from the config.json file
+    :param cf_dict: dictionary of configurations, this is from command line
+    :return:
+    """
+    recursive_update(flags, cf_dict)
+    return historical_update_flag(flags, cf_dict)
+
+
+def historical_update_flag(flags, cf_dict):
+    """
+    This function updates flag to make it backward compatible with old versions
+    :param flags: dictionary of configurations, this is from the config.json file
+    :param cf_dict: dictionary of configurations, this is from command line
+    :return:
+    """
+    flags['config'] = cf_dict['config']
+
+    return historical_process_flag(flags)
+
+
+def historical_process_flag(flags):
+    """
+    This function updates flag to make it backward compatible with old versions
+    :param flags: dictionary of configurations, this is from the config.json file
+    """
+    if 'imagenet' not in flags:
+        flags['imagenet'] = 'True'
+    if 'name' not in flags['optimizer']:
+        flags['optimizer']['name'] = 'sgd'
+    if 'aux_loss' not in flags['optimizer']:
+        flags['optimizer']['aux_loss'] = 0
+    if 'aux_loss' in flags['optimizer']:
+        if 'aux_loss_weight' not in flags['optimizer']:
+            flags['optimizer']['aux_loss_weight'] = 0.4
+    if 'class_weight' not in flags['trainer']:
+        flags['trainer']['class_weight'] = '({})'.format(','.join(['1' for _ in range(flags['dataset']['class_num'])]))
+    if 'loss_weights' not in flags['trainer']:
+        flags['trainer']['loss_weights'] = 'None'
+    if isinstance(flags['trainer']['bp_loss_idx'], str) and len(flags['trainer']['bp_loss_idx']) == 1:
+        flags['trainer']['bp_loss_idx'] = '({},)'.format(flags['trainer']['bp_loss_idx'])
+    if isinstance(flags['trainer']['bp_loss_idx'], int):
+        flags['trainer']['bp_loss_idx'] = '({},)'.format(flags['trainer']['bp_loss_idx'])
+    if isinstance(flags['trainer']['loss_weights'], int):
+        flags['trainer']['loss_weights'] = (flags['trainer']['loss_weights'],)
+    return flags

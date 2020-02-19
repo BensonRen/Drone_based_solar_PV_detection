@@ -14,7 +14,16 @@ from tqdm import tqdm
 
 # Own modules
 from data import data_utils
-from mrs_utils import misc_utils
+from mrs_utils import misc_utils, process_block
+
+# Settings
+DS_NAME = 'DeepGlobeRoad'
+MEAN = (0.40994515, 0.38314009, 0.28864455)
+STD = (0.12889884, 0.10563929, 0.09726452)
+
+
+def decode_map(gt_map):
+    return gt_map[:, :, 0]
 
 
 def patch_tile(rgb_file, gt_file, patch_size, pad, overlap):
@@ -72,6 +81,16 @@ def patch_deepgloberoad(data_dir, save_dir, patch_size, pad, overlap, valid_perc
     record_file_valid.close()
 
 
+def get_stats(img_dir):
+    from data import data_utils
+    dirs = ['road_trainv1/train', 'road_trainv2/train']
+    rgb_imgs = []
+    for dir_ in dirs:
+        rgb_imgs.extend([a[0] for a in data_utils.get_img_lbl(os.path.join(img_dir, dir_), 'sat.jpg', 'mask.png')])
+    ds_mean, ds_std = data_utils.get_ds_stats(rgb_imgs)
+    return np.stack([ds_mean, ds_std], axis=0)
+
+
 def get_images(data_dir, valid_percent=0.14):
     dirs = ['road_trainv1/train', 'road_trainv2/train']
     files = []
@@ -86,8 +105,18 @@ def get_images(data_dir, valid_percent=0.14):
     return rgb_files, gt_files
 
 
+def get_stats_pb(img_dir=r'/hdd/mrs/deepglobe/14p_pd0_ol0/patches'):
+    val = process_block.ValueComputeProcess(DS_NAME, os.path.join(os.path.dirname(__file__), '../stats/builtin'),
+                                            os.path.join(os.path.dirname(__file__),
+                                                         '../stats/builtin/{}.npy'.format(DS_NAME)),
+                                            func=get_stats).\
+        run(img_dir=img_dir).val
+    val_test = val
+    return val, val_test
+
+
 if __name__ == '__main__':
-    ps = 512
+    ps = 1024
     pd = 0
     ol = 0
     save_dir = os.path.join(r'/hdd/mrs/deepgloberoad', 'ps{}_pd{}_ol{}'.format(ps, pd, ol))

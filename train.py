@@ -5,14 +5,12 @@
 
 # Built-in
 import os
+import sys
 import json
-import shutil
 import timeit
 import argparse
 
 # Libs
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
 from tensorboardX import SummaryWriter
 
 # Pytorch
@@ -25,22 +23,18 @@ from data import data_loader
 from mrs_utils import misc_utils
 from network import network_utils, network_io
 
-CONFIG_FILE = 'config.json'
+CONFIG_FILE = 'temp_config.json'
 
 
 def read_config():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', default=CONFIG_FILE, type=str, help='config file location')
-    flags = parser.parse_args()
-    config_file = flags.config
-    flags = json.load(open(flags.config))
-
+    args, extras = parser.parse_known_args(sys.argv[1:])
+    cfg_dict = misc_utils.parse_args(extras)
+    if 'config' not in cfg_dict:
+        cfg_dict['config'] = CONFIG_FILE
+    flags = json.load(open(cfg_dict['config']))
+    flags = misc_utils.update_flags(flags, cfg_dict)
     flags['save_dir'] = os.path.join(flags['trainer']['save_root'], network_utils.unique_model_name(flags))
-    flags['config'] = config_file
-
-    if 'imagenet' not in flags:
-        flags['imagenet'] = 'True'
-
     return flags
 
 
@@ -62,13 +56,18 @@ def train_model(args, device, parallel):
     if parallel:
         model.encoder = nn.DataParallel(model.encoder)
         model.decoder = nn.DataParallel(model.decoder)
+        if args['optimizer']['aux_loss']:
+            model.cls = nn.DataParallel(model.cls)
         print('Parallel training mode enabled!')
     train_params = model.set_train_params((args['optimizer']['learn_rate_encoder'],
                                            args['optimizer']['learn_rate_decoder']))
 
     # make optimizer
-    optm = optim.SGD(train_params, lr=args['optimizer']['learn_rate_encoder'], momentum=0.9, weight_decay=5e-4)
+    optm = network_io.create_optimizer(args['optimizer']['name'], train_params, args['optimizer']['learn_rate_encoder'])
     criterions = network_io.create_loss(args, device=device)
+    if args['optimizer']['aux_loss']:
+        from mrs_utils import metric_utils
+        cls_criterion = metric_utils.BCEWithLogitLoss(device, eval(args['trainer']['class_weight']))
     scheduler = optim.lr_scheduler.MultiStepLR(optm, milestones=eval(args['optimizer']['decay_step']),
                                                gamma=args['optimizer']['decay_rate'])
 
@@ -81,7 +80,7 @@ def train_model(args, device, parallel):
     else:
         print('Resume training decoder {} with encoder {} from epoch {} ...'.format(
             args['decoder_name'], args['encoder_name'], args['trainer']['resume_epoch']))
-        network_utils.load_epoch(args['save_dir'], args['trainer']['resume_epoch'], model, optm)
+        network_utils.load_epoch(args['save_dir'], args['trainer']['resume_epoch'], model, optm, device)
 
     # prepare training
     print('Total params: {:.2f}M'.format(sum(p.numel() for p in model.parameters()) / 1000000.0))
@@ -90,22 +89,17 @@ def train_model(args, device, parallel):
         c.to(device)
 
     # make data loader
-    mean = eval(args['dataset']['mean'])
-    std = eval(args['dataset']['std'])
-    input_size = eval(args['dataset']['input_size'])
-    crop_size = eval(args['dataset']['crop_size'])
-    tsfms = [A.Flip(), A.RandomRotate90(), A.Normalize(mean=mean, std=std), ToTensorV2()]
-    if input_size[0] != crop_size[0] or input_size[1] != crop_size[1]:
-        tsfm_train = A.Compose([A.RandomCrop(*crop_size)]+tsfms)
-        tsfm_valid = A.Compose([A.RandomCrop(*crop_size)]+tsfms[2:])
-    else:
-        tsfm_train = A.Compose(tsfms)
-        tsfm_valid = A.Compose(tsfms[-2:])
+    mean, std = network_io.get_dataset_stats(args['dataset']['ds_name'], args['dataset']['data_dir'],
+                                             mean_val=(eval(args['dataset']['mean']), eval(args['dataset']['std'])))
+    tsfm_train, tsfm_valid = network_io.create_tsfm(args, mean, std)
     train_loader = DataLoader(data_loader.get_loader(
-        args['dataset']['data_dir'], args['dataset']['train_file'], transforms=tsfm_train),
-        batch_size=args['dataset']['batch_size'], shuffle=True, num_workers=args['dataset']['num_workers'])
+        args['dataset']['data_dir'], args['dataset']['train_file'], transforms=tsfm_train,
+        aux_loss=args['optimizer']['aux_loss']),
+        batch_size=args['dataset']['batch_size'], shuffle=True, num_workers=args['dataset']['num_workers'],
+        drop_last=True)
     valid_loader = DataLoader(data_loader.get_loader(
-        args['dataset']['data_dir'], args['dataset']['valid_file'], transforms=tsfm_valid),
+        args['dataset']['data_dir'], args['dataset']['valid_file'], transforms=tsfm_valid,
+        aux_loss=args['optimizer']['aux_loss']),
         batch_size=args['dataset']['batch_size'], shuffle=False, num_workers=args['dataset']['num_workers'])
     print('Training model on the {} dataset'.format(args['dataset']['ds_name']))
     train_val_loaders = {'train': train_loader, 'valid': valid_loader}
@@ -118,14 +112,20 @@ def train_model(args, device, parallel):
             start_time = timeit.default_timer()
             if phase == 'train':
                 model.train()
-                scheduler.step()
             else:
                 model.eval()
 
-            loss_dict = model.step(train_val_loaders[phase], device, optm, phase, criterions,
-                                   args['trainer']['bp_loss_idx'], True, mean, std)
+            if args['optimizer']['aux_loss']:
+                loss_dict = model.step_aux(train_val_loaders[phase], device, optm, phase, criterions, cls_criterion,
+                                           args['optimizer']['aux_loss_weight'], eval(args['trainer']['bp_loss_idx']),
+                                           True, mean, std, loss_weights=eval(args['trainer']['loss_weights']))
+            else:
+                loss_dict = model.step(train_val_loaders[phase], device, optm, phase, criterions,
+                                       eval(args['trainer']['bp_loss_idx']), True, mean, std,
+                                       loss_weights=eval(args['trainer']['loss_weights']))
             network_utils.write_and_print(writer, phase, epoch, args['trainer']['epochs'], loss_dict, start_time)
 
+        scheduler.step()
         # save the model
         if epoch % args['trainer']['save_epoch'] == 0 and epoch != 0:
             save_name = os.path.join(args['save_dir'], 'epoch-{}.pth.tar'.format(epoch))
@@ -145,7 +145,7 @@ def main():
     misc_utils.set_random_seed(cfg['random_seed'])
     # make training directory
     misc_utils.make_dir_if_not_exist(cfg['save_dir'])
-    shutil.copyfile(cfg['config'], os.path.join(cfg['save_dir'], 'config.json'))
+    misc_utils.save_file(os.path.join(cfg['save_dir'], 'config.json'), cfg)
 
     # train the model
     train_model(cfg, device, parallel)

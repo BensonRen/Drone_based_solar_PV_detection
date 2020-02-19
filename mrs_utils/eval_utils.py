@@ -4,15 +4,23 @@
 
 
 # Built-in
+import os
+import re
 
 # Libs
+import skimage.transform
 import numpy as np
 from tqdm import tqdm
 from skimage import measure
 from scipy.spatial import KDTree
 from sklearn.metrics import precision_recall_curve, average_precision_score
 
+# PyTorch
+import torch
+import torch.nn.functional as F
+
 # Own modules
+from data import patch_extractor, data_utils
 from mrs_utils import vis_utils, metric_utils, misc_utils
 
 
@@ -242,10 +250,347 @@ def batch_score(pred_files, lbl_files, min_region=5, min_th=0.5, link_r=20, eps=
     return conf, true
 
 
+'''def read_results(result_name, regex=None, sum_results=False, delta=1e-6):
+    """
+    Read and parse evaluated results text file
+    :param result_name: path to the results file
+    :param regex: if given, it will be applied to select lines that match the name
+    :param sum_results: if True, return the IoU of the overall dataset
+    :param delta: a small value to prevent divided by zero
+    :return:
+    """
+    results = {}
+    result_lines = misc_utils.load_file(result_name)
+    for line in result_lines:
+        if len(line) <= 1:
+            continue
+        name, iou_a, iou_b, iou = line.strip().split(',')
+        results[name] = {'iou_a': float(iou_a), 'iou_b': float(iou_b), 'iou': float(iou)}
+    if regex:
+        pattern = re.compile(regex)
+        iou_a, iou_b = 0, 0
+        for key, val in results.items():
+            if pattern.match(key):
+                iou_a += val['iou_a']
+                iou_b += val['iou_b']
+        return iou_a / (iou_b + delta) * 100
+    elif sum_results:
+        return results['Overall']['iou']
+    else:
+        return results'''
+
+
+def read_results(result_name, regex=None, sum_results=False, delta=1e-6, class_names=None):
+    """
+    Read and parse evaluated results text file
+    :param result_name: path to the results file
+    :param regex: if given, it will be applied to select lines that match the name
+    :param sum_results: if True, return the IoU of the overall dataset
+    :param delta: a small value to prevent divided by zero
+    :param class_names: list of strings for class names, if None, they will be class_i
+    :return:
+    """
+    def update_results(res, n, i_res, c_names):
+        if c_names is not None:
+            assert len(i_res) == 2 * len(c_names)
+        else:
+            c_names = ['class_{}'.format(i) for i in range(len(i_res) // 2)]
+        for cnt, c_name in enumerate(c_names):
+            res[n][c_name+'_a'] = i_res[cnt * 2]
+            res[n][c_name+'_b'] = i_res[cnt * 2 + 1]
+        return c_names
+
+    def combine_results(res, i_res):
+        if res is None:
+            for k, v in i_res.items():
+                if k != 'iou':
+                    res[k] = v
+        else:
+            for k, v in i_res.items():
+                if k != 'iou':
+                    res[k] += v
+
+    def summarize_results(res):
+        sum_res = dict()
+        sum_res['iou'] = res['iou']
+        for c_name in class_names:
+            sum_res[c_name] = (float(res[c_name + '_a']) / float(res[c_name + '_b']) + delta) * 100
+        return sum_res
+
+    results = {}
+    result_lines = misc_utils.load_file(result_name)
+
+    for line in result_lines:
+        if len(line) <= 1:
+            continue
+        name, iou_a, iou_b, *ious, iou = line.strip().split(',')
+        iou_a, iou_b, iou = float(iou_a), float(iou_b), float(iou)
+        results[name] = {'iou': iou, 'iou_a': iou_a, 'iou_b': iou_b}
+        class_names = update_results(results, name, ious, class_names)
+    if regex:
+        comb_res = None
+        pattern = re.compile(regex)
+        for key, val in results.items():
+            if pattern.match(key):
+                combine_results(comb_res, val)
+        return summarize_results(comb_res)
+    elif sum_results:
+        return summarize_results(results['Overall'])
+    else:
+        return results
+
+
 def get_precision_recall(conf, true):
     ap = average_precision_score(true, conf)
     p, r, th = precision_recall_curve(true, conf)
     return ap, p, r, th
+
+
+class Evaluator:
+    def __init__(self, ds_name, data_dir, tsfm, device, load_func=None, infer=False, ensembler=None, **kwargs):
+        ds_name = misc_utils.stem_string(ds_name)
+        self.tsfm = tsfm
+        self.device = device
+        if ensembler is None:
+            self.ensembler = BaseEnsemble()
+        else:
+            self.ensembler = ensembler
+        if ds_name == 'inria':
+            from data.inria import preprocess
+            self.rgb_files, self.lbl_files = preprocess.get_images(data_dir, **kwargs)
+            assert len(self.rgb_files) == len(self.lbl_files)
+            self.truth_val = 255
+            self.decode_func = None
+            self.encode_func = None
+            self.class_names = ['building', ]
+        elif ds_name == 'deepglobe':
+            from data.deepglobe import preprocess
+            self.rgb_files, self.lbl_files = preprocess.get_images(data_dir)
+            assert len(self.rgb_files) == len(self.lbl_files)
+            self.truth_val = 1
+            self.decode_func = None
+            self.encode_func = lambda x: x * 255
+            self.class_names = ['building', ]
+        elif ds_name == 'deepgloberoad':
+            from data.deepgloberoad import preprocess
+            self.rgb_files, self.lbl_files = preprocess.get_images(data_dir, **kwargs)
+            assert len(self.rgb_files) == len(self.lbl_files)
+            self.truth_val = 255
+            self.decode_func = preprocess.decode_map
+            self.encode_func = None
+            self.class_names = ['road', ]
+        elif ds_name == 'deepglobeland':
+            from data.deepglobeland import preprocess
+            if not infer:
+                self.rgb_files, self.lbl_files = preprocess.get_images(data_dir, **kwargs)
+            else:
+                self.rgb_files, self.lbl_files = preprocess.get_test_images(data_dir, **kwargs)
+            assert len(self.rgb_files) == len(self.lbl_files)
+            self.truth_val = 1
+            self.decode_func = preprocess.decode_map
+            self.encode_func = preprocess.encode_map
+            self.class_names = preprocess.CLASS_NAMES[:6]
+        elif ds_name == 'mnih':
+            from data.mnih import preprocess
+            self.rgb_files, self.lbl_files = preprocess.get_images(data_dir, **kwargs)
+            assert len(self.rgb_files) == len(self.lbl_files)
+            self.truth_val = 255
+            self.decode_func = None
+            self.encode_func = None
+            self.class_names = ['road', ]
+        elif load_func:
+            self.truth_val = kwargs.pop('truth_val', 1)
+            self.rgb_files, self.lbl_files = load_func(data_dir, **kwargs)
+            assert len(self.rgb_files) == len(self.lbl_files)
+            self.decode_func = kwargs.pop('decode_func', None)
+            self.encode_func = kwargs.pop('encode_func', None)
+            self.class_names = kwargs.pop('class_names', ['building', ])
+        else:
+            raise NotImplementedError('Dataset {} is not supported')
+
+    def get_result_strings(self, file_name, iou_score, delta=1e-6):
+        print_string = '{}: IoU={:05.2f}\n\t'.format(file_name, np.mean(iou_score[0, :] / (iou_score[1, :] + delta) * 100))
+        for c_cnt, class_name in enumerate(self.class_names):
+            print_string += ' {}: IoU={:05.2f}'.format(class_name, iou_score[0, c_cnt] / (iou_score[1, c_cnt] + delta) * 100)
+        report_string = '{},{},{}'.format(file_name, np.sum(iou_score[0, :]), np.sum(iou_score[1, :]))
+        if len(self.class_names) > 1:
+            for c_cnt, class_name in enumerate(self.class_names):
+                report_string += ',{},{}'.format(iou_score[0, c_cnt], iou_score[1, c_cnt])
+        report_string += ',{}\n'.format(np.mean(iou_score[0, :] / (iou_score[1, :] + delta) * 100))
+        return print_string, report_string
+
+    def evaluate(self, model, patch_size, overlap, pred_dir=None, report_dir=None, save_conf=False, delta=1e-6,
+                 eval_class=(1, ), visualize=False):
+        iou_a, iou_b = np.zeros(len(eval_class)), np.zeros(len(eval_class))
+        report = []
+        if pred_dir:
+            misc_utils.make_dir_if_not_exist(pred_dir)
+        for rgb_file, lbl_file in zip(self.rgb_files, self.lbl_files):
+            file_name = os.path.splitext(os.path.basename(lbl_file))[0]
+
+            # read data
+            rgb = misc_utils.load_file(rgb_file)[:, :, :3]
+            lbl = misc_utils.load_file(lbl_file)
+            if self.decode_func:
+                lbl = self.decode_func(lbl)
+
+            # evaluate on tiles
+            tile_dim = rgb.shape[:2]
+            tile_dim_pad = [tile_dim[0]+2*model.lbl_margin, tile_dim[1]+2*model.lbl_margin]
+            grid_list = patch_extractor.make_grid(tile_dim_pad, patch_size, overlap)
+            tile_preds = []
+            for patch in patch_extractor.patch_block(rgb, model.lbl_margin, grid_list, patch_size, False):
+                patch_preds = []
+                for aug_patch in self.ensembler.augment_data(patch):
+                    for tsfm in self.tsfm:
+                        tsfm_image = tsfm(image=aug_patch)
+                        aug_patch = tsfm_image['image']
+                    aug_patch = torch.unsqueeze(aug_patch, 0).to(self.device)
+                    pred = F.softmax(model.inference(aug_patch), 1).detach().cpu().numpy()
+                    patch_preds.append(pred)
+                tile_preds.append(data_utils.change_channel_order(self.ensembler.fuse_data(patch_preds), True)[0, :, :, :])
+            # stitch back to tiles
+            tile_preds = patch_extractor.unpatch_block(
+                np.array(tile_preds),
+                tile_dim_pad,
+                patch_size,
+                tile_dim,
+                [patch_size[0]-2*model.lbl_margin, patch_size[1]-2*model.lbl_margin],
+                overlap=2*model.lbl_margin
+            )
+            if save_conf:
+                misc_utils.save_file(os.path.join(pred_dir, '{}.npy'.format(file_name)), tile_preds[:, :, 1])
+            tile_preds = np.argmax(tile_preds, -1)
+            iou_score = metric_utils.iou_metric(lbl/self.truth_val, tile_preds, eval_class=eval_class)
+            pstr, rstr = self.get_result_strings(file_name, iou_score, delta)
+            print(pstr)
+            report.append(rstr)
+            iou_a += iou_score[0, :]
+            iou_b += iou_score[1, :]
+            if visualize:
+                if self.encode_func:
+                    vis_utils.compare_figures([rgb, self.encode_func(lbl), self.encode_func(tile_preds)], (1, 3),
+                                              fig_size=(15, 5))
+                else:
+                    vis_utils.compare_figures([rgb, lbl, tile_preds], (1, 3), fig_size=(15, 5))
+            if pred_dir:
+                if self.encode_func:
+                    misc_utils.save_file(os.path.join(pred_dir, '{}.png'.format(file_name)), self.encode_func(tile_preds))
+                else:
+                    misc_utils.save_file(os.path.join(pred_dir, '{}.png'.format(file_name)), tile_preds)
+        pstr, rstr = self.get_result_strings('Overall', np.stack([iou_a, iou_b], axis=0), delta)
+        print(pstr)
+        report.append(rstr)
+        if report_dir:
+            misc_utils.make_dir_if_not_exist(report_dir)
+            misc_utils.save_file(os.path.join(report_dir, 'result.txt'), report)
+        return np.mean(iou_a / (iou_b + delta))*100
+
+    def infer(self, model, pred_dir, patch_size, overlap, ext='_mask', file_ext='png', visualize=False):
+        misc_utils.make_dir_if_not_exist(pred_dir)
+        pbar = tqdm(self.rgb_files)
+        for rgb_file in pbar:
+            file_name = os.path.splitext(os.path.basename(rgb_file))[0].split('_')[0]
+            pbar.set_description('Inferring {}'.format(file_name))
+            # read data
+            rgb = misc_utils.load_file(rgb_file)[:, :, :3]
+
+            # evaluate on tiles
+            tile_dim = rgb.shape[:2]
+            tile_dim_pad = [tile_dim[0] + 2 * model.lbl_margin, tile_dim[1] + 2 * model.lbl_margin]
+            grid_list = patch_extractor.make_grid(tile_dim_pad, patch_size, overlap)
+            tile_preds = []
+            for patch in patch_extractor.patch_block(rgb, model.lbl_margin, grid_list, patch_size, False):
+                patch_preds = []
+                for aug_patch in self.ensembler.augment_data(patch):
+                    for tsfm in self.tsfm:
+                        tsfm_image = tsfm(image=aug_patch)
+                        aug_patch = tsfm_image['image']
+                    aug_patch = torch.unsqueeze(aug_patch, 0).to(self.device)
+                    pred = F.softmax(model.inference(aug_patch), 1).detach().cpu().numpy()
+                    patch_preds.append(pred)
+                tile_preds.append(data_utils.change_channel_order(self.ensembler.fuse_data(patch_preds), True)[0, :, :, :])
+            # stitch back to tiles
+            tile_preds = patch_extractor.unpatch_block(
+                np.array(tile_preds),
+                tile_dim_pad,
+                patch_size,
+                tile_dim,
+                [patch_size[0] - 2 * model.lbl_margin, patch_size[1] - 2 * model.lbl_margin],
+                overlap=2 * model.lbl_margin
+            )
+            tile_preds = np.argmax(tile_preds, -1)
+            if self.encode_func:
+                pred_img = self.encode_func(tile_preds)
+            else:
+                pred_img = tile_preds
+
+            if visualize:
+                vis_utils.compare_figures([rgb, pred_img], (1, 2), fig_size=(12, 5))
+
+            misc_utils.save_file(os.path.join(pred_dir, '{}{}.{}'.format(file_name, ext, file_ext)), pred_img)
+
+
+class BaseEnsemble(object):
+    @staticmethod
+    def augment_data(img):
+        return [img, ]
+
+    @staticmethod
+    def fuse_data(img):
+        return img[0]
+
+
+class MultiResEnsemble(BaseEnsemble):
+    def __init__(self, aug_size, fuse_size=None, rotate=True, use_max=False):
+        self.aug_size = aug_size
+        self.rotate = rotate
+        if self.rotate:
+            self.copy_per_img = 6
+        else:
+            self.copy_per_img = 1
+        if not fuse_size:
+            fuse_size = self.aug_size[-1]
+        self.fuse_size = fuse_size
+        self.use_max = use_max
+
+    def augment_data(self, img):
+        aug_images = []
+        for aug_size in self.aug_size:
+            rgb = skimage.transform.resize(img, (aug_size, aug_size), preserve_range=True).astype(np.uint8)
+            aug_images.append(rgb)
+            if self.rotate:
+                aug_images.append(rgb[::-1, :, :])
+                aug_images.append(rgb[:, ::-1, :])
+                aug_images.append(np.rot90(rgb))
+                aug_images.append(np.rot90(rgb)[::-1, :, :])
+                aug_images.append(np.rot90(rgb)[:, ::-1, :])
+        return aug_images
+
+    def fuse_data(self, imgs):
+        fuse_images = [[] for _ in range(len(self.aug_size))]
+        for cnt, img in enumerate(imgs):
+            rgb = skimage.transform.resize(data_utils.change_channel_order(img[0, :, :, :], to_channel_last=True),
+                                           (self.fuse_size, self.fuse_size))
+            if cnt % self.copy_per_img == 0:
+                fuse_images[cnt // self.copy_per_img].append(rgb)
+            elif cnt % self.copy_per_img == 1:
+                fuse_images[cnt // self.copy_per_img].append(rgb[::-1, :, :])
+            elif cnt % self.copy_per_img == 2:
+                fuse_images[cnt // self.copy_per_img].append(rgb[:, ::-1, :])
+            elif cnt % self.copy_per_img == 3:
+                fuse_images[cnt // self.copy_per_img].append(np.rot90(rgb, k=-1))
+            elif cnt % self.copy_per_img == 4:
+                fuse_images[cnt // self.copy_per_img].append(np.rot90(rgb[::-1, :, :], k=-1))
+            elif cnt % self.copy_per_img == 5:
+                fuse_images[cnt // self.copy_per_img].append(np.rot90(rgb[:, ::-1, :], k=-1))
+        fuse_tps = [np.mean(np.stack(a, axis=0), axis=0) for a in fuse_images]
+
+        if self.use_max:
+            pred = np.max(np.stack(fuse_tps, axis=0), axis=0)
+        else:
+            pred = np.mean(np.stack(fuse_tps, axis=0), axis=0)
+        return np.expand_dims(data_utils.change_channel_order(pred, to_channel_last=False), axis=0)
 
 
 if __name__ == '__main__':

@@ -7,16 +7,43 @@ This file defines data loader for some benchmarked remote sensing datasets
 import os
 
 # Libs
+import torch
 import h5py
+import numpy as np
 from torch.utils import data
 
 # Own modules
-from data import data_utils
 from mrs_utils import misc_utils
 
 
+def get_file_paths(parent_path, file_list):
+    """
+    Parse the paths into absolute paths
+    :param parent_path: the parent paths of all the data files
+    :param file_list: the list of files
+    :return:
+    """
+    img_list = []
+    lbl_list = []
+    for fl in file_list:
+        img_filename, lbl_filename = [os.path.join(parent_path, a) for a in fl.strip().split(' ')[:2]]
+        img_list.append(img_filename)
+        lbl_list.append(lbl_filename)
+    return img_list, lbl_list
+
+
+def one_hot(class_n, x):
+    """
+    Make scalar into one-hot vector
+    :param class_n: number of classes
+    :param x: the scalar
+    :return: converted one-hot vector
+    """
+    return torch.eye(class_n)[x]
+
+
 class RSDataLoader(data.Dataset):
-    def __init__(self, parent_path, file_list, transforms=None):
+    def __init__(self, parent_path, file_list, transforms=None, n_class=0):
         """
         A data reader for the remote sensing dataset
         The dataset storage structure should be like
@@ -29,29 +56,46 @@ class RSDataLoader(data.Dataset):
         :param parent_path: path to a preprocessed remote sensing dataset
         :param file_list: a text file where each row contains rgb and gt files separated by space
         :param transforms: albumentation transforms
+        :param n_class: if greater than 0, will yield a #classes dimension vector where 1 indicates corresponding class exist
         """
-        self.file_list = misc_utils.load_file(file_list)
-        self.parent_path = parent_path
+        try:
+            file_list = misc_utils.load_file(file_list)
+            self.img_list, self.lbl_list = get_file_paths(parent_path, file_list)
+        except OSError:
+            file_list = eval(file_list)
+            parent_path = eval(parent_path)
+            self.img_list, self.lbl_list = [], []
+            for fl, pp in zip(file_list, parent_path):
+                img_list, lbl_list = get_file_paths(pp, misc_utils.load_file(fl))
+                self.img_list.extend(img_list)
+                self.lbl_list.extend(lbl_list)
         self.transforms = transforms
+        self.n_class = n_class
 
     def __len__(self):
-        return len(self.file_list)
+        return len(self.img_list)
 
     def __getitem__(self, index):
-        rgb_filename, gt_filename = [os.path.join(self.parent_path, a)
-                                     for a in self.file_list[index].strip().split(' ')]
-        rgb = misc_utils.load_file(rgb_filename)
-        gt = misc_utils.load_file(gt_filename)
+        rgb = misc_utils.load_file(self.img_list[index])
+        lbl = misc_utils.load_file(self.lbl_list[index])
         if self.transforms:
             for tsfm in self.transforms:
-                tsfm_image = tsfm(image=rgb, mask=gt)
+                tsfm_image = tsfm(image=rgb, mask=lbl)
                 rgb = tsfm_image['image']
-                gt = tsfm_image['mask']
-        return rgb, gt
+                lbl = tsfm_image['mask']
+        if self.n_class:
+            if len(lbl.shape) == 2:
+                cls = int(torch.mean(lbl.type(torch.float)) > 0)
+                cls = one_hot(self.n_class, cls).type(torch.float)
+            else:
+                cls = (torch.sum(lbl, dim=-1) > 0).type(torch.float)
+            return rgb, lbl, cls
+        else:
+            return rgb, lbl
 
 
 class HDF5DataLoader(data.Dataset):
-    def __init__(self, parent_path, file_list, transforms=None):
+    def __init__(self, parent_path, file_list, transforms=None, n_class=0):
         """
         A data reader for the remote sensing dataset in hdf5 format
         Training with hdf5 data is generally >10% faster
@@ -59,10 +103,12 @@ class HDF5DataLoader(data.Dataset):
         :param parent_path: path to a preprocessed remote sensing dataset
         :param file_list: a text file where each row contains rgb and gt files separated by space
         :param transforms: albumentation transforms
+        :param n_class: if greater than 0, will yield a #classes dimension vector where 1 indicates corresponding class exist
         """
         self.file_path = os.path.join(parent_path, file_list)
         self.transforms = transforms
         self.dataset = None
+        self.n_class = n_class
         with h5py.File(self.file_path, 'r') as file:
             self.dataset_len = file['img'].shape[0]
 
@@ -73,48 +119,83 @@ class HDF5DataLoader(data.Dataset):
         if self.dataset is None:
             self.dataset = h5py.File(self.file_path, 'r')
         rgb = self.dataset['img'][index, ...]
-        gt = self.dataset['lbl'][index, ...]
+        lbl = self.dataset['lbl'][index, ...]
         if self.transforms:
             for tsfm in self.transforms:
-                tsfm_image = tsfm(image=rgb, mask=gt)
+                tsfm_image = tsfm(image=rgb, mask=lbl)
                 rgb = tsfm_image['image']
-                gt = tsfm_image['mask']
-        return rgb, gt
+                lbl = tsfm_image['mask']
+        if self.n_class:
+            if len(lbl.shape) == 2:
+                cls = int(torch.mean(lbl.type(torch.float)) > 0)
+                cls = one_hot(self.n_class, cls).type(torch.float)
+            else:
+                cls = (torch.sum(lbl, dim=-1) > 0).type(torch.float)
+            return rgb, lbl, cls
+        else:
+            return rgb, lbl
 
 
-def get_loader(data_path, file_name, transforms=None):
+def get_loader(data_path, file_name, transforms=None, aux_loss=0):
     """
     Get the appropriate loader with the given file type
     :param data_path: path to a preprocessed remote sensing dataset
     :param file_name: name of the data file, could be a text file or hdf5 file
     :param transforms: albumentation transforms
+    :param aux_loss: if > 0, the dataloader will return patch-wise classification label
     :return: the corresponding loader
     """
     if file_name[-3:] == 'txt':
-        return RSDataLoader(data_path, file_name, transforms)
+        return RSDataLoader(data_path, file_name, transforms, aux_loss)
     elif file_name[-4:] == 'hdf5':
-        return HDF5DataLoader(data_path, file_name, transforms)
+        return HDF5DataLoader(data_path, file_name, transforms, aux_loss)
+    elif file_name[-1] == ']':
+        # multi dataset
+        return RSDataLoader(data_path, file_name, transforms, aux_loss)
     else:
         raise NotImplementedError('File extension {} is not supportted yet'.format(os.path.splitext(file_name))[-1])
 
 
+class MixedBatchSampler(data.sampler.Sampler):
+    def __init__(self, ds_len, ratio):
+        """
+        Mixed batch sampler where each batch has fixed number of samples from each data source
+        :param ds_len: length of each dataset
+        :param ratio: #samples from each dataset, it should have same number of elements ds_len
+        """
+        super(MixedBatchSampler, self).__init__(ds_len)
+        assert len(ds_len) == len(ratio)
+        self.ds_len = ds_len
+        self.ratio = ratio
+        self.batch_size = sum(ratio)
+        self.offset = [int(np.sum(self.ds_len[:a])) for a in range(len(ds_len))]
+
+    def __len__(self):
+        return self.ds_len[0]
+
+    def __iter__(self):
+        rand_idx = [np.random.permutation(np.arange(x)) for x in self.ds_len]
+        for cnt in range(self.ds_len[0] // self.batch_size):
+            for ds_cnt, n_sample in enumerate(self.ratio):
+                for curr_cnt in range(n_sample):
+                    yield self.offset[ds_cnt] + rand_idx[ds_cnt][(cnt*n_sample+curr_cnt) % self.ds_len[ds_cnt]]
+
+
 if __name__ == '__main__':
     import albumentations as A
-    from albumentations.pytorch import ToTensorV2
 
-    tsfm = A.Compose([
-        A.Flip(),
-        A.RandomRotate90(),
-        A.Normalize(
-            mean=[0.485, 0.456, 0.406],
-            std=[0.229, 0.224, 0.225],
-        ),
-        ToTensorV2(),
-    ])
-    ds = RSDataLoader(r'/hdd/mrs/inria/ps512_pd0_ol0/patches', r'/hdd/mrs/inria/ps512_pd0_ol0/file_list_valid.txt', transforms=tsfm)
-    # ds = RSDataLoader(r'/hdd/pgm/nz_ps512_ol0/patches', r'/hdd/pgm/nz_ps512_ol0/file_list_valid.txt', transforms=tsfm)
-    for cnt, (rgb, gt) in enumerate(ds):
-        data_utils.visualize(rgb, gt)
+    tsfms = [A.RandomCrop(512, 512)]
+    ds1 = RSDataLoader(r'/hdd/mrs/inria/ps512_pd0_ol0/patches', r'/hdd/mrs/inria/ps512_pd0_ol0/file_list_train_kt.txt', transforms=tsfms, n_class=2)
+    '''ds2 = RSDataLoader(r'/hdd/mrs/synthinel_1/patches', r'/hdd/mrs/synthinel_1/file_list_train.txt', transforms=tsfms)
+    ds3 = RSDataLoader(r'/hdd/mrs/inria/ps512_pd0_ol0/patches', r'/hdd/mrs/inria/ps512_pd0_ol0/file_list_valid_a.txt', transforms=tsfms)
+    ds = data.ConcatDataset([ds1, ds2, ds3])
+    loader = data.DataLoader(ds, sampler=MixedBatchSampler((len(ds1), len(ds2), len(ds3)), (5, 0, 0)), batch_size=5)
 
-        if cnt == 10:
-            break
+    for cnt, (rgb, gt) in enumerate(loader):
+        from mrs_utils import vis_utils
+        vis_utils.compare_figures(rgb, (1, 5), fig_size=(12, 6))'''
+
+    for cnt, (rgb, gt, cls) in enumerate(ds1):
+        from mrs_utils import vis_utils
+        print(cls)
+        vis_utils.compare_figures([rgb, gt], (1, 2), fig_size=(12, 5))

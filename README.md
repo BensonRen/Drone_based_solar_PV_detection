@@ -3,10 +3,14 @@
 
 ## Installation
 ### Dependencies
-- PyTorch >= 0.4
+- PyTorch >= 1.1
 - [TensorboardX](https://github.com/lanpa/tensorboardX)
 - [TorchSummary](https://github.com/sksq96/pytorch-summary)
 - [Albumentation](https://github.com/albu/albumentations)
+
+## Demos
+- [Object-wise scoring](./demo/object_scoring.ipynb)
+- [Results visualization](./demo/results_visualization.ipynb)
 
 ## Pretrained Models
 | Encoder Name | Decoder Name | Dataset   | Label    | Score (IoU) | Size    | Model |
@@ -40,18 +44,19 @@
     - [X] [DLinkNet](./network/dlinknet.py)
     - [X] [PSPNet](./network/pspnet.py)
     - [X] [DeepLabV3+](./network/deeplabv3.py)
-- [ ] Different Losses:
+- [X] Different Losses:
     - [X] Xent
     - [X] Jaccard Approximation
-    - [ ] Focal Loss
-    - [ ] Lovasz softmax (https://github.com/bermanmaxim/LovaszSoftmax/tree/master/pytorch)
-    - [ ] Weighted combination of arbitrary supported losses
+    - [X] Focal Loss
+    - [X] Lovasz softmax (https://github.com/bermanmaxim/LovaszSoftmax/tree/master/pytorch)
+    - [X] Weighted combination of arbitrary supported losses
 - [X] Multi GPU Training
-- [ ] Evaluation
+- [X] Evaluation
     - [X] Dataset Evaluator
     - [X] Evaluate Report & Prediction Map
-- [ ] Results visualization
-- [ ] Class weights on criterions
+- [X] Results visualization
+- [X] Class weights on criterions
+
 ## Known Bugs
 - [ ] Unable to do model-wise data parallel
 - [ ] [Failed to load models that trained on multiple gpus](https://github.com/bohaohuang/mrs/issues/8)

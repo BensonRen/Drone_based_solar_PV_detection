@@ -10,16 +10,17 @@ from glob import glob
 
 # Libs
 import numpy as np
-import solaris as sol
 from tqdm import tqdm
-from osgeo import gdal
 from natsort import natsorted
 
 # Own modules
-from mrs_utils import misc_utils
+from mrs_utils import misc_utils, process_block
 
 # Settings
+DS_NAME = 'DeepGlobe'
 CITY_DICT = {'Vegas': '2_Vegas', 'Paris': '3_Paris', 'Shanghai': '4_Shanghai', 'Khartoum': '5_Khartoum'}
+MEAN = (0.34391829, 0.41294382, 0.45617783)
+STD = (0.10493991, 0.09446405, 0.08782307)
 
 
 def get_image_gt(data_dir, city_names, target='buildings', valid_percent=0.4):
@@ -51,6 +52,8 @@ def convert_gtif_to_8bit(src_raster_path, dst_raster_path):
     :param dst_raster_path:
     :return:
     """
+    from osgeo import gdal
+
     srcRaster = gdal.Open(src_raster_path)
 
     outputPixType = 'Byte'
@@ -84,6 +87,8 @@ def check_blank_region(img):
 
 
 def make_dataset(ds_train, ds_valid, save_dir, th=0.5):
+    import solaris as sol
+
     # create folders and files
     patch_dir = os.path.join(save_dir, 'patches')
     misc_utils.make_dir_if_not_exist(patch_dir)
@@ -131,6 +136,22 @@ def make_dataset(ds_train, ds_valid, save_dir, th=0.5):
         files_remove = glob(os.path.join(patch_dir, '*.aux.xml'))
         for f in files_remove:
             os.remove(f)
+
+
+def get_stats(img_dir):
+    from data import data_utils
+    rgb_imgs = natsorted(glob(os.path.join(img_dir, '*.jpg')))
+    ds_mean, ds_std = data_utils.get_ds_stats(rgb_imgs)
+    return np.stack([ds_mean, ds_std], axis=0)
+
+
+def get_stats_pb(img_dir=r'/hdd/mrs/deepglobe/14p_pd0_ol0/patches'):
+    val = process_block.ValueComputeProcess(
+        DS_NAME, os.path.join(os.path.dirname(__file__), '../stats/builtin'),
+        os.path.join(os.path.dirname(__file__), '../stats/builtin/{}.npy'.format(DS_NAME)), func=get_stats).\
+        run(img_dir=img_dir).val
+    val_test = val
+    return val, val_test
 
 
 def get_images(data_dir):
