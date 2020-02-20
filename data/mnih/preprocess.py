@@ -12,14 +12,18 @@ from tqdm import tqdm
 
 # Own modules
 from data import data_utils
-from mrs_utils import misc_utils
+from mrs_utils import misc_utils, process_block
 
 # Settings
-DATA_DIR = '/data/users/wh145/mnih/'
-SPLITS = ['train', 'valid'] # test set will be grabbed by get_images() and processed during testing
-MODES = os.listdir(os.path.join(DATA_DIR, SPLITS[0])) # sat (input), map (target)
+DS_NAME = 'MIT-Road'
+DATA_DIR = '/data/users/wh145/data/mnih/'
+# test set will be grabbed by get_images() and processed during testing
+SPLITS = ['train', 'valid']
+# sat (input), map (target)
+MODES = os.listdir(os.path.join(DATA_DIR, SPLITS[0]))
 MEAN = (0.4251811, 0.42812928, 0.39143909)
 STD = (0.22423858, 0.21664895, 0.22102307)
+
 
 def patch_tile(rgb_file, gt_file, patch_size, pad, overlap):
     """
@@ -34,13 +38,16 @@ def patch_tile(rgb_file, gt_file, patch_size, pad, overlap):
     rgb = misc_utils.load_file(rgb_file)
     gt = misc_utils.load_file(gt_file)
     np.testing.assert_array_equal(rgb.shape[:2], gt.shape)
-    grid_list = data_utils.make_grid(np.array(rgb.shape[:2]) + 2 * pad, patch_size, overlap)
+    grid_list = data_utils.make_grid(
+        np.array(rgb.shape[:2]) + 2 * pad, patch_size, overlap)
     if pad > 0:
         rgb = data_utils.pad_image(rgb, pad)
         gt = data_utils.pad_image(gt, pad)
     for y, x in grid_list:
-        rgb_patch = data_utils.crop_image(rgb, y, x, patch_size[0], patch_size[1])
-        gt_patch = data_utils.crop_image(gt, y, x, patch_size[0], patch_size[1])
+        rgb_patch = data_utils.crop_image(
+            rgb, y, x, patch_size[0], patch_size[1])
+        gt_patch = data_utils.crop_image(
+            gt, y, x, patch_size[0], patch_size[1])
         yield rgb_patch, gt_patch, y, x
 
 
@@ -54,7 +61,7 @@ def patch_mnih(data_dir, save_dir, patch_size, pad, overlap):
     :param overlap: #overlapping pixels between two patches in both vertical and horizontal direction
     :return:
     """
-    
+
     for dataset in tqdm(SPLITS, desc='Train-valid split'):
         FILENAMES = [
             fname.split('.')[0] for fname in os.listdir(os.path.join(DATA_DIR, dataset, MODES[0]))
@@ -62,18 +69,23 @@ def patch_mnih(data_dir, save_dir, patch_size, pad, overlap):
         # create folders and files
         patch_dir = os.path.join(save_dir, 'patches')
         misc_utils.make_dir_if_not_exist(patch_dir)
-        record_file = open(os.path.join(save_dir, 'file_list_{}.txt'.format(dataset)), 'w+')
+        record_file = open(os.path.join(
+            save_dir, 'file_list_{}.txt'.format(dataset)), 'w+')
 
         # get rgb and gt files
         for fname in tqdm(FILENAMES, desc='File-wise'):
-            rgb_filename = os.path.join(DATA_DIR, dataset, 'sat', fname+'.tiff')
+            rgb_filename = os.path.join(
+                DATA_DIR, dataset, 'sat', fname+'.tiff')
             gt_filename = os.path.join(DATA_DIR, dataset, 'map', fname+'.tif')
             for rgb_patch, gt_patch, y, x in patch_tile(rgb_filename, gt_filename, patch_size, pad, overlap):
                 rgb_patchname = '{}_y{}x{}.jpg'.format(fname, int(y), int(x))
                 gt_patchname = '{}_y{}x{}.png'.format(fname, int(y), int(x))
-                misc_utils.save_file(os.path.join(patch_dir, rgb_patchname), rgb_patch.astype(np.uint8))
-                misc_utils.save_file(os.path.join(patch_dir, gt_patchname), (gt_patch/255).astype(np.uint8))
-                record_file.write('{} {}\n'.format(rgb_patchname, gt_patchname))
+                misc_utils.save_file(os.path.join(
+                    patch_dir, rgb_patchname), rgb_patch.astype(np.uint8))
+                misc_utils.save_file(os.path.join(
+                    patch_dir, gt_patchname), (gt_patch/255).astype(np.uint8))
+                record_file.write('{} {}\n'.format(
+                    rgb_patchname, gt_patchname))
         record_file.close()
 
 
@@ -82,13 +94,14 @@ def get_images(data_dir=DATA_DIR, dataset='test'):
     Stand-alone function to be used in evaluate.py.
     :param data_dir
     :param dataset: name of the dataset/split
-    """    
+    """
     rgb_files = []
     gt_files = []
     file_list = os.listdir(os.path.join(data_dir, dataset, 'map'))
     for fname in file_list:
-        gt_files.append(os.path.join(data_dir, dataset, 'map' ,fname))
-        rgb_files.append(os.path.join(data_dir, dataset, 'sat' ,fname.replace('tif', 'tiff')))
+        gt_files.append(os.path.join(data_dir, dataset, 'map', fname))
+        rgb_files.append(os.path.join(data_dir, dataset,
+                                      'sat', fname.replace('tif', 'tiff')))
     return rgb_files, gt_files
 
 
@@ -101,6 +114,15 @@ def get_stats(img_dir):
     ds_mean, ds_std = data_utils.get_ds_stats(rgb_imgs)
     print('Mean: {}'.format(ds_mean))
     print('Std: {}'.format(ds_std))
+    return np.stack([ds_mean, ds_std], axis=0)
+
+
+def get_stats_pb(img_dir=r'/home/wh145/data/mnih'):
+    val = process_block.ValueComputeProcess(DS_NAME, os.path.join(os.path.dirname(__file__), '../stats/builtin'),
+                                            os.path.join(os.path.dirname(__file__), '../stats/builtin/{}.npy'.format(DS_NAME)), func=get_stats).\
+        run(img_dir=r'/home/wh145/data/mnih').val
+    val_test = val
+    return val, val_test
 
 
 if __name__ == '__main__':
