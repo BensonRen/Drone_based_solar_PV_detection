@@ -17,8 +17,6 @@ model/log/
 model/log_pre/
 .idea/
 tasks/
-*.log
-my*
 
 # C extensions
 *.so
@@ -121,9 +119,3 @@ venv.bak/
 
 # mypy
 .mypy_cache/
-
-# personal config files
-myconf.json
-gpu6.json
-gpu7.json
-myeval.py
