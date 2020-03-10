@@ -73,6 +73,22 @@ def network_summary(network, input_size, **kwargs):
     summary(net, input_size, device='cpu')
 
 
+def load_optim(optim, state_dict, device):
+    """
+    Load the optimizer and then individually transfer the optimizer parts, this part comes from
+    https://discuss.pytorch.org/t/loading-a-saved-model-for-continue-training/17244/4
+    :param optim: the optimizer
+    :param state_dict: state dictionary
+    :param device:  device to place the models
+    :return:
+    """
+    optim.load_state_dict(state_dict)
+    for state in optim.state.values():
+        for k, v in state.items():
+            if isinstance(v, torch.Tensor):
+                state[k] = v.to(device)
+
+
 def load_epoch(save_dir, resume_epoch, model, optm, device):
     """
     Load model from a snapshot, this function can be used to resume training
@@ -83,18 +99,12 @@ def load_epoch(save_dir, resume_epoch, model, optm, device):
     :return:
     """
     checkpoint = torch.load(
-        os.path.join(save_dir, 'epoch-' + str(resume_epoch - 1) + '.pth.tar'),
+        os.path.join(save_dir, 'epoch-' + str(resume_epoch) + '.pth.tar'),
         map_location=lambda storage, loc: storage)  # Load all tensors onto the CPU
     print("Initializing weights from: {}...".format(
-        os.path.join(save_dir, 'epoch-' + str(resume_epoch - 1) + '.pth.tar')))
+        os.path.join(save_dir, 'epoch-' + str(resume_epoch) + '.pth.tar')))
     model.load_state_dict(checkpoint['state_dict'])
-    optm.load_state_dict(checkpoint['opt_dict'])
-    # individually transfer the optimizer parts, this part comes from
-    # https://discuss.pytorch.org/t/loading-a-saved-model-for-continue-training/17244/4
-    for state in optm.state.values():
-        for k, v in state.items():
-            if isinstance(v, torch.Tensor):
-                state[k] = v.to(device)
+    load_optim(optm, checkpoint['opt_dict'], device)
 
 
 def sequential_load(target, source_state):
@@ -143,7 +153,7 @@ def flex_load(model_dict, ckpt_dict, relax_load=False, disable_parallel=False, v
         if verb:
             print('Try loading without those parameters')
         return pretrained_state
-    elif disable_parallel:
+    elif disable_parallel or 'module' in [a for a in ckpt_params if a not in self_params][0]:
         pretrained_state = {k: v for k, v in ckpt_dict.items() if k.replace('module.', '') in model_dict and
                             v.size() == model_dict[k.replace('module.', '')].size()}
         if len(pretrained_state) == 0:
@@ -188,7 +198,7 @@ def flex_load(model_dict, ckpt_dict, relax_load=False, disable_parallel=False, v
         return pretrained_state
 
 
-def load(model, model_path, relax_load=False, disable_parallel=False):
+def load(model, model_path, relax_load=False, disable_parallel=False, optm=None, device=None):
     """
     Load the weights in the pretrained model directory, the order of loading method is as follows:
     1. Try load the exact name of tensors in the pretrained model file, if not all names are the same, try 2;
@@ -206,12 +216,24 @@ def load(model, model_path, relax_load=False, disable_parallel=False):
     try:
         model.load_state_dict(checkpoint['state_dict'])
     except RuntimeError:
-        pretrained_state = flex_load(model.state_dict(), checkpoint['state_dict'], relax_load, disable_parallel)
-        model.load_state_dict(pretrained_state, strict=False)
+        try:
+            pretrained_state = flex_load(model.state_dict(), checkpoint['state_dict'], relax_load, disable_parallel)
+            model.load_state_dict(pretrained_state, strict=False)
+        except ValueError:
+            if device is not None:
+                gpu = device.index
+            else:
+                gpu = 0
+            model.encoder = DataParallelPassThrough(model.encoder, [gpu, ])
+            model.decoder = DataParallelPassThrough(model.decoder, [gpu, ])
+            model.load_state_dict(checkpoint['state_dict'])
     except KeyError:
         # FIXME this is a adhoc fix to be compatible with RSMoCo
         pretrained_state = flex_load(model.state_dict(), checkpoint['model'], relax_load, disable_parallel)
         model.load_state_dict(pretrained_state, strict=False)
+    if optm is not None:
+        assert device is not None
+        load_optim(optm, checkpoint['opt_dict'], device)
 
 
 def save(model, epochs, optm, loss_dict, save_name):
@@ -270,3 +292,15 @@ def unique_model_name(cfg):
         cfg['encoder_name'], cfg['decoder_name'], cfg['dataset']['ds_name'], cfg['optimizer']['learn_rate_encoder'],
         cfg['optimizer']['learn_rate_decoder'], cfg['trainer']['epochs'], cfg['dataset']['batch_size'],
         decay_str, dr_str, criterion_str, aux_str)
+
+
+class DataParallelPassThrough(torch.nn.DataParallel):
+    """
+    Access model attributes after DataParallel wrapper
+    this code comes from: https://github.com/pytorch/pytorch/issues/16885#issuecomment-551779897
+    """
+    def __getattr__(self, name):
+        try:
+            return super().__getattr__(name)
+        except AttributeError:
+            return getattr(self.module, name)

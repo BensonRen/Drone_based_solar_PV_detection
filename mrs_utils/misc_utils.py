@@ -4,6 +4,7 @@ import time
 import json
 import pickle
 import collections.abc
+from glob import glob
 from functools import wraps
 
 # Libs
@@ -14,6 +15,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from PIL import Image
 from skimage import io
+from natsort import natsorted
 from torchsummary import summary
 
 # Own modules
@@ -26,7 +28,8 @@ def set_gpu(gpu, enable_benchmark=True):
     :param enable_benchmark: if True, will let CUDNN find optimal set of algorithms for input configuration
     :return: device instance
     """
-    gpu = str(gpu)
+    if not isinstance(gpu, str):
+        gpu = str(int(gpu))
     if len(str(gpu)) > 1:
         os.environ["CUDA_VISIBLE_DEVICES"] = gpu
         parallel = True
@@ -317,6 +320,25 @@ def get_default_colors():
     return colors
 
 
+def get_file_name_no_extension(file_name):
+    """
+    Handy function for getting the file name without path and extension
+    :param file_name: the name or path to the file
+    :return: filename without extension
+    """
+    return os.path.splitext(os.path.basename(file_name))[0]
+
+
+def get_files(path_list, extension):
+    """
+    Get files in the given folder that matches certain regex
+    :param path_list: list of path to the directory
+    :param extension: regex that filters the desired files
+    :return: list of files
+    """
+    return natsorted(glob(os.path.join(*path_list, extension)))
+
+
 def recursive_update(d, u):
     """
     Recursively update nested dictionary d with u
@@ -408,4 +430,8 @@ def historical_process_flag(flags):
         flags['trainer']['bp_loss_idx'] = '({},)'.format(flags['trainer']['bp_loss_idx'])
     if isinstance(flags['trainer']['loss_weights'], int):
         flags['trainer']['loss_weights'] = (flags['trainer']['loss_weights'],)
+    if 'further_train' not in flags['trainer']:
+        flags['trainer']['further_train'] = False
+    elif isinstance(flags['trainer']['further_train'], str):
+        flags['trainer']['further_train'] = eval(flags['trainer']['further_train'])
     return flags
