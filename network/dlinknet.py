@@ -12,7 +12,7 @@ from torch import nn
 from torch.nn import functional as F
 
 # Own modules
-from network import base_model
+from network import base_model, emau
 from network.backbones import encoders
 
 
@@ -92,12 +92,19 @@ class DLinkNet(base_model.Base):
     This module is the original DLinknet defined in paper
     http://openaccess.thecvf.com/content_cvpr_2018_workshops/papers/w4/Zhou_D-LinkNet_LinkNet_With_CVPR_2018_paper.pdf
     """
-    def __init__(self, n_class, encoder_name='resnet34', pretrained=True, aux_loss=False):
+    def __init__(self, n_class, encoder_name='resnet34', pretrained=True, aux_loss=False, use_emau=False):
         super(DLinkNet, self).__init__()
         self.n_class = n_class
         self.aux_loss = aux_loss
+        self.use_emau = use_emau
         self.encoder_name = encoder_name
         self.encoder = encoders.models(self.encoder_name, pretrained, (2, 2, 2, 2, 2), True)
+        if self.use_emau:
+            if isinstance(self.use_emau, int):
+                c = self.use_emau
+            else:
+                c = 64
+            self.encoder.emau = emau.EMAU(self.encoder.chans[0], c)
         if 'vgg' in self.encoder_name:
             self.decoder = DLinkNetDecoder(self.encoder.chans, n_class, final_upsample=False)
         else:
@@ -116,19 +123,29 @@ class DLinkNet(base_model.Base):
         input_size = x.size()[2]
         x = self.encoder(x)
         ftr, layers = x[0], x[1:-1]
-        # part b and c: center dilation + decoder
-        pred = self.decoder(ftr, layers, input_size)
+        if self.use_emau:
+            ftr, mu = self.encoder.emau(ftr)
+            # part b and c: center dilation + decoder
+            pred = self.decoder(ftr, layers, input_size)
+            return pred, mu
         if self.aux_loss:
+            if self.use_emau:
+                ftr, mu = self.encoder.emau(ftr)
+            pred = self.decoder(ftr, layers, input_size)
             aux = F.adaptive_max_pool2d(input=ftr, output_size=(1, 1)).view(-1, ftr.size(1))
-            return pred, self.cls(aux)
+            if self.use_emau:
+                return pred, mu, self.cls(aux)
+            else:
+                return pred, self.cls(aux)
         else:
+            pred = self.decoder(ftr, layers, input_size)
             return pred
 
 
 if __name__ == '__main__':
     import torch
 
-    net = DLinkNet(2, encoder_name='resnet101', aux_loss=True)
+    net = DLinkNet(2, encoder_name='resnet101', aux_loss=True, use_emau=True)
     x = torch.randn((5, 3, 512, 512))
     y, cls = net(x)
     print(y.shape, cls.shape)

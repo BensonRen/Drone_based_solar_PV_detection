@@ -96,7 +96,7 @@ def coord_iou(coords_a, coords_b):
     bb1_area = (bb1['x2'] - bb1['x1']) * (bb1['y2'] - bb1['y1'])
     bb2_area = (bb2['x2'] - bb2['x1']) * (bb2['y2'] - bb2['y1'])
     iou = intersection_area / float(bb1_area + bb2_area - intersection_area)
-    assert 0.0 <= iou <= 1.0
+    iou = np.minimum(np.maximum(iou, 0), 1)
     return iou
 
 
@@ -311,9 +311,8 @@ def read_results(result_name, regex=None, sum_results=False, delta=1e-6, class_n
         class_names = update_results(results, name, ious, class_names)
     if regex:
         comb_res = None
-        pattern = re.compile(regex)
         for key, val in results.items():
-            if pattern.match(key):
+            if re.search(regex, key):
                 comb_res = combine_results(comb_res, val)
         return summarize_results(comb_res)
     elif sum_results:
@@ -380,6 +379,14 @@ class Evaluator:
             self.decode_func = None
             self.encode_func = None
             self.class_names = ['road', ]
+        elif ds_name == 'spca':
+            from data.spca import preprocess
+            self.rgb_files, self.lbl_files = preprocess.get_images(data_dir, **kwargs)
+            assert len(self.rgb_files) == len(self.lbl_files)
+            self.truth_val = 1
+            self.decode_func = None
+            self.encode_func = None
+            self.class_names = ['panel', ]
         elif load_func:
             self.truth_val = kwargs.pop('truth_val', 1)
             self.rgb_files, self.lbl_files = load_func(data_dir, **kwargs)

@@ -40,19 +40,19 @@ def create_model(args):
     if args['decoder_name'] == 'unet':
         if args['encoder_name'] == 'base':
             model = unet.UNet(sfn=args['sfn'], n_class=args['dataset']['class_num'],
-                              encoder_name=args['encoder_name'], aux_loss=aux_loss)
+                              encoder_name=args['encoder_name'], aux_loss=aux_loss, use_emau=args['use_emau'])
         else:
             model = unet.UNet(n_class=args['dataset']['class_num'], encoder_name=args['encoder_name'],
-                              pretrained=eval(args['imagenet']), aux_loss=aux_loss)
+                              pretrained=eval(args['imagenet']), aux_loss=aux_loss, use_emau=args['use_emau'])
     elif args['decoder_name'] in ['psp', 'pspnet']:
         model = pspnet.PSPNet(n_class=args['dataset']['class_num'], encoder_name=args['encoder_name'],
-                              pretrained=eval(args['imagenet']), aux_loss=aux_loss)
+                              pretrained=eval(args['imagenet']), aux_loss=aux_loss, use_emau=args['use_emau'])
     elif args['decoder_name'] == 'dlinknet':
         model = dlinknet.DLinkNet(n_class=args['dataset']['class_num'], encoder_name=args['encoder_name'],
-                                  pretrained=eval(args['imagenet']), aux_loss=aux_loss)
+                                  pretrained=eval(args['imagenet']), aux_loss=aux_loss, use_emau=args['use_emau'])
     elif args['decoder_name'] == 'deeplabv3':
         model = deeplabv3.DeepLabV3(n_class=args['dataset']['class_num'], encoder_name=args['encoder_name'],
-                                    pretrained=eval(args['imagenet']), aux_loss=aux_loss)
+                                    pretrained=eval(args['imagenet']), aux_loss=aux_loss, use_emau=args['use_emau'])
     else:
         raise NotImplementedError('Decoder structure {} is not supported'.format(args['decoder_name']))
     return model
@@ -143,6 +143,10 @@ def get_dataset_stats(ds_name, img_dir, load_func=None, mean_val=([0.485, 0.456,
         print('Use {} mean std stats: {}'.format(ds_name, val))
     elif ds_name == 'mnih':
         from data.mnih import preprocess
+        val = preprocess.get_stats_pb(img_dir)[0]
+        print('Use {} mean std stats: {}'.format(ds_name, val))
+    elif ds_name == 'spca':
+        from data.spca import preprocess
         val = preprocess.get_stats_pb(img_dir)[0]
         print('Use {} mean std stats: {}'.format(ds_name, val))
     elif load_func:
