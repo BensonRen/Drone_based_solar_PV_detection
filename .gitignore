@@ -3,6 +3,8 @@
 
 # Customize
 tasks
+pytest/.pytest_cache
+/pytest/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -12,8 +12,8 @@ from torch import nn
 from torch.nn import functional as F
 
 # Own modules
-from network import base_model, emau
 from network.backbones import encoders
+from network import base_model, emau, ocr
 
 
 class UpSample(nn.Module):
@@ -92,11 +92,12 @@ class DLinkNet(base_model.Base):
     This module is the original DLinknet defined in paper
     http://openaccess.thecvf.com/content_cvpr_2018_workshops/papers/w4/Zhou_D-LinkNet_LinkNet_With_CVPR_2018_paper.pdf
     """
-    def __init__(self, n_class, encoder_name='resnet34', pretrained=True, aux_loss=False, use_emau=False):
+    def __init__(self, n_class, encoder_name='resnet34', pretrained=True, aux_loss=False, use_emau=False, use_ocr=False):
         super(DLinkNet, self).__init__()
         self.n_class = n_class
         self.aux_loss = aux_loss
         self.use_emau = use_emau
+        self.use_ocr = use_ocr
         self.encoder_name = encoder_name
         self.encoder = encoders.models(self.encoder_name, pretrained, (2, 2, 2, 2, 2), True)
         if self.use_emau:
@@ -105,10 +106,8 @@ class DLinkNet(base_model.Base):
             else:
                 c = 64
             self.encoder.emau = emau.EMAU(self.encoder.chans[0], c)
-        if 'vgg' in self.encoder_name:
-            self.decoder = DLinkNetDecoder(self.encoder.chans, n_class, final_upsample=False)
-        else:
-            self.decoder = DLinkNetDecoder(self.encoder.chans, n_class)
+        if self.use_ocr:
+            self.encoder.ocr = ocr.OCRModule(self.n_class, *self.encoder.chans[:2][::-1], self.encoder.chans[0])
         if self.aux_loss:
             self.cls = nn.Sequential(
                 nn.Linear(self.encoder.chans[0], 256),
@@ -117,35 +116,36 @@ class DLinkNet(base_model.Base):
             )
         else:
             self.cls = None
+        if 'vgg' in self.encoder_name:
+            self.decoder = DLinkNetDecoder(self.encoder.chans, n_class, final_upsample=False)
+        else:
+            self.decoder = DLinkNetDecoder(self.encoder.chans, n_class)
 
     def forward(self, x):
+        input_size = x.shape[2:]
+        output_dict = dict()
         # part a: encoder
         input_size = x.size()[2]
         x = self.encoder(x)
         ftr, layers = x[0], x[1:-1]
         if self.use_emau:
-            ftr, mu = self.encoder.emau(ftr)
-            # part b and c: center dilation + decoder
-            pred = self.decoder(ftr, layers, input_size)
-            return pred, mu
+            ftr, output_dict['mu'] = self.encoder.emau(ftr)
+        if self.use_ocr:
+            region, ftr = self.encoder.ocr(layers[0], ftr)
+            output_dict['region'] = F.interpolate(region, size=input_size, mode='bilinear', align_corners=False)
         if self.aux_loss:
-            if self.use_emau:
-                ftr, mu = self.encoder.emau(ftr)
-            pred = self.decoder(ftr, layers, input_size)
-            aux = F.adaptive_max_pool2d(input=ftr, output_size=(1, 1)).view(-1, ftr.size(1))
-            if self.use_emau:
-                return pred, mu, self.cls(aux)
-            else:
-                return pred, self.cls(aux)
-        else:
-            pred = self.decoder(ftr, layers, input_size)
-            return pred
+            output_dict['aux'] = self.cls(F.adaptive_max_pool2d(input=ftr, output_size=(1, 1)).view(-1, ftr.size(1)))
+        # part b and c: center dilation + decoder
+        pred = self.decoder(ftr, layers, input_size)
+        output_dict['pred'] = pred
+        return output_dict
 
 
 if __name__ == '__main__':
     import torch
 
-    net = DLinkNet(2, encoder_name='resnet101', aux_loss=True, use_emau=True)
+    net = DLinkNet(2, encoder_name='resnet34', use_ocr=True)
     x = torch.randn((5, 3, 512, 512))
-    y, cls = net(x)
-    print(y.shape, cls.shape)
+    output_dict = net(x)
+    y, region = output_dict['pred'], output_dict['region']
+    print(y.shape, region.shape)
