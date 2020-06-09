@@ -386,6 +386,15 @@ class Evaluator:
             self.truth_val = 1
             self.decode_func = None
             self.encode_func = None
+            self.class_names = ['panel',]
+        elif ds_name == 'spca':
+            from data.ct_finetune import preprocess
+            self.rgb_files, self.lbl_files = preprocess.get_images(
+                data_dir, **kwargs)
+            assert len(self.rgb_files) == len(self.lbl_files)
+            self.truth_val = 1
+            self.decode_func = None
+            self.encode_func = None
             self.class_names = ['panel', ]
         elif load_func:
             self.truth_val = kwargs.pop('truth_val', 1)
@@ -492,7 +501,7 @@ class Evaluator:
         )
         return tile_preds
 
-    def infer(self, model, pred_dir, patch_size, overlap, ext='_mask', file_ext='png', visualize=False):
+    def infer(self, model, pred_dir, patch_size, overlap, ext='_mask', file_ext='png', visualize=False, save_conf=False):
         if isinstance(model, list) or isinstance(model, tuple):
             lbl_margin = model[0].lbl_margin
         else:
@@ -501,7 +510,7 @@ class Evaluator:
         misc_utils.make_dir_if_not_exist(pred_dir)
         pbar = tqdm(self.rgb_files)
         for rgb_file in pbar:
-            file_name = os.path.splitext(os.path.basename(rgb_file))[0].split('_')[0]
+            file_name = os.path.splitext(os.path.basename(rgb_file))[0].split('.')[0]
             pbar.set_description('Inferring {}'.format(file_name))
             # read data
             rgb = misc_utils.load_file(rgb_file)[:, :, :3]
@@ -518,6 +527,11 @@ class Evaluator:
                                                               lbl_margin)
             else:
                 tile_preds = self.infer_tile(model, rgb, grid_list, patch_size, tile_dim, tile_dim_pad, lbl_margin)
+
+            if save_conf:
+                misc_utils.save_file(os.path.join(pred_dir, '{}_conf.npy'.format(file_name)),
+                                     scipy.special.softmax(tile_preds, axis=-1)[:, :, 1])
+
             tile_preds = np.argmax(tile_preds, -1)
 
             if self.encode_func:

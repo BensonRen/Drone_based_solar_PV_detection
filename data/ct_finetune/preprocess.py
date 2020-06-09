@@ -14,20 +14,23 @@ from natsort import natsorted
 
 # Own modules
 from data import data_utils
-from mrs_utils import misc_utils
+from mrs_utils import misc_utils, process_block
+
+# Settings
+DS_NAME = 'ct_finetune'
 
 
-def get_images(data_dir):
-    rgb_files = natsorted(glob(os.path.join(data_dir, 'images', '*.png')))
+def get_images(data_dir, valid_percent=0.2, split=False):
+    rgb_files = natsorted(glob(os.path.join(data_dir, 'images', '*.jpg')))
     lbl_files = natsorted(glob(os.path.join(data_dir, 'annotations', '*.png')))
     assert len(rgb_files) == len(lbl_files)
-    while True:
-        valid_idx = np.random.randint(0, len(lbl_files))
-        if not '015840_se.png' in rgb_files[valid_idx]: # the urban tile must be used for training
-            break
+    # while True:
+    #     valid_idx = np.random.randint(0, len(lbl_files))
+    #     if not '015840_se.png' in rgb_files[valid_idx]: # the urban tile must be used for training
+    #         break
     train_files, valid_files = [], []
     for i, pair in enumerate(zip(rgb_files, lbl_files)):
-        if i == valid_idx:
+        if i <= int(valid_percent * len(rgb_files)):
             valid_files.append(pair)
         else:
             train_files.append(pair)
@@ -77,9 +80,25 @@ def create_dataset(data_dir, save_dir, patch_size, pad, overlap, visualize=False
                 '{} {}\n'.format(img_patchname, lbl_patchname))
 
 
+def get_stats(img_dir):
+    from data import data_utils
+    from glob import glob
+    rgb_imgs = glob(os.path.join(img_dir, '*.jpg'))
+    ds_mean, ds_std = data_utils.get_ds_stats(rgb_imgs)
+    return np.stack([ds_mean, ds_std], axis=0)
+
+
+def get_stats_pb(img_dir):
+    val = process_block.ValueComputeProcess(DS_NAME, os.path.join(os.path.dirname(__file__), '../stats/builtin'),
+                                            os.path.join(os.path.dirname(__file__), '../stats/builtin/{}.npy'.format(DS_NAME)), func=get_stats).\
+        run(img_dir=img_dir).val
+    val_test = val
+    return val, val_test
+
+
 if __name__ == '__main__':
     ps = 512
     ol = 0
     pd = 0
-    create_dataset(data_dir=r'/home/wh145/data/CT_downsampled',
-                   save_dir=r'/home/wh145/data/CT_downsampled', patch_size=(ps, ps), pad=pd, overlap=ol, visualize=False)
+    create_dataset(data_dir=r'/hdd/wh145/data/ct_finetune',
+                   save_dir=r'/hdd/wh145/data/ct_finetune', patch_size=(ps, ps), pad=pd, overlap=ol, visualize=False)
