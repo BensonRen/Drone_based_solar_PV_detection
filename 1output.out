@@ -1,0 +1,385 @@
+number of objects in ground truth = 121
+len p = 140, len r = 140, ap = 0.9539899527461797
+best_f1_idx = 17, p = 0.9508196721311475, r = 0.9586776859504132
+shape of r (140,)
+shape of p (140,)
+shape of pr (140, 2)
+number of objects in ground truth = 100
+len p = 768, len r = 768, ap = 0.8953358837270945
+best_f1_idx = 659, p = 0.8796296296296297, r = 0.95
+shape of r (768,)
+shape of p (768,)
+shape of pr (768, 2)
+number of objects in ground truth = 144
+len p = 1653, len r = 1653, ap = 0.8940904049638877
+best_f1_idx = 1495, p = 0.8407643312101911, r = 0.9166666666666666
+shape of r (1653,)
+shape of p (1653,)
+shape of pr (1653, 2)
+number of objects in ground truth = 100
+len p = 1917, len r = 1917, ap = 0.9347816890736039
+best_f1_idx = 1819, p = 0.9278350515463918, r = 0.9
+shape of r (1917,)
+shape of p (1917,)
+shape of pr (1917, 2)
+number of objects in ground truth = 122
+len p = 2503, len r = 2503, ap = 0.8423640576818838
+best_f1_idx = 2368, p = 0.8059701492537313, r = 0.8852459016393442
+shape of r (2503,)
+shape of p (2503,)
+shape of pr (2503, 2)
+number of objects in ground truth = 100
+len p = 1072, len r = 1072, ap = 0.8789635662013681
+best_f1_idx = 964, p = 0.8691588785046729, r = 0.93
+shape of r (1072,)
+shape of p (1072,)
+shape of pr (1072, 2)
+number of objects in ground truth = 122
+len p = 818, len r = 818, ap = 0.8765342899322954
+best_f1_idx = 685, p = 0.8712121212121212, r = 0.9426229508196722
+shape of r (818,)
+shape of p (818,)
+shape of pr (818, 2)
+number of objects in ground truth = 100
+len p = 818, len r = 818, ap = 0.9064931211841297
+best_f1_idx = 711, p = 0.8679245283018868, r = 0.92
+shape of r (818,)
+shape of p (818,)
+shape of pr (818, 2)
+number of objects in ground truth = 121
+len p = 1142, len r = 1142, ap = 0.9249305665344476
+best_f1_idx = 1006, p = 0.8666666666666667, r = 0.9669421487603306
+shape of r (1142,)
+shape of p (1142,)
+shape of pr (1142, 2)
+number of objects in ground truth = 100
+len p = 1020, len r = 1020, ap = 0.8968782815007741
+best_f1_idx = 909, p = 0.8545454545454545, r = 0.94
+shape of r (1020,)
+shape of p (1020,)
+shape of pr (1020, 2)
+number of objects in ground truth = 121
+len p = 1182, len r = 1182, ap = 0.9248855949608774
+best_f1_idx = 1046, p = 0.8592592592592593, r = 0.9586776859504132
+shape of r (1182,)
+shape of p (1182,)
+shape of pr (1182, 2)
+number of objects in ground truth = 100
+len p = 1870, len r = 1870, ap = 0.8305516914892254
+best_f1_idx = 1764, p = 0.8380952380952381, r = 0.88
+shape of r (1870,)
+shape of p (1870,)
+shape of pr (1870, 2)
+number of objects in ground truth = 122
+len p = 993, len r = 993, ap = 0.8547228353195798
+best_f1_idx = 855, p = 0.8394160583941606, r = 0.9426229508196722
+shape of r (993,)
+shape of p (993,)
+shape of pr (993, 2)
+number of objects in ground truth = 100
+len p = 947, len r = 947, ap = 0.8899320398505339
+best_f1_idx = 840, p = 0.8867924528301887, r = 0.94
+shape of r (947,)
+shape of p (947,)
+shape of pr (947, 2)
+number of objects in ground truth = 121
+len p = 3066, len r = 3066, ap = 0.8828233688614866
+best_f1_idx = 2932, p = 0.8345864661654135, r = 0.9173553719008265
+shape of r (3066,)
+shape of p (3066,)
+shape of pr (3066, 2)
+number of objects in ground truth = 100
+len p = 1133, len r = 1133, ap = 0.8852098592436428
+best_f1_idx = 1022, p = 0.8636363636363636, r = 0.95
+shape of r (1133,)
+shape of p (1133,)
+shape of pr (1133, 2)
+number of objects in ground truth = 122
+len p = 970, len r = 970, ap = 0.8765845221312241
+best_f1_idx = 830, p = 0.8201438848920863, r = 0.9344262295081968
+shape of r (970,)
+shape of p (970,)
+shape of pr (970, 2)
+number of objects in ground truth = 118
+len p = 184, len r = 184, ap = 0.9474057350306746
+best_f1_idx = 61, p = 0.9016393442622951, r = 0.9322033898305084
+shape of r (184,)
+shape of p (184,)
+shape of pr (184, 2)
+number of objects in ground truth = 140
+len p = 4447, len r = 4447, ap = 0.8940928987312236
+best_f1_idx = 4309, p = 0.8905109489051095, r = 0.8714285714285714
+shape of r (4447,)
+shape of p (4447,)
+shape of pr (4447, 2)
+number of objects in ground truth = 118
+len p = 995, len r = 995, ap = 0.9217869740673248
+best_f1_idx = 870, p = 0.8951612903225806, r = 0.940677966101695
+shape of r (995,)
+shape of p (995,)
+shape of pr (995, 2)
+number of objects in ground truth = 122
+len p = 175, len r = 175, ap = 0.914080943513792
+best_f1_idx = 57, p = 0.9316239316239316, r = 0.8934426229508197
+shape of r (175,)
+shape of p (175,)
+shape of pr (175, 2)
+number of objects in ground truth = 118
+len p = 144, len r = 144, ap = 0.9563394183364533
+best_f1_idx = 20, p = 0.9024390243902439, r = 0.940677966101695
+shape of r (144,)
+shape of p (144,)
+shape of pr (144, 2)
+number of objects in ground truth = 122
+len p = 765, len r = 765, ap = 0.8850741359295201
+best_f1_idx = 632, p = 0.8712121212121212, r = 0.9426229508196722
+shape of r (765,)
+shape of p (765,)
+shape of pr (765, 2)
+number of objects in ground truth = 118
+len p = 1387, len r = 1387, ap = 0.9158280099230163
+best_f1_idx = 1264, p = 0.8770491803278688, r = 0.9067796610169492
+shape of r (1387,)
+shape of p (1387,)
+shape of pr (1387, 2)
+number of objects in ground truth = 121
+len p = 1064, len r = 1064, ap = 0.8937609715785407
+best_f1_idx = 931, p = 0.8636363636363636, r = 0.9421487603305785
+shape of r (1064,)
+shape of p (1064,)
+shape of pr (1064, 2)
+number of objects in ground truth = 118
+len p = 1036, len r = 1036, ap = 0.9288027589925976
+best_f1_idx = 912, p = 0.9024390243902439, r = 0.940677966101695
+shape of r (1036,)
+shape of p (1036,)
+shape of pr (1036, 2)
+number of objects in ground truth = 121
+len p = 954, len r = 954, ap = 0.9346334148310894
+best_f1_idx = 830, p = 0.9105691056910569, r = 0.9256198347107438
+shape of r (954,)
+shape of p (954,)
+shape of pr (954, 2)
+number of objects in ground truth = 118
+len p = 1299, len r = 1299, ap = 0.9086000460293988
+best_f1_idx = 1163, p = 0.8296296296296296, r = 0.9491525423728814
+shape of r (1299,)
+shape of p (1299,)
+shape of pr (1299, 2)
+number of objects in ground truth = 144
+len p = 1584, len r = 1584, ap = 0.8854895337195611
+best_f1_idx = 1425, p = 0.8607594936708861, r = 0.9444444444444444
+shape of r (1584,)
+shape of p (1584,)
+shape of pr (1584, 2)
+number of objects in ground truth = 118
+len p = 1522, len r = 1522, ap = 0.9056121894208738
+best_f1_idx = 1399, p = 0.8852459016393442, r = 0.9152542372881356
+shape of r (1522,)
+shape of p (1522,)
+shape of pr (1522, 2)
+number of objects in ground truth = 121
+len p = 1022, len r = 1022, ap = 0.9266608645306913
+best_f1_idx = 898, p = 0.9105691056910569, r = 0.9256198347107438
+shape of r (1022,)
+shape of p (1022,)
+shape of pr (1022, 2)
+number of objects in ground truth = 118
+len p = 775, len r = 775, ap = 0.9230557234616196
+best_f1_idx = 637, p = 0.8394160583941606, r = 0.9745762711864406
+shape of r (775,)
+shape of p (775,)
+shape of pr (775, 2)
+number of objects in ground truth = 122
+len p = 981, len r = 981, ap = 0.8901878608335402
+best_f1_idx = 841, p = 0.8345323741007195, r = 0.9508196721311475
+shape of r (981,)
+shape of p (981,)
+shape of pr (981, 2)
+number of objects in ground truth = 122
+len p = 994, len r = 994, ap = 0.9042597638754284
+best_f1_idx = 859, p = 0.8507462686567164, r = 0.9344262295081968
+shape of r (994,)
+shape of p (994,)
+shape of pr (994, 2)
+number of objects in ground truth = 144
+len p = 1682, len r = 1682, ap = 0.8983980533621783
+best_f1_idx = 1516, p = 0.8181818181818182, r = 0.9375
+shape of r (1682,)
+shape of p (1682,)
+shape of pr (1682, 2)
+number of objects in ground truth = 122
+len p = 2846, len r = 2846, ap = 0.887021959982446
+best_f1_idx = 2717, p = 0.828125, r = 0.8688524590163934
+shape of r (2846,)
+shape of p (2846,)
+shape of pr (2846, 2)
+number of objects in ground truth = 144
+len p = 1832, len r = 1832, ap = 0.892756574039703
+best_f1_idx = 1670, p = 0.8385093167701864, r = 0.9375
+shape of r (1832,)
+shape of p (1832,)
+shape of pr (1832, 2)
+number of objects in ground truth = 122
+len p = 1126, len r = 1126, ap = 0.9078916504839402
+best_f1_idx = 993, p = 0.8560606060606061, r = 0.9262295081967213
+shape of r (1126,)
+shape of p (1126,)
+shape of pr (1126, 2)
+number of objects in ground truth = 144
+len p = 1237, len r = 1237, ap = 0.9047969942038281
+best_f1_idx = 1078, p = 0.8607594936708861, r = 0.9444444444444444
+shape of r (1237,)
+shape of p (1237,)
+shape of pr (1237, 2)
+number of objects in ground truth = 113
+len p = 1414, len r = 1414, ap = 0.864347458195736
+best_f1_idx = 1295, p = 0.8135593220338984, r = 0.8495575221238938
+shape of r (1414,)
+shape of p (1414,)
+shape of pr (1414, 2)
+number of objects in ground truth = 144
+len p = 3743, len r = 3743, ap = 0.8132564866630582
+best_f1_idx = 3595, p = 0.8027210884353742, r = 0.8194444444444444
+shape of r (3743,)
+shape of p (3743,)
+shape of pr (3743, 2)
+number of objects in ground truth = 113
+len p = 3610, len r = 3610, ap = 0.8551847390084132
+best_f1_idx = 3492, p = 0.7777777777777778, r = 0.8053097345132744
+shape of r (3610,)
+shape of p (3610,)
+shape of pr (3610, 2)
+number of objects in ground truth = 140
+len p = 5190, len r = 5190, ap = 0.9250389751902443
+best_f1_idx = 5049, p = 0.9071428571428571, r = 0.9071428571428571
+shape of r (5190,)
+shape of p (5190,)
+shape of pr (5190, 2)
+number of objects in ground truth = 113
+len p = 1787, len r = 1787, ap = 0.8808288101447623
+best_f1_idx = 1670, p = 0.8448275862068966, r = 0.8672566371681416
+shape of r (1787,)
+shape of p (1787,)
+shape of pr (1787, 2)
+number of objects in ground truth = 121
+len p = 901, len r = 901, ap = 0.9179415262845937
+best_f1_idx = 769, p = 0.8778625954198473, r = 0.9504132231404959
+shape of r (901,)
+shape of p (901,)
+shape of pr (901, 2)
+number of objects in ground truth = 122
+len p = 1211, len r = 1211, ap = 0.8850115817890842
+best_f1_idx = 1083, p = 0.8503937007874016, r = 0.8852459016393442
+shape of r (1211,)
+shape of p (1211,)
+shape of pr (1211, 2)
+number of objects in ground truth = 122
+len p = 847, len r = 847, ap = 0.8621441853415123
+best_f1_idx = 712, p = 0.8507462686567164, r = 0.9344262295081968
+shape of r (847,)
+shape of p (847,)
+shape of pr (847, 2)
+number of objects in ground truth = 122
+len p = 1649, len r = 1649, ap = 0.8944586340914067
+best_f1_idx = 1518, p = 0.8538461538461538, r = 0.9098360655737705
+shape of r (1649,)
+shape of p (1649,)
+shape of pr (1649, 2)
+number of objects in ground truth = 140
+len p = 5451, len r = 5451, ap = 0.9136609486983086
+best_f1_idx = 5311, p = 0.8920863309352518, r = 0.8857142857142857
+shape of r (5451,)
+shape of p (5451,)
+shape of pr (5451, 2)
+number of objects in ground truth = 113
+len p = 862, len r = 862, ap = 0.8916940255429755
+best_f1_idx = 744, p = 0.8376068376068376, r = 0.8672566371681416
+shape of r (862,)
+shape of p (862,)
+shape of pr (862, 2)
+number of objects in ground truth = 144
+len p = 1899, len r = 1899, ap = 0.899248573323762
+best_f1_idx = 1736, p = 0.8518518518518519, r = 0.9583333333333334
+shape of r (1899,)
+shape of p (1899,)
+shape of pr (1899, 2)
+number of objects in ground truth = 113
+len p = 1080, len r = 1080, ap = 0.9036477137347004
+best_f1_idx = 948, p = 0.816793893129771, r = 0.9469026548672567
+shape of r (1080,)
+shape of p (1080,)
+shape of pr (1080, 2)
+there is exception in os.makedirs step
+number of objects in ground truth = 140
+len p = 5253, len r = 5253, ap = 0.9469841443554547
+best_f1_idx = 5101, p = 0.8807947019867549, r = 0.95
+shape of r (5253,)
+shape of p (5253,)
+shape of pr (5253, 2)
+number of objects in ground truth = 122
+len p = 1025, len r = 1025, ap = 0.9132031197216904
+best_f1_idx = 903, p = 0.8842975206611571, r = 0.8770491803278688
+shape of r (1025,)
+shape of p (1025,)
+shape of pr (1025, 2)
+number of objects in ground truth = 140
+len p = 4451, len r = 4451, ap = 0.9066083211958034
+best_f1_idx = 4323, p = 0.937007874015748, r = 0.85
+shape of r (4451,)
+shape of p (4451,)
+shape of pr (4451, 2)
+number of objects in ground truth = 122
+len p = 159, len r = 159, ap = 0.9513697207349303
+best_f1_idx = 30, p = 0.890625, r = 0.9344262295081968
+shape of r (159,)
+shape of p (159,)
+shape of pr (159, 2)
+number of objects in ground truth = 140
+len p = 4917, len r = 4917, ap = 0.8944965515165312
+best_f1_idx = 4777, p = 0.8848920863309353, r = 0.8785714285714286
+shape of r (4917,)
+shape of p (4917,)
+shape of pr (4917, 2)
+number of objects in ground truth = 113
+len p = 830, len r = 830, ap = 0.9316094841752971
+best_f1_idx = 710, p = 0.8823529411764706, r = 0.9292035398230089
+shape of r (830,)
+shape of p (830,)
+shape of pr (830, 2)
+number of objects in ground truth = 144
+len p = 299, len r = 299, ap = 0.9520534981733974
+best_f1_idx = 149, p = 0.8859060402684564, r = 0.9166666666666666
+shape of r (299,)
+shape of p (299,)
+shape of pr (299, 2)
+number of objects in ground truth = 113
+len p = 1517, len r = 1517, ap = 0.9084778650387019
+best_f1_idx = 1398, p = 0.8728813559322034, r = 0.911504424778761
+shape of r (1517,)
+shape of p (1517,)
+shape of pr (1517, 2)
+number of objects in ground truth = 140
+len p = 5860, len r = 5860, ap = 0.8573712245160223
+best_f1_idx = 5734, p = 0.888, r = 0.7928571428571428
+shape of r (5860,)
+shape of p (5860,)
+shape of pr (5860, 2)
+number of objects in ground truth = 113
+len p = 1153, len r = 1153, ap = 0.9107648725442178
+best_f1_idx = 1017, p = 0.7925925925925926, r = 0.9469026548672567
+shape of r (1153,)
+shape of p (1153,)
+shape of pr (1153, 2)
+number of objects in ground truth = 140
+len p = 161, len r = 161, ap = 0.993220317440873
+best_f1_idx = 22, p = 0.9782608695652174, r = 0.9642857142857143
+shape of r (161,)
+shape of p (161,)
+shape of pr (161, 2)
+number of objects in ground truth = 122
+len p = 1575, len r = 1575, ap = 0.8866532055438009
+best_f1_idx = 1445, p = 0.8527131782945736, r = 0.9016393442622951
+shape of r (1575,)
+shape of p (1575,)
+shape of pr (1575, 2)

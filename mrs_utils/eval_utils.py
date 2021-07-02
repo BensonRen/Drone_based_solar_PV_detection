@@ -11,10 +11,18 @@ import re
 import scipy.special
 import skimage.transform
 import numpy as np
+from skimage.util.dtype import img_as_float, img_as_int
+import toolman as tm
 from tqdm import tqdm
 from skimage import measure
+from skimage.morphology import dilation, disk, erosion
 from scipy.spatial import KDTree
+import pydensecrf.densecrf as dcrf
+from pydensecrf.utils import unary_from_softmax
 from sklearn.metrics import precision_recall_curve, average_precision_score
+import matplotlib.pyplot as plt
+from skimage import io
+import cv2
 
 # PyTorch
 import torch
@@ -35,10 +43,10 @@ def display_group(reg_groups, size, img=None, need_return=False):
     :return:
     """
     group_map = np.zeros(size, dtype=np.int)
-    for cnt, group in enumerate(reg_groups):
-        for g in group:
-            coords = np.array(g.coords)
-            group_map[coords[:, 0], coords[:, 1]] = cnt
+    for cnt, g in enumerate(reg_groups):
+        # for g in group:
+        coords = np.array(g.coords)
+        group_map[coords[:, 0], coords[:, 1]] = cnt + 1
     if need_return:
         return group_map
     else:
@@ -56,8 +64,8 @@ def get_stats_from_group(reg_group, conf_img=None):
     :return:
     """
     coords = []
-    for g in reg_group:
-        coords.extend(g.coords)
+    # for g in reg_group:
+    coords.extend(reg_group.coords)
     coords = np.array(coords)
     if conf_img is not None:
         conf = np.mean(conf_img[coords[:, 0], coords[:, 1]])
@@ -117,13 +125,16 @@ def compute_iou(coords_a, coords_b, size):
         tile_a[coords_a[:, 0], coords_a[:, 1]] = 1
         tile_b = np.zeros(size)
         tile_b[coords_b[:, 0], coords_b[:, 1]] = 1
-        return metric_utils.iou_metric(tile_a, tile_b, divide=True)
+        iou_utils = metric_utils.iou_metric(tile_a, tile_b, divide=True)
+        #print('in compute_iou, coord_iou gives result: {}'.format(iou))
+        #print('in metric_utils.iou_metric, the give result: {}'.format(iou_utils))
+        return iou_utils
     else:
         return 0
 
 
 class ObjectScorer(object):
-    def __init__(self, min_region=5, min_th=0.5, link_r=20, eps=2):
+    def __init__(self, min_region=5, min_th=0.5, dilation_size=12, link_r=20, eps=2):
         """
         Object-wise scoring metric: the conf map instead of prediction map is needed
         The conf map will first be binarized by certain threshold, then any connected components
@@ -141,6 +152,7 @@ class ObjectScorer(object):
         """
         self.min_region = min_region
         self.min_th = min_th
+        self.dilation_size = dilation_size
         self.link_r = link_r
         self.eps = eps
 
@@ -190,35 +202,110 @@ class ObjectScorer(object):
         """
         # get connected components
         im_binary = conf_map >= self.min_th
+        # do min_region thresholding before adding dilation
         im_label = measure.label(im_binary)
-        reg_props = measure.regionprops(im_label, conf_map)
-        # remove regions that are smaller than threshold
-        reg_props = [a for a in reg_props if a.area >= self.min_region]
-        # group objects
-        centroids = self._reg_to_centroids(reg_props)
-        if len(centroids) > 0:
-            kdt = KDTree(centroids)
-            connect_pair = kdt.query_pairs(self.link_r, eps=self.eps)
-            groups = self._group_pairs(connect_pair, reg_props)
-            return groups
-        else:
-            return []
+        reg_props = [a for a in measure.regionprops(im_label, conf_map) if a.area >= self.min_region]
+        # rasterize post min_region map
+        im_binary = dummyfy(im_label, reg_props)
+        # dummy = np.zeros(im_label.shape, dtype=int)
+        # for reg in reg_props:
+        #     coords = np.array(reg.coords)
+        #     dummy[coords[:, 0], coords[:, 1]] = 1
+        # im_binary = dummy
+        # add dilation
+        if self.dilation_size < 0 or not isinstance(self.dilation_size, int):
+            return ValueError("Dilation size must be a positive integer")
+        elif self.dilation_size > 0:
+            im_dilated = dilation(im_binary, disk(self.dilation_size))
+            # im_dilated = erosion(im_dilated, disk(self.dilation_size))  # Ben added for original algorithm
+        dilated_label = measure.label (im_dilated)
+        # reg_props = measure.regionprops(dilated_label)              # Ben added for original one
+        pixel_grouped = np.multiply(im_binary, dilated_label)
+        pixel_grouped_reg_props = measure.regionprops(pixel_grouped)
+        # Remove regions whose un-dilated area are lower than threshold
+        pixel_grouped_reg_props = [a for a in pixel_grouped_reg_props if a.area >= self.min_region]
+        return reg_props
 
+def dummyfy(original_img, reg_props):
+    """
+    The function that provides a dummy label from reg_props
+    """
+    # rasterize post min_region map
+    dummy = np.zeros(original_img.shape, dtype=int)
+    for reg in reg_props:
+        coords = np.array(reg.coords)
+        dummy[coords[:, 0], coords[:, 1]] = 1
+    return dummy
 
-def score(pred, lbl, min_region=5, min_th=0.5, link_r=20, eps=2, iou_th=0.5):
-    obj_scorer = ObjectScorer(min_region, min_th, link_r, eps)
+def score(pred, lbl, min_region=5, min_th=0.5, dilation_size=5, link_r=20, eps=2, iou_th=0.5):
+    obj_scorer = ObjectScorer(min_region, min_th, dilation_size, link_r, eps)
 
-    group_pred = obj_scorer.get_object_groups(pred)
-    group_lbl =obj_scorer. get_object_groups(lbl)
+    # Get the list of groups (each group represent a group of pixels that are connected)
+    ################################################
+    # 2021.06.10 added for understanding PR process#
+    ################################################
+    # print('doing object group for prediction')        # Ben added
+    # group_pred = obj_scorer.get_object_groups(pred)
+    group_pred = obj_scorer.get_object_groups(pred)  # Ben added
+    # print('doing object group for labels')        # Ben added
+    group_lbl = obj_scorer. get_object_groups(lbl)
+    # # Plotting the 
+    # pred_map = dummyfy(pred, group_pred)
+    # # f = plt.figure()
+    # # pred_map = np.reshape(pred_map, [-1, 1])
+    # lbl_map = lbl > 0
+    # # lbl_map = np.reshape(lbl, [-1, 1])
+    # TP =  np.logical_and(np.equal(pred_map, lbl_map), np.equal(pred_map, 1))
+    # FP =  np.logical_and(np.not_equal(pred_map, lbl_map), np.equal(pred_map, 1))
+    # FN =  np.logical_and(np.not_equal(pred_map, lbl_map), np.equal(pred_map, 0))
+    # TN =  np.logical_and(np.equal(pred_map, lbl_map), np.equal(pred_map, 0))
+    # # print('number of true positive', np.sum(TP))
+    # # print('number of false positive', np.sum(FP))
+    # # print('number of false negative', np.sum(FN))
+    # confusion_plot = np.zeros([*np.shape(lbl), 3])
+    # print(np.shape(confusion_plot))
+    # for i in range(np.shape(TP)[0]):
+    #     for j in range(np.shape(TP)[1]):
+    #         if TP[i, j] == 1:
+    #             confusion_plot[i, j, 0] = 255
+    #         elif FP[i, j] == 1:
+    #             confusion_plot[i, j, 1] = 255
+    #         elif FN[i, j] == 1:
+    #             confusion_plot[i, j, 2] = 255
+    # # # Add text for labelling the size of the 
+    # # for pred_object in group_pred:
+    # #     text_pos = (int(pred_object.centroid[1]), int(pred_object.centroid[0]))
+    # #     cv2.putText(img=confusion_plot, text='{}'.format(pred_object.area), org=text_pos, 
+    # #                 fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.5, color=(255, 255, 0))
+    # # for lbl_object in group_lbl:
+    # #     text_pos = (int(lbl_object.centroid[1])+10, int(lbl_object.centroid[0])+10)
+    # #     cv2.putText(img=confusion_plot, text='{}'.format(lbl_object.area),  org=text_pos,
+    # #                 fontFace=cv2.FONT_HERSHEY_SIMPLEX,  fontScale=0.5, color=(0, 255, 255))
+    # img_label_num = len(os.listdir('/scratch/sr365/PR_curves/confusion_plots_0617'))
+    # io.imsave('/scratch/sr365/PR_curves/confusion_plots_0617/{}.png'.format(img_label_num), confusion_plot)
+    # # cv2.imwrite('/scratch/sr365/PR_curves/confusion_plots_0617/{}.png'.format(img_label_num), confusion_plot)
+    # # Plotting the prediction map
+    # prediction_map_over_threshold = pred > min_th
+    # io.imsave('/scratch/sr365/PR_curves/confusion_plots_0617/original_pred_map_{}.png'.format(img_label_num), prediction_map_over_threshold)
+    # #plt.imshow(confusion_plot)
+    # #plt.savefig('/scratch/sr365/PR_curves/confusion_plot.png')
+    #confusion_plot[TP]
+    #quit()        # Ben added
+
 
     conf_list, true_list = [], []
     linked_pred = []
-
-    for g_cnt, g_lbl in enumerate(group_lbl):
+    
+    # Loop over the labels first, for each label
+    for _, g_lbl in enumerate(group_lbl):
         link_flag = False
+        # Check each of the predictions
         for cnt, g_pred in enumerate(group_pred):
+            # Get the prediction coordinates of this group and the average confidence of this group
             coords_pred, conf = get_stats_from_group(g_pred, pred)
+            # Get the label coordinates
             coords_lbl = get_stats_from_group(g_lbl)
+            # Calculate the iou of these two groups
             iou = compute_iou(coords_pred, coords_lbl, pred.shape)
             if iou >= iou_th and cnt not in linked_pred:
                 # TP
@@ -387,15 +474,24 @@ class Evaluator:
             self.decode_func = None
             self.encode_func = None
             self.class_names = ['panel',]
-        elif ds_name == 'spca':
-            from data.ct_finetune import preprocess
-            self.rgb_files, self.lbl_files = preprocess.get_images(
-                data_dir, **kwargs)
-            assert len(self.rgb_files) == len(self.lbl_files)
-            self.truth_val = 1
-            self.decode_func = None
-            self.encode_func = None
-            self.class_names = ['panel', ]
+        # elif ds_name == 'ct_finetune':
+        #     from data.ct_finetune import preprocess
+        #     self.rgb_files, self.lbl_files = preprocess.get_images(
+        #         data_dir, **kwargs)
+        #     assert len(self.rgb_files) == len(self.lbl_files)
+        #     self.truth_val = 1
+        #     self.decode_func = None
+        #     self.encode_func = None
+        #     self.class_names = ['panel', ]
+        # elif ds_name == 'sd_finetune':
+        #     from data.sd_finetune import preprocess
+        #     self.rgb_files, self.lbl_files = preprocess.get_images(
+        #         data_dir, **kwargs)
+        #     assert len(self.rgb_files) == len(self.lbl_files)
+        #     self.truth_val = 255
+        #     self.decode_func = None
+        #     self.encode_func = None
+        #     self.class_names = ['panel', ]
         elif load_func:
             self.truth_val = kwargs.pop('truth_val', 1)
             self.decode_func = kwargs.pop('decode_func', None)
@@ -418,11 +514,13 @@ class Evaluator:
         return print_string, report_string
 
     def evaluate(self, model, patch_size, overlap, pred_dir=None, report_dir=None, save_conf=False, delta=1e-6,
-                 eval_class=(1, ), visualize=False):
+                 eval_class=(1, ), visualize=False, densecrf=False, crf_params=None, verbose=True):
         if isinstance(model, list) or isinstance(model, tuple):
             lbl_margin = model[0].lbl_margin
         else:
             lbl_margin = model.lbl_margin
+        if crf_params is None and densecrf:
+            crf_params = {'sxy': 3, 'srgb': 3, 'compat': 5}
 
         iou_a, iou_b = np.zeros(len(eval_class)), np.zeros(len(eval_class))
         report = []
@@ -450,12 +548,21 @@ class Evaluator:
                 tile_preds = self.infer_tile(model, rgb, grid_list, patch_size, tile_dim, tile_dim_pad, lbl_margin)
 
             if save_conf:
-                misc_utils.save_file(os.path.join(pred_dir, '{}.npy'.format(file_name)),
-                                     scipy.special.softmax(tile_preds, axis=-1)[:, :, 1])
-            tile_preds = np.argmax(tile_preds, -1)
+                misc_utils.save_file(os.path.join(pred_dir, '{}.npy'.format(file_name)), tile_preds[:, :, 1])
+
+            if densecrf:
+                d = dcrf.DenseCRF2D(*tile_preds.shape)
+                U = unary_from_softmax(np.ascontiguousarray(
+                    data_utils.change_channel_order(tile_preds, False)))
+                d.setUnaryEnergy(U)
+                d.addPairwiseBilateral(rgbim=rgb, **crf_params)
+                Q = d.inference(5)
+                tile_preds = np.argmax(Q, axis=0).reshape(*tile_preds.shape[:2])
+            else:
+                tile_preds = np.argmax(tile_preds, -1)
             iou_score = metric_utils.iou_metric(lbl/self.truth_val, tile_preds, eval_class=eval_class)
             pstr, rstr = self.get_result_strings(file_name, iou_score, delta)
-            print(pstr)
+            tm.misc_utils.verb_print(pstr, verbose)
             report.append(rstr)
             iou_a += iou_score[0, :]
             iou_b += iou_score[1, :]
@@ -471,7 +578,7 @@ class Evaluator:
                 else:
                     misc_utils.save_file(os.path.join(pred_dir, '{}.png'.format(file_name)), tile_preds)
         pstr, rstr = self.get_result_strings('Overall', np.stack([iou_a, iou_b], axis=0), delta)
-        print(pstr)
+        tm.misc_utils.verb_print(pstr, verbose)
         report.append(rstr)
         if report_dir:
             misc_utils.make_dir_if_not_exist(report_dir)
@@ -501,11 +608,14 @@ class Evaluator:
         )
         return tile_preds
 
-    def infer(self, model, pred_dir, patch_size, overlap, ext='_mask', file_ext='png', visualize=False, save_conf=False):
+    def infer(self, model, pred_dir, patch_size, overlap, ext='_mask', file_ext='png', visualize=False,
+              densecrf=False, crf_params=None, save_conf=False):
         if isinstance(model, list) or isinstance(model, tuple):
             lbl_margin = model[0].lbl_margin
         else:
             lbl_margin = model.lbl_margin
+        if crf_params is None and densecrf:
+            crf_params = {'sxy': 3, 'srgb': 3, 'compat': 5}
 
         misc_utils.make_dir_if_not_exist(pred_dir)
         pbar = tqdm(self.rgb_files)
@@ -529,10 +639,18 @@ class Evaluator:
                 tile_preds = self.infer_tile(model, rgb, grid_list, patch_size, tile_dim, tile_dim_pad, lbl_margin)
 
             if save_conf:
-                misc_utils.save_file(os.path.join(pred_dir, '{}_conf.npy'.format(file_name)),
-                                     scipy.special.softmax(tile_preds, axis=-1)[:, :, 1])
+                misc_utils.save_file(os.path.join(pred_dir, '{}_conf.png'.format(file_name)), (tile_preds[:, :, 1] * 255).astype(np.uint8))
 
-            tile_preds = np.argmax(tile_preds, -1)
+            if densecrf:
+                d = dcrf.DenseCRF2D(*tile_preds.shape)
+                U = unary_from_softmax(np.ascontiguousarray(
+                    data_utils.change_channel_order(tile_preds, False)))
+                d.setUnaryEnergy(U)
+                d.addPairwiseBilateral(rgbim=rgb, **crf_params)
+                Q = d.inference(5)
+                tile_preds = np.argmax(Q, axis=0).reshape(*tile_preds.shape[:2])
+            else:
+                tile_preds = np.argmax(tile_preds, -1)
 
             if self.encode_func:
                 pred_img = self.encode_func(tile_preds)
@@ -542,7 +660,7 @@ class Evaluator:
             if visualize:
                 vis_utils.compare_figures([rgb, pred_img], (1, 2), fig_size=(12, 5))
 
-            misc_utils.save_file(os.path.join(pred_dir, '{}{}.{}'.format(file_name, ext, file_ext)), pred_img)
+            # misc_utils.save_file(os.path.join(pred_dir, '{}{}.{}'.format(file_name, ext, file_ext)), pred_img)
 
 
 class BaseEnsemble(object):

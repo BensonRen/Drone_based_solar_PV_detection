@@ -1,0 +1,460 @@
+The tiff file opened is :/scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Ngarama_Processed_Phase2/image.tif
+ There are 4 channels in this file, width = 37528, height = 28042 pixels
+
+reading channel 0
+reading channel 1
+reading channel 2
+saving your patch to patch_dir /scratch/sr365/RTI_Rwanda_full/cut_tiles_ps_8000/rti_rwanda_crop_type_raw_Ngarama_Processed_Phase2
+saving patch 0 0 now
+saving patch 0 6680 now
+saving patch 0 13361 now
+saving patch 0 20042 now
+saving patch 7382 0 now
+saving patch 7382 6680 now
+saving patch 7382 13361 now
+saving patch 7382 20042 now
+saving patch 14764 0 now
+saving patch 14764 6680 now
+saving patch 14764 13361 now
+saving patch 14764 20042 now
+saving patch 22146 0 now
+saving patch 22146 6680 now
+saving patch 22146 13361 now
+saving patch 22146 20042 now
+saving patch 29528 0 now
+saving patch 29528 6680 now
+saving patch 29528 13361 now
+saving patch 29528 20042 now
+The tiff file opened is :/scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Cyampirita_Processed_Phase3/image.tif
+ There are 4 channels in this file, width = 55937, height = 28266 pixels
+
+reading channel 0
+reading channel 1
+reading channel 2
+saving your patch to patch_dir /scratch/sr365/RTI_Rwanda_full/cut_tiles_ps_8000/rti_rwanda_crop_type_raw_Cyampirita_Processed_Phase3
+saving patch 0 0 now
+saving patch 0 6755 now
+saving patch 0 13510 now
+saving patch 0 20266 now
+saving patch 7989 0 now
+saving patch 7989 6755 now
+saving patch 7989 13510 now
+saving patch 7989 20266 now
+saving patch 15979 0 now
+saving patch 15979 6755 now
+saving patch 15979 13510 now
+saving patch 15979 20266 now
+saving patch 23968 0 now
+saving patch 23968 6755 now
+saving patch 23968 13510 now
+saving patch 23968 20266 now
+saving patch 31958 0 now
+saving patch 31958 6755 now
+saving patch 31958 13510 now
+saving patch 31958 20266 now
+saving patch 39947 0 now
+saving patch 39947 6755 now
+saving patch 39947 13510 now
+saving patch 39947 20266 now
+saving patch 47937 0 now
+saving patch 47937 6755 now
+saving patch 47937 13510 now
+saving patch 47937 20266 now
+The tiff file opened is :/scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Ngarama_Processed_Phase1/image.tif
+ There are 4 channels in this file, width = 29937, height = 23361 pixels
+
+reading channel 0
+reading channel 1
+reading channel 2
+saving your patch to patch_dir /scratch/sr365/RTI_Rwanda_full/cut_tiles_ps_8000/rti_rwanda_crop_type_raw_Ngarama_Processed_Phase1
+saving patch 0 0 now
+saving patch 0 7680 now
+saving patch 0 15361 now
+saving patch 7312 0 now
+saving patch 7312 7680 now
+saving patch 7312 15361 now
+saving patch 14624 0 now
+saving patch 14624 7680 now
+saving patch 14624 15361 now
+saving patch 21937 0 now
+saving patch 21937 7680 now
+saving patch 21937 15361 now
+The tiff file opened is :/scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Kinyaga_Processed_Phase3/image.tif
+ There are 4 channels in this file, width = 33430, height = 32382 pixels
+
+reading channel 0
+The cutting for /scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Kinyaga_Processed_Phase3/image.tif folder failed!!! Continuing now
+The tiff file opened is :/scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Kaberege_Processed_Phase3/image.tif
+ There are 4 channels in this file, width = 38224, height = 27943 pixels
+
+reading channel 0
+The cutting for /scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Kaberege_Processed_Phase3/image.tif folder failed!!! Continuing now
+The tiff file opened is :/scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Rwakigarati_Processed_Phase3/image.tif
+ There are 4 channels in this file, width = 19840, height = 20201 pixels
+
+reading channel 0
+reading channel 1
+reading channel 2
+saving your patch to patch_dir /scratch/sr365/RTI_Rwanda_full/cut_tiles_ps_8000/rti_rwanda_crop_type_raw_Rwakigarati_Processed_Phase3
+saving patch 0 0 now
+saving patch 0 6100 now
+saving patch 0 12201 now
+saving patch 5920 0 now
+saving patch 5920 6100 now
+saving patch 5920 12201 now
+saving patch 11840 0 now
+saving patch 11840 6100 now
+saving patch 11840 12201 now
+The tiff file opened is :/scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Kinyaga_Processed_Phase1/image.tif
+ There are 4 channels in this file, width = 40013, height = 35260 pixels
+
+reading channel 0
+reading channel 1
+reading channel 2
+saving your patch to patch_dir /scratch/sr365/RTI_Rwanda_full/cut_tiles_ps_8000/rti_rwanda_crop_type_raw_Kinyaga_Processed_Phase1
+saving patch 0 0 now
+saving patch 0 6815 now
+saving patch 0 13630 now
+saving patch 0 20445 now
+saving patch 0 27260 now
+saving patch 6402 0 now
+saving patch 6402 6815 now
+saving patch 6402 13630 now
+saving patch 6402 20445 now
+saving patch 6402 27260 now
+saving patch 12805 0 now
+saving patch 12805 6815 now
+saving patch 12805 13630 now
+saving patch 12805 20445 now
+saving patch 12805 27260 now
+saving patch 19207 0 now
+saving patch 19207 6815 now
+saving patch 19207 13630 now
+saving patch 19207 20445 now
+saving patch 19207 27260 now
+saving patch 25610 0 now
+saving patch 25610 6815 now
+saving patch 25610 13630 now
+saving patch 25610 20445 now
+saving patch 25610 27260 now
+saving patch 32013 0 now
+saving patch 32013 6815 now
+saving patch 32013 13630 now
+saving patch 32013 20445 now
+saving patch 32013 27260 now
+The tiff file opened is :/scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Rwakigarati_Processed_Phase1/image.tif
+ There are 4 channels in this file, width = 22747, height = 23942 pixels
+
+reading channel 0
+reading channel 1
+reading channel 2
+saving your patch to patch_dir /scratch/sr365/RTI_Rwanda_full/cut_tiles_ps_8000/rti_rwanda_crop_type_raw_Rwakigarati_Processed_Phase1
+saving patch 0 0 now
+saving patch 0 7971 now
+saving patch 0 15942 now
+saving patch 7373 0 now
+saving patch 7373 7971 now
+saving patch 7373 15942 now
+saving patch 14747 0 now
+saving patch 14747 7971 now
+saving patch 14747 15942 now
+The tiff file opened is :/scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Kaberege_Processed_Phase2/image.tif
+ There are 4 channels in this file, width = 39637, height = 28996 pixels
+
+reading channel 0
+reading channel 1
+reading channel 2
+saving your patch to patch_dir /scratch/sr365/RTI_Rwanda_full/cut_tiles_ps_8000/rti_rwanda_crop_type_raw_Kaberege_Processed_Phase2
+saving patch 0 0 now
+saving patch 0 6998 now
+saving patch 0 13997 now
+saving patch 0 20996 now
+saving patch 7909 0 now
+saving patch 7909 6998 now
+saving patch 7909 13997 now
+saving patch 7909 20996 now
+saving patch 15818 0 now
+saving patch 15818 6998 now
+saving patch 15818 13997 now
+saving patch 15818 20996 now
+saving patch 23727 0 now
+saving patch 23727 6998 now
+saving patch 23727 13997 now
+saving patch 23727 20996 now
+saving patch 31637 0 now
+saving patch 31637 6998 now
+saving patch 31637 13997 now
+saving patch 31637 20996 now
+The tiff file opened is :/scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Cyampirita_Processed_Phase1/image.tif
+ There are 4 channels in this file, width = 48008, height = 27272 pixels
+
+reading channel 0
+reading channel 1
+reading channel 2
+saving your patch to patch_dir /scratch/sr365/RTI_Rwanda_full/cut_tiles_ps_8000/rti_rwanda_crop_type_raw_Cyampirita_Processed_Phase1
+saving patch 0 0 now
+saving patch 0 6424 now
+saving patch 0 12848 now
+saving patch 0 19272 now
+saving patch 6668 0 now
+saving patch 6668 6424 now
+saving patch 6668 12848 now
+saving patch 6668 19272 now
+saving patch 13336 0 now
+saving patch 13336 6424 now
+saving patch 13336 12848 now
+saving patch 13336 19272 now
+saving patch 20004 0 now
+saving patch 20004 6424 now
+saving patch 20004 12848 now
+saving patch 20004 19272 now
+saving patch 26672 0 now
+saving patch 26672 6424 now
+saving patch 26672 12848 now
+saving patch 26672 19272 now
+saving patch 33340 0 now
+saving patch 33340 6424 now
+saving patch 33340 12848 now
+saving patch 33340 19272 now
+saving patch 40008 0 now
+saving patch 40008 6424 now
+saving patch 40008 12848 now
+saving patch 40008 19272 now
+The tiff file opened is :/scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Rwakigarati_Processed_Phase2/image.tif
+ There are 4 channels in this file, width = 24182, height = 30643 pixels
+
+reading channel 0
+reading channel 1
+reading channel 2
+saving your patch to patch_dir /scratch/sr365/RTI_Rwanda_full/cut_tiles_ps_8000/rti_rwanda_crop_type_raw_Rwakigarati_Processed_Phase2
+saving patch 0 0 now
+saving patch 0 7547 now
+saving patch 0 15095 now
+saving patch 0 22643 now
+saving patch 5394 0 now
+saving patch 5394 7547 now
+saving patch 5394 15095 now
+saving patch 5394 22643 now
+saving patch 10788 0 now
+saving patch 10788 7547 now
+saving patch 10788 15095 now
+saving patch 10788 22643 now
+saving patch 16182 0 now
+saving patch 16182 7547 now
+saving patch 16182 15095 now
+saving patch 16182 22643 now
+The tiff file opened is :/scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Ngarama_Processed_Phase3/image.tif
+ There are 4 channels in this file, width = 37478, height = 28237 pixels
+
+reading channel 0
+reading channel 1
+reading channel 2
+saving your patch to patch_dir /scratch/sr365/RTI_Rwanda_full/cut_tiles_ps_8000/rti_rwanda_crop_type_raw_Ngarama_Processed_Phase3
+saving patch 0 0 now
+saving patch 0 6745 now
+saving patch 0 13491 now
+saving patch 0 20237 now
+saving patch 7369 0 now
+saving patch 7369 6745 now
+saving patch 7369 13491 now
+saving patch 7369 20237 now
+saving patch 14739 0 now
+saving patch 14739 6745 now
+saving patch 14739 13491 now
+saving patch 14739 20237 now
+saving patch 22108 0 now
+saving patch 22108 6745 now
+saving patch 22108 13491 now
+saving patch 22108 20237 now
+saving patch 29478 0 now
+saving patch 29478 6745 now
+saving patch 29478 13491 now
+saving patch 29478 20237 now
+The tiff file opened is :/scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Kabarama_Processed_Phase3/image.tif
+ There are 4 channels in this file, width = 25480, height = 36458 pixels
+
+reading channel 0
+reading channel 1
+reading channel 2
+saving your patch to patch_dir /scratch/sr365/RTI_Rwanda_full/cut_tiles_ps_8000/rti_rwanda_crop_type_raw_Kabarama_Processed_Phase3
+saving patch 0 0 now
+saving patch 0 7114 now
+saving patch 0 14229 now
+saving patch 0 21343 now
+saving patch 0 28458 now
+saving patch 5826 0 now
+saving patch 5826 7114 now
+saving patch 5826 14229 now
+saving patch 5826 21343 now
+saving patch 5826 28458 now
+saving patch 11653 0 now
+saving patch 11653 7114 now
+saving patch 11653 14229 now
+saving patch 11653 21343 now
+saving patch 11653 28458 now
+saving patch 17480 0 now
+saving patch 17480 7114 now
+saving patch 17480 14229 now
+saving patch 17480 21343 now
+saving patch 17480 28458 now
+The tiff file opened is :/scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Kaberege_Processed_Phase1/image.tif
+ There are 4 channels in this file, width = 36496, height = 25640 pixels
+
+reading channel 0
+reading channel 1
+reading channel 2
+saving your patch to patch_dir /scratch/sr365/RTI_Rwanda_full/cut_tiles_ps_8000/rti_rwanda_crop_type_raw_Kaberege_Processed_Phase1
+saving patch 0 0 now
+saving patch 0 5880 now
+saving patch 0 11760 now
+saving patch 0 17640 now
+saving patch 7124 0 now
+saving patch 7124 5880 now
+saving patch 7124 11760 now
+saving patch 7124 17640 now
+saving patch 14248 0 now
+saving patch 14248 5880 now
+saving patch 14248 11760 now
+saving patch 14248 17640 now
+saving patch 21372 0 now
+saving patch 21372 5880 now
+saving patch 21372 11760 now
+saving patch 21372 17640 now
+saving patch 28496 0 now
+saving patch 28496 5880 now
+saving patch 28496 11760 now
+saving patch 28496 17640 now
+The tiff file opened is :/scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Kabarama_Processed_Phase2/image.tif
+ There are 4 channels in this file, width = 28583, height = 43536 pixels
+
+reading channel 0
+The cutting for /scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Kabarama_Processed_Phase2/image.tif folder failed!!! Continuing now
+The tiff file opened is :/scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Kinyaga_Processed_Phase2/image.tif
+ There are 4 channels in this file, width = 50965, height = 49674 pixels
+
+reading channel 0
+reading channel 1
+reading channel 2
+saving your patch to patch_dir /scratch/sr365/RTI_Rwanda_full/cut_tiles_ps_8000/rti_rwanda_crop_type_raw_Kinyaga_Processed_Phase2
+saving patch 0 0 now
+saving patch 0 6945 now
+saving patch 0 13891 now
+saving patch 0 20837 now
+saving patch 0 27782 now
+saving patch 0 34728 now
+saving patch 0 41674 now
+saving patch 7160 0 now
+saving patch 7160 6945 now
+saving patch 7160 13891 now
+saving patch 7160 20837 now
+saving patch 7160 27782 now
+saving patch 7160 34728 now
+saving patch 7160 41674 now
+saving patch 14321 0 now
+saving patch 14321 6945 now
+saving patch 14321 13891 now
+saving patch 14321 20837 now
+saving patch 14321 27782 now
+saving patch 14321 34728 now
+saving patch 14321 41674 now
+saving patch 21482 0 now
+saving patch 21482 6945 now
+saving patch 21482 13891 now
+saving patch 21482 20837 now
+saving patch 21482 27782 now
+saving patch 21482 34728 now
+saving patch 21482 41674 now
+saving patch 28643 0 now
+saving patch 28643 6945 now
+saving patch 28643 13891 now
+saving patch 28643 20837 now
+saving patch 28643 27782 now
+saving patch 28643 34728 now
+saving patch 28643 41674 now
+saving patch 35804 0 now
+saving patch 35804 6945 now
+saving patch 35804 13891 now
+saving patch 35804 20837 now
+saving patch 35804 27782 now
+saving patch 35804 34728 now
+saving patch 35804 41674 now
+saving patch 42965 0 now
+saving patch 42965 6945 now
+saving patch 42965 13891 now
+saving patch 42965 20837 now
+saving patch 42965 27782 now
+saving patch 42965 34728 now
+saving patch 42965 41674 now
+The tiff file opened is :/scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Cyampirita_Processed_Phase2/image.tif
+ There are 4 channels in this file, width = 47443, height = 26177 pixels
+
+reading channel 0
+reading channel 1
+reading channel 2
+saving your patch to patch_dir /scratch/sr365/RTI_Rwanda_full/cut_tiles_ps_8000/rti_rwanda_crop_type_raw_Cyampirita_Processed_Phase2
+saving patch 0 0 now
+saving patch 0 6059 now
+saving patch 0 12118 now
+saving patch 0 18177 now
+saving patch 7888 0 now
+saving patch 7888 6059 now
+saving patch 7888 12118 now
+saving patch 7888 18177 now
+saving patch 15777 0 now
+saving patch 15777 6059 now
+saving patch 15777 12118 now
+saving patch 15777 18177 now
+saving patch 23665 0 now
+saving patch 23665 6059 now
+saving patch 23665 12118 now
+saving patch 23665 18177 now
+saving patch 31554 0 now
+saving patch 31554 6059 now
+saving patch 31554 12118 now
+saving patch 31554 18177 now
+saving patch 39443 0 now
+saving patch 39443 6059 now
+saving patch 39443 12118 now
+saving patch 39443 18177 now
+The tiff file opened is :/scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Kabarama_Processed_Phase1/image.tif
+ There are 4 channels in this file, width = 35674, height = 50199 pixels
+
+reading channel 0
+reading channel 1
+reading channel 2
+saving your patch to patch_dir /scratch/sr365/RTI_Rwanda_full/cut_tiles_ps_8000/rti_rwanda_crop_type_raw_Kabarama_Processed_Phase1
+saving patch 0 0 now
+saving patch 0 7033 now
+saving patch 0 14066 now
+saving patch 0 21099 now
+saving patch 0 28132 now
+saving patch 0 35165 now
+saving patch 0 42199 now
+saving patch 6918 0 now
+saving patch 6918 7033 now
+saving patch 6918 14066 now
+saving patch 6918 21099 now
+saving patch 6918 28132 now
+saving patch 6918 35165 now
+saving patch 6918 42199 now
+saving patch 13837 0 now
+saving patch 13837 7033 now
+saving patch 13837 14066 now
+saving patch 13837 21099 now
+saving patch 13837 28132 now
+saving patch 13837 35165 now
+saving patch 13837 42199 now
+saving patch 20755 0 now
+saving patch 20755 7033 now
+saving patch 20755 14066 now
+saving patch 20755 21099 now
+saving patch 20755 28132 now
+saving patch 20755 35165 now
+saving patch 20755 42199 now
+saving patch 27674 0 now
+saving patch 27674 7033 now
+saving patch 27674 14066 now
+saving patch 27674 21099 now
+saving patch 27674 28132 now
+saving patch 27674 35165 now
+saving patch 27674 42199 now

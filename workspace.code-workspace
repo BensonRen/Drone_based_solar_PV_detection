@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "../../../home/sr365"
+		},
+		{
+			"path": "../.."
+		}
+	],
+	"settings": {
+		"python.pythonPath": "/opt/anaconda/anaconda3/envs/pt120/bin/python"
+	}
+}
