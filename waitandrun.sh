@@ -4,22 +4,22 @@
 export PYTHONPATH="/scratch/sr365/mrs/:$PYTHONPATH"
 
 # Waiting orders
-#PID=6248
-#while [ -e /proc/$PID ]
-#do
-#    echo "Process: $PID is still running" 
-#        sleep 1m
-#done
+PID=12012
+while [ -e /proc/$PID ]
+do
+    echo "Process: $PID is still running" 
+        sleep 1m
+done
 
 TIME=`date`
 PWD=`pwd`
 # The command to execute
 #COMMAND=hyper_sweep.py
 #COMMAND=compare.py
-#COMMAND=object_pr.py
+COMMAND=object_pr.py
 #COMMAND=cut_RTI.py
 #COMMAND=aggregate_pr_curves.py
-COMMAND=infer_catalyst.py
+#COMMAND=infer_catalyst.py
 #COMMAND=change_to_sat_res.py
 #COMMAND=train.py
 #COMMAND="train.py --config config_0629_Rwanda.json"

@@ -227,7 +227,7 @@ def bulk_object_pr():
     # save_title = 'single_image'
     # plot_PR_curve(min_region, dilation_size, link_r, min_th)
 
-def take_pair_wise_object_pr(i, j, min_region, dilation_size, min_th, iou_th):
+def take_pair_wise_object_pr(i, j, min_region, dilation_size, min_th, iou_th, trail):
     # # Every 10 meters
     # output_dir = '/scratch/sr365/PR_curves/every_10_meter_train/iou_th_{}_min_th_{}_dila_{}'.format(iou_th, min_th, dilation_size)
     # # output_dir = '/scratch/sr365/PR_curves/every_10_meter_test/iou_th_{}_min_th_{}_dila_{}'.format(iou_th, min_th, dilation_size)
@@ -241,11 +241,11 @@ def take_pair_wise_object_pr(i, j, min_region, dilation_size, min_th, iou_th):
     prefix = 'model_d{}_test_d{}'.format(j, i)
     gt_dir = '/scratch/sr365/Catalyst_data/d{}/annotations'.format(i)
     # output_dir = '/scratch/sr365/PR_curves/dx_dx_test_set/iou_th_{}_min_th_{}_dila_{}'.format(iou_th, min_th, dilation_size)
-    output_dir = '/scratch/sr365/PR_curves/dx_dx_test_set_ensemble/iou_th_{}_min_th_{}_dila_{}'.format(iou_th, min_th, dilation_size)
-    # output_dir = '/scratch/sr365/PR_curves/dx_train_trail_1/iou_th_{}_min_th_{}_dila_{}'.format(iou_th, min_th, dilation_size)
+    # output_dir = '/scratch/sr365/PR_curves/dx_dx_test_set_ensemble/iou_th_{}_min_th_{}_dila_{}'.format(iou_th, min_th, dilation_size)
+    output_dir = '/scratch/sr365/PR_curves/dx_test_trail_{}/iou_th_{}_min_th_{}_dila_{}'.format(trail, iou_th, min_th, dilation_size)
     # conf_dir = '/scratch/sr365/Catalyst_data/d{}/images/train_set/ecresnet50_dcdlinknet_dscatalyst_d{}_lre1e-03_lrd1e-02_ep120_bs16_ds50_75_dr0p1_crxent1p0_softiou0p5'.format(i, j)
-    conf_dir = '/scratch/sr365/Catalyst_data/d{}/images/test_domain_ensembled_img_d{}_model_d{}'.format(i, i, j)
-    # conf_dir = '/scratch/sr365/Catalyst_data/d{}/images/train_save_root_trail_1/ecresnet50_dcdlinknet_dscatalyst_d{}_lre1e-03_lrd1e-02_ep80_bs16_ds50_75_dr0p1_crxent1p0_softiou0p5'.format(i, j)
+    # conf_dir = '/scratch/sr365/Catalyst_data/d{}/images/test_domain_ensembled_img_d{}_model_d{}'.format(i, i, j)
+    conf_dir = '/scratch/sr365/Catalyst_data/d{}/images/test_domain_trail_{}/ecresnet50_dcdlinknet_dscatalyst_d{}_lre1e-03_lrd1e-02_ep80_bs16_ds50_75_dr0p1_crxent1p0_softiou0p5'.format(i, trail, j)
     #output_dir = '/scratch/sr365/PR_curves/dx_dx_test_set/iou_th_{}_min_th_{}_dila_{}'.format(iou_th, min_th, dilation_size)
     #conf_dir = '/scratch/sr365/Catalyst_data/d{}/images/train_set/ecresnet50_dcdlinknet_dscatalyst_d{}_lre1e-03_lrd1e-02_ep120_bs16_ds50_75_dr0p1_crxent1p0_softiou0p5'.format(i, j)
     
@@ -290,7 +290,8 @@ if __name__ == '__main__':
                 # Every 20 meters
                 for i in range(1, 5):
                     for j in range(1, 5):
-                        args_list.append((i, j, min_region, dilation_size, min_th, iou_th))
+                        for trail in range(5):
+                            args_list.append((i, j, min_region, dilation_size, min_th, iou_th, trail))
         print(args_list)
         pool.starmap(take_pair_wise_object_pr, args_list)
     finally:
