@@ -1,7 +1,7 @@
 #!/bin/bash
 
-export PYTHONPATH="/home/sr365/Gaia/mrs/:$PYTHONPATH"
-#export PYTHONPATH="/scratch/sr365/mrs/:$PYTHONPATH"
+#export PYTHONPATH="/home/sr365/Gaia/mrs/:$PYTHONPATH"
+export PYTHONPATH="/scratch/sr365/mrs/:$PYTHONPATH"
 
 # Waiting orders
 #PID=6248
@@ -19,10 +19,10 @@ PWD=`pwd`
 #COMMAND=object_pr.py
 #COMMAND=cut_RTI.py
 #COMMAND=aggregate_pr_curves.py
-#COMMAND=infer_catalyst.py
+COMMAND=infer_catalyst.py
 #COMMAND=change_to_sat_res.py
 #COMMAND=train.py
-COMMAND="train.py --config config_0629_Rwanda.json"
+#COMMAND="train.py --config config_0629_Rwanda.json"
 #COMMAND="train.py --config config_ben_0406_h3_RTI.json"
 #COMMAND="train.py --config config_ben_0407_h2RTI_mixed.json"
 #COMMAND="train.py --config config_ben_0407_h3RTI_mixed.json"

@@ -1,4 +1,5 @@
 # This function counts the number of panels in the ground truth label images and then gives the estimates
+from numpy.core.defchararray import mod
 from numpy.core.numeric import _moveaxis_dispatcher
 from skimage import io
 import os
@@ -192,15 +193,46 @@ def sub_sample_randomly_image_label_pair(sample_size=0.1):
             os.rename(os.path.join(source_folder, file), os.path.join(dest_folder, file))
             os.rename(os.path.join(source_folder, file.replace('.png', '.jpg')), os.path.join(dest_folder, file.replace('.png','.jpg')))
 
+
+def rename_infered_folder():
+    """
+    Cuz the inference structure, usually underneath the image/test_domain_trail there is a long and useless 
+    model name like ecresnet50_dcdlinknet_dscatalyst_d1_lre1e-03_lrd1e-02_ep80_bs16_ds50_75_dr0p1_crxent1p0_softiou0p5
+    This function aims to remove that folder name and move everything upwards
+    """
+    # Define the list of folders to lift upward (delete the model name and get everything up)
+    folder_to_move_upward_list = []
+    for i in range(1, 5):
+        # Loop over the d{} images
+        for j in range(1, 6):
+            # Loop over the trails
+            folder_to_move_upward_list.append('/scratch/sr365/models/catalyst_from_ct_d{}/d{}_trail_{}'.format(i, i, j))
+    
+    # Start the upward movement
+    for folder in folder_to_move_upward_list:
+        # Assert that there is only 1 model folder underneath
+        assert len(os.listdir(folder)) == 1, 'Folder {}, There is more than 1 model folder under your renaming folder, check again'.format(folder)
+        model_folder = os.path.join(folder, os.listdir(folder)[0])
+        # move out all the files
+        for files in os.listdir(model_folder):
+            os.rename(os.path.join(model_folder, files), os.path.join(folder, files))
+        # make sure that the folder dir is empty now
+        assert len(os.listdir(model_folder)) == 0, 'The model folder should be empty, which is not?'
+        # Delete the original model folder
+        os.remove(model_folder)
+
 if __name__ == '__main__':
     # count_panels(mother_dir)
     # check_labels_complete()
     # check_RTI_image_label_size_match()
     #get_rid_of_low_information_images()
-    make_file_list_for_RTI_Rwanda()
+    # make_file_list_for_RTI_Rwanda()
 
     # Getting rid of the test files that does not contains any solar panels
     # An complete dark label has 334 Byte of information
     # get_rid_of_low_information_images(335, mode='label')
 
     # sub_sample_randomly_image_label_pair()
+
+    # remove the model folder from the inference
+    # rename_infered_folder()
