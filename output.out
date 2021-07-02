@@ -1,0 +1,49 @@
+evaluating for /scratch/sr365/Catalyst_data/d1/images
+Loaded from /scratch/sr365/models/catalyst_from_ct_d1/d1_trail_2/epoch-80.pth.tar
+Use default (imagenet) mean and std stats: ((0.485Process 8343 has finished
+.224, 0.225))
+evaluating for /scratch/sr365/Catalyst_data/d1/images
+Loaded from /scratch/sr365/models/catalyst_from_ct_d2/d2_trail_2/epoch-80.pth.tar
+Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+evaluating for /scratch/sr365/Catalyst_data/d1/images
+Loaded from /scratch/sr365/models/catalyst_from_ct_d3/d3_trail_2/epoch-80.pth.tar
+Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+evaluating for /scratch/sr365/Catalyst_data/d1/images
+Loaded from /scratch/sr365/models/catalyst_from_ct_d4/d4_trail_2/epoch-80.pth.tar
+Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+evaluating for /scratch/sr365/Catalyst_data/d2/images
+Loaded from /scratch/sr365/models/catalyst_from_ct_d1/d1_trail_2/epoch-80.pth.tar
+Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+evaluating for /scratch/sr365/Catalyst_data/d2/images
+Loaded from /scratch/sr365/models/catalyst_from_ct_d2/d2_trail_2/epoch-80.pth.tar
+Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+evaluating for /scratch/sr365/Catalyst_data/d2/images
+Loaded from /scratch/sr365/models/catalyst_from_ct_d3/d3_trail_2/epoch-80.pth.tar
+Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+evaluating for /scratch/sr365/Catalyst_data/d2/images
+Loaded from /scratch/sr365/models/catalyst_from_ct_d4/d4_trail_2/epoch-80.pth.tar
+Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+evaluating for /scratch/sr365/Catalyst_data/d3/images
+Loaded from /scratch/sr365/models/catalyst_from_ct_d1/d1_trail_2/epoch-80.pth.tar
+Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+evaluating for /scratch/sr365/Catalyst_data/d3/images
+Loaded from /scratch/sr365/models/catalyst_from_ct_d2/d2_trail_2/epoch-80.pth.tar
+Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+evaluating for /scratch/sr365/Catalyst_data/d3/images
+Loaded from /scratch/sr365/models/catalyst_from_ct_d3/d3_trail_2/epoch-80.pth.tar
+Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+evaluating for /scratch/sr365/Catalyst_data/d3/images
+Loaded from /scratch/sr365/models/catalyst_from_ct_d4/d4_trail_2/epoch-80.pth.tar
+Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+evaluating for /scratch/sr365/Catalyst_data/d4/images
+Loaded from /scratch/sr365/models/catalyst_from_ct_d1/d1_trail_2/epoch-80.pth.tar
+Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+evaluating for /scratch/sr365/Catalyst_data/d4/images
+Loaded from /scratch/sr365/models/catalyst_from_ct_d2/d2_trail_2/epoch-80.pth.tar
+Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+evaluating for /scratch/sr365/Catalyst_data/d4/images
+Loaded from /scratch/sr365/models/catalyst_from_ct_d3/d3_trail_2/epoch-80.pth.tar
+Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+evaluating for /scratch/sr365/Catalyst_data/d4/images
+Loaded from /scratch/sr365/models/catalyst_from_ct_d4/d4_trail_2/epoch-80.pth.tar
+Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))

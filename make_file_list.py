@@ -60,6 +60,6 @@ if __name__ == '__main__':
     #         dir_group.append('/scratch/sr365/Catalyst_data/every_10m_change_res/{}0m_resample_to_{}0m/images'.format(i, j))
 
     # Test set
-    #group_make_file_list(dir_group, must_have='BW', must_not_have=None)
+    group_make_file_list(dir_group, must_have='BW', must_not_have=None)
     # Train set
     #group_make_file_list(dir_group, must_have=None, must_not_have='BW')

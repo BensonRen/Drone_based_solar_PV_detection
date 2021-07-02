@@ -367,13 +367,15 @@ if __name__ == '__main__':
     # compare_dir_list = ['/scratch/sr365/PR_curves/dx_test_trail_0',
     #                     '/scratch/sr365/PR_curves/dx_test_trail_1',
     #                     '/scratch/sr365/PR_curves/dx_test_trail_2']
-    compare_dir_list = ['/scratch/sr365/PR_curves/dx_train_trail_0',
-                        '/scratch/sr365/PR_curves/dx_train_trail_1',
-                        '/scratch/sr365/PR_curves/dx_train_trail_2']
-    draw_type_list = ['AUPR', 'F1PR','max_recall_recall_PR','max_recall_precision_PR']
-    for draw_type in draw_type_list:
-        plot_mean_variance_from_aggregate(compare_dir_list, save_dir='/scratch/sr365/PR_curves/compare_plot_dx_train/',
-                                            draw_type=draw_type)
+    
+    # # Comparing various PR curve values
+    # compare_dir_list = ['/scratch/sr365/PR_curves/dx_train_trail_0',
+    #                     '/scratch/sr365/PR_curves/dx_train_trail_1',
+    #                     '/scratch/sr365/PR_curves/dx_train_trail_2']
+    # draw_type_list = ['AUPR', 'F1PR','max_recall_recall_PR','max_recall_precision_PR']
+    # for draw_type in draw_type_list:
+    #     plot_mean_variance_from_aggregate(compare_dir_list, save_dir='/scratch/sr365/PR_curves/compare_plot_dx_train/',
+    #                                         draw_type=draw_type)
     
     # mother_dir = '/scratch/sr365/PR_curves/dx_dx_test_set'
     # mother_dir = '/scratch/sr365/PR_curves/every_10_meter_test'
@@ -384,34 +386,35 @@ if __name__ == '__main__':
     #                     '/scratch/sr365/PR_curves/dx_train_trail_0',
     #                     '/scratch/sr365/PR_curves/dx_train_trail_1',
     #                     '/scratch/sr365/PR_curves/dx_train_trail_2']
-    # fpr_threshold_list = [1e-4, 2e-4, 3e-4, 4e-4, 5e-4]
-    # num_cpu = 32
+    mother_dir_list = ['/scratch/sr365/PR_curves/dx_dx_train_set_ensemble']
+    fpr_threshold_list = [1e-4, 2e-4, 3e-4, 4e-4, 5e-4]
+    num_cpu = 64
 
-    # # Trying different iou_threshold and min threshold for confidence intensity
-    # # if num_cpu > 1:
-    # #     try: 
-    # #         pool = Pool(num_cpu)
-    # #         # The value agnostic version where directory is provided
-    # #         args_list = []
-    # #         for mother_dir in mother_dir_list:
-    # #             for folder in os.listdir(mother_dir):
-    # #                 if 'iou_th' not in folder:      # Make sure this is a iou_th and hyper-param sweeping folder
-    # #                         continue
-    # #                 for fpr_threshold in fpr_threshold_list:
-    # #                     iou_th, min_th, dila = get_iou_th_min_th_dila_from_name(folder)
-    # #                     args_list.append((os.path.join(mother_dir, folder), dila, 30, min_th, iou_th, fpr_threshold))         # 30 is the min region parameter
-    # #         pool.starmap(draw_a_lot_of_curves, args_list)
-    # #     finally:
-    # #         pool.close()
-    # #         pool.join()
-    # # else:
-    # #     for mother_dir in mother_dir_list:
-    # #         for folder in os.listdir(mother_dir):
-    # #             if 'iou_th' not in folder:      # Make sure this is a iou_th and hyper-param sweeping folder
-    # #                 continue
-    # #             for fpr_threshold in fpr_threshold_list:
-    # #                 iou_th, min_th, dila = get_iou_th_min_th_dila_from_name(folder)
-    # #                 draw_a_lot_of_curves(os.path.join(mother_dir, folder), dila, 30, min_th, iou_th, fpr_threshold)          # 30 is the min region parameter
+    # Trying different iou_threshold and min threshold for confidence intensity
+    if num_cpu > 1:
+        try: 
+            pool = Pool(num_cpu)
+            # The value agnostic version where directory is provided
+            args_list = []
+            for mother_dir in mother_dir_list:
+                for folder in os.listdir(mother_dir):
+                    if 'iou_th' not in folder:      # Make sure this is a iou_th and hyper-param sweeping folder
+                            continue
+                    for fpr_threshold in fpr_threshold_list:
+                        iou_th, min_th, dila = get_iou_th_min_th_dila_from_name(folder)
+                        args_list.append((os.path.join(mother_dir, folder), dila, 30, min_th, iou_th, fpr_threshold))         # 30 is the min region parameter
+            pool.starmap(draw_a_lot_of_curves, args_list)
+        finally:
+            pool.close()
+            pool.join()
+    else:
+        for mother_dir in mother_dir_list:
+            for folder in os.listdir(mother_dir):
+                if 'iou_th' not in folder:      # Make sure this is a iou_th and hyper-param sweeping folder
+                    continue
+                for fpr_threshold in fpr_threshold_list:
+                    iou_th, min_th, dila = get_iou_th_min_th_dila_from_name(folder)
+                    draw_a_lot_of_curves(os.path.join(mother_dir, folder), dila, 30, min_th, iou_th, fpr_threshold)          # 30 is the min region parameter
             
     
     # draw_type_list = ['AUPR', 'F1PR','max_recall_recall_PR','max_recall_precision_PR']

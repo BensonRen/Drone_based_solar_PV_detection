@@ -17,7 +17,7 @@ from network import network_io, network_utils
 from make_file_list import make_file_list
 # Settings
 
-GPU = 0
+GPU = 7
 #general_folder = r'/scratch/sr365/Catalyst_data/'
 #general_folder = r'/scratch/sr365/RTI_data/positive_class'
 #general_folder = r'/scratch/sr365/Catalyst_data/moving_imgs/labelled/img'
@@ -241,7 +241,7 @@ def aggregate_infer():
     # model_dir_list = ['/scratch/sr365/models/catalyst_10m/catalyst_from_ct_{}0m/best_model'.format(i) for i in range(5, 13)]
     
 
-    post_fix = '_trail_0'
+    post_fix = '_trail_4'
     data_dir_list = ['/scratch/sr365/Catalyst_data/d{}/images'.format(i) for i in range(1, 5)]
     model_dir_list = ['/scratch/sr365/models/catalyst_from_ct_d{}/d{}{}'.format(i, i, post_fix) for i in range(1, 5)]
     # For the pair-wise evaluations
@@ -252,7 +252,7 @@ def aggregate_infer():
     # for DATA_DIR, MODEL_DIR in zip(data_dir_list, model_dir_list):
             DS_NAME = 'catalyst_dx'
             LOAD_EPOCH = 80
-            SAVE_ROOT = os.path.join(DATA_DIR, 'train_domain{}/'.format(post_fix)) # Parent directory of input images in .jpg format
+            SAVE_ROOT = os.path.join(DATA_DIR, 'test_domain{}/'.format(post_fix)) # Parent directory of input images in .jpg format
 
             FILE_LIST = os.path.join(DATA_DIR, 'file_list_raw.txt') # A list of full path of images to be tested on in DATA_DIR 
             print('evaluating for {}'.format(DATA_DIR))
