@@ -43,11 +43,13 @@ def group_make_file_list(dir_group, postfix='jpg', must_have=None, must_not_have
         make_file_list(data_dir, postfix=postfix, must_have=must_have, must_not_have=must_not_have)
 
 if __name__ == '__main__':
+    # data_dir = '/scratch/sr365/RTI_data'
     # Make file list for individual folder
     #make_file_list(data_dir)
     
     # Make file list for a group of folders
     dir_group = ['/scratch/sr365/Catalyst_data/d{}/images'.format(i) for i in range(1, 5)]
+
     
     # The cross validation
     # dir_group = []
@@ -60,6 +62,4 @@ if __name__ == '__main__':
     # Test set
     #group_make_file_list(dir_group, must_have='BW', must_not_have=None)
     # Train set
-    group_make_file_list(dir_group, must_have=None, must_not_have='BW')
-
-    
+    #group_make_file_list(dir_group, must_have=None, must_not_have='BW')

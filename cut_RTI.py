@@ -8,9 +8,14 @@ from data.data_utils import patch_tile_single
 from mrs_utils import misc_utils
 import gc
 
-test_file = '/scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Kinyaga_Processed_Phase3/image.tif'
+from multiprocessing import Pool
+
 patch_size = 8000
-dest_dir = '/scratch/sr365/RTI_Rwanda_full/cut_tiles' + '_ps_{}'.format(patch_size)
+test_file = '/scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Kinyaga_Processed_Phase3/image.tif'
+dest_dir = '/home/sr365/Gaia/rti_rwanda_cut_tiles' + '_ps_{}'.format(patch_size)
+# test_file = '/scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Kinyaga_Processed_Phase3/image.tif'
+# dest_dir = '/scratch/sr365/RTI_Rwanda_full/cut_tiles' + '_ps_{}'.format(patch_size)
+
 
 
 def read_tiff(tiff_file):
@@ -99,5 +104,8 @@ def cut_all(data_dir):
 if __name__ == '__main__':
     #read_tiff(test_file)
     #cut_img_big_into_tiles(test_file, ps=8000, dest_dir=dest_dir, pad=0, overlap=0)
-    cut_all('/scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw')
+
+    cut_all('/home/sr365/Gaia/rti_rwanda_crop_type_raw/Cyampirita')
+    #cut_all('/scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw')
+
     
