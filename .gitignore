@@ -1,6 +1,8 @@
 # Created by .ignore support plugin (hsz.mobi)
 ### Python template
 
+workspace*
+
 # Customize
 tasks
 pytest/.pytest_cache

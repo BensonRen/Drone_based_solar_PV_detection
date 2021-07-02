@@ -1,0 +1,9 @@
+ERROR 1: LZWDecode:Wrong length of decoded string: data probably corrupted at scanline 19594
+ERROR 1: TIFFReadEncodedStrip() failed.
+ERROR 1: /scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Kinyaga_Processed_Phase3/image.tif, band 1: IReadBlock failed at X offset 0, Y offset 19594: TIFFReadEncodedStrip() failed.
+ERROR 1: LZWDecode:Wrong length of decoded string: data probably corrupted at scanline 15661
+ERROR 1: TIFFReadEncodedStrip() failed.
+ERROR 1: /scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Kaberege_Processed_Phase3/image.tif, band 1: IReadBlock failed at X offset 0, Y offset 15661: TIFFReadEncodedStrip() failed.
+ERROR 1: LZWDecode:Corrupted LZW table at scanline 33527
+ERROR 1: TIFFReadEncodedStrip() failed.
+ERROR 1: /scratch/sr365/RTI_Rwanda_full/rti_rwanda_crop_type_raw/rti_rwanda_crop_type_raw_Kabarama_Processed_Phase2/image.tif, band 1: IReadBlock failed at X offset 0, Y offset 33527: TIFFReadEncodedStrip() failed.

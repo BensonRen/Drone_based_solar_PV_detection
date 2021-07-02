@@ -48,7 +48,8 @@ if __name__ == '__main__':
     #make_file_list(data_dir)
     
     # Make file list for a group of folders
-    #dir_group = ['/scratch/sr365/Catalyst_data/d{}/images'.format(i) for i in range(1, 5)]
+    dir_group = ['/scratch/sr365/Catalyst_data/d{}/images'.format(i) for i in range(1, 5)]
+
     
     # The cross validation
     # dir_group = []

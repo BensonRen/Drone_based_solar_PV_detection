@@ -3,6 +3,7 @@ from train import *
 import numpy as np
 
 # The catalyst dataset with d claasification (d1=50, 60m, d2=70,80m, d3=90,100m, d4=110,120m)
+
 base_json_config = 'config_0529_d2.json'
 
 
@@ -21,6 +22,7 @@ def sweep_strength():
     #strength_list = [300]
     #for mb in range(2, 6):
     #for class_strength in strength_list:
+
     for i in range(2, 5):
 #for loss_weight in loss_weight_list:
         # Setting up the cfg file
