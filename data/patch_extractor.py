@@ -68,8 +68,11 @@ def make_grid(tile_size, patch_size, overlap):
     else:
         h_step = 1
         w_step = 1
-    patch_grid_h = np.floor(np.linspace(0, max_h, h_step)).astype(np.int32)
-    patch_grid_w = np.floor(np.linspace(0, max_w, w_step)).astype(np.int32)
+    patch_grid_h = np.floor(np.linspace(0, max_h, int(h_step))).astype(np.int32) 
+    patch_grid_w = np.floor(np.linspace(0, max_w, int(w_step))).astype(np.int32)
+    # Ben modified version
+    #patch_grid_h = np.floor(np.linspace(0, max_h, num=int(max_h / h_step)+1)).astype(np.int32)  
+    #patch_grid_w = np.floor(np.linspace(0, max_w, num=int(max_w / w_step)+1)).astype(np.int32)
 
     y, x = np.meshgrid(patch_grid_h, patch_grid_w)
     return list(zip(y.flatten(), x.flatten()))

@@ -1,0 +1,38 @@
+{
+  "gpu": "1",
+  "encoder_name": "resnet50",
+  "decoder_name": "dlinknet",
+  "random_seed": 1,
+  "dataset": {
+    "ds_name": "RTI_negative",
+    "input_size": "(512, 512)",
+    "crop_size": "(512, 512)",
+    "class_num": 2,
+    "mean" : "(0.485, 0.456, 0.406)",
+    "std" : "(0.229, 0.224, 0.225)",
+    "data_dir": "/scratch/sr365/RTI_data/subsampled_negative_10percent/patches",
+    "train_file": "/scratch/sr365/RTI_data/subsampled_negative_10percent/file_list_train.txt",
+    "valid_file": "/scratch/sr365/RTI_data/subsampled_negative_10percent/file_list_valid.txt",
+    "batch_size": 16,
+    "num_workers": 8
+  },
+  "optimizer": {
+    "learn_rate_encoder": 1e-3,
+    "learn_rate_decoder": 1e-2,
+    "decay_rate": 0.1,
+    "decay_step": "[50,50]"
+  },
+  "trainer": {
+    "alpha": 0.25,
+    "gamma": 2,
+    "loss_weights": "(7, 3)",
+    "bp_loss_idx": "(0, 1)",
+    "class_weight": "(1, 10)",
+    "criterion_name": "xent,softiou,iou",
+    "epochs": 30,
+    "save_epoch": 30,
+    "resume_epoch": 0,
+    "finetune_dir": "/scratch/sr365/models/catalyst/loss_weight/catalystloss_weight=0.5/ecresnet50_dcdlinknet_dscatalyst_h2_lre1e-03_lrd1e-02_ep80_bs16_ds50_50_dr0p1_crxent1p0_softiou0p5/epoch-80.pth.tar",
+    "save_root": "/scratch/sr365/models/RTI_finetune_h2"
+  }
+}

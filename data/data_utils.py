@@ -35,8 +35,8 @@ def make_grid(tile_size, patch_size, overlap):
     else:
         h_step = 1
         w_step = 1
-    patch_grid_h = np.floor(np.linspace(0, max_h, h_step)).astype(np.int32)
-    patch_grid_w = np.floor(np.linspace(0, max_w, w_step)).astype(np.int32)
+    patch_grid_h = np.floor(np.linspace(0, max_h, int(h_step))).astype(np.int32)
+    patch_grid_w = np.floor(np.linspace(0, max_w, int(w_step))).astype(np.int32)
 
     y, x = np.meshgrid(patch_grid_h, patch_grid_w)
     return list(zip(y.flatten(), x.flatten()))
@@ -199,6 +199,12 @@ def patch_tile(rgb_file, gt_file, patch_size, pad, overlap):
     else:
         rgb = rgb_file
         gt = gt_file
+    # Ben added: To accomondate the fact that currently the gt might be 3 channels
+    if len(np.shape(gt)) == 3:
+        gt = gt[:,:,0]
+    if np.max(gt) > 0:      # Normalize to 1
+        gt = gt / np.max(gt)
+    
     np.testing.assert_array_equal(rgb.shape[:2], gt.shape)
     grid_list = make_grid(np.array(rgb.shape[:2]) + 2 * pad, patch_size, overlap)
     if pad > 0:
@@ -208,6 +214,27 @@ def patch_tile(rgb_file, gt_file, patch_size, pad, overlap):
         rgb_patch = crop_image(rgb, y, x, patch_size[0], patch_size[1])
         gt_patch = crop_image(gt, y, x, patch_size[0], patch_size[1])
         yield rgb_patch, gt_patch, y, x
+
+
+def patch_tile_single(rgb_file, patch_size, pad, overlap):
+    """
+    The single rgb version of the patch_file() function above that does not need a gt file
+    :param rgb_file: path to the rgb file or the rgb imagery
+    :param patch_size: size of the patches, should be a tuple of (h, w)
+    :param pad: #pixels to be padded around each tile, should be either one element or four elements
+    :param overlap: #overlapping pixels between two patches in both vertical and horizontal direction
+    :return: rgb and gt patches as well as coordinates
+    """
+    if isinstance(rgb_file, str):
+        rgb = misc_utils.load_file(rgb_file)
+    else:
+        rgb = rgb_file
+    grid_list = make_grid(np.array(rgb.shape[:2]) + 2 * pad, patch_size, overlap)
+    if pad > 0:
+        rgb = pad_image(rgb, pad)
+    for y, x in grid_list:
+        rgb_patch = crop_image(rgb, y, x, patch_size[0], patch_size[1])
+        yield rgb_patch, y, x
 
 
 def get_custom_ds_stats(ds_name, img_dir):
