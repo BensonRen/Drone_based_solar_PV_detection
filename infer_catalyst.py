@@ -17,7 +17,7 @@ from network import network_io, network_utils
 from make_file_list import make_file_list
 # Settings
 
-GPU = 7
+GPU = 0
 #general_folder = r'/scratch/sr365/Catalyst_data/'
 #general_folder = r'/scratch/sr365/RTI_data/positive_class'
 #general_folder = r'/scratch/sr365/Catalyst_data/moving_imgs/labelled/img'
@@ -137,7 +137,10 @@ def tile_wise_validation(gt_dir, conf_dir, tile_list, min_conf=0.5, min_area=10,
 
 
 def infer_confidence_map(DATA_DIR=DATA_DIR, SAVE_ROOT=SAVE_ROOT, FILE_LIST=FILE_LIST,
-                        DS_NAME=DS_NAME, MODEL_DIR=MODEL_DIR ,LOAD_EPOCH=LOAD_EPOCH ):
+                        DS_NAME=DS_NAME, MODEL_DIR=MODEL_DIR ,LOAD_EPOCH=LOAD_EPOCH, extra_save_name=None ):
+    """
+    Extra save name is for changing the output name of the 
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument('--gpu', type=int, default=GPU)
     parser.add_argument('--model_dir', type=str, default=MODEL_DIR)
@@ -203,8 +206,11 @@ def infer_confidence_map(DATA_DIR=DATA_DIR, SAVE_ROOT=SAVE_ROOT, FILE_LIST=FILE_
         A.Normalize(mean=mean, std=std),
         ToTensorV2(),
     ])
-    save_dir = os.path.join(super_args.save_root, os.path.basename(
-        network_utils.unique_model_name(args)))
+    if extra_save_name is None:
+        save_dir = os.path.join(super_args.save_root, os.path.basename(
+            network_utils.unique_model_name(args)))
+    else:
+        save_dir = os.path.join(super_args.save_root, extra_save_name)
     evaluator = eval_utils.Evaluator(
         super_args.ds_name, super_args.data_dir, tsfm_valid, device, load_func=load_func_ct_tiles)
     # evaluator.evaluate(model, PATCHS_SIZE, 2*model.lbl_margin,
@@ -241,9 +247,15 @@ def aggregate_infer():
     # model_dir_list = ['/scratch/sr365/models/catalyst_10m/catalyst_from_ct_{}0m/best_model'.format(i) for i in range(5, 13)]
     
 
-    post_fix = '_trail_4'
-    data_dir_list = ['/scratch/sr365/Catalyst_data/d{}/images'.format(i) for i in range(1, 5)]
-    model_dir_list = ['/scratch/sr365/models/catalyst_from_ct_d{}/d{}{}'.format(i, i, post_fix) for i in range(1, 5)]
+    data_dir_list = ['/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/train_object_only',
+                     '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/test_object_only']
+    # model_mother_folder_list = ['/home/sr365/Gaia/models/rwanda_rti_from_ct']
+    model_mother_folder_list = [ '/home/sr365/Gaia/models/rwanda_rti_from_catalyst']
+    model_dir_list = []
+    for mother_folder in model_mother_folder_list:
+        for folder in os.listdir(mother_folder):
+            model_dir_list.append(os.path.join(mother_folder, folder))
+
     # For the pair-wise evaluations
     for DATA_DIR in data_dir_list:
         for MODEL_DIR in model_dir_list:
@@ -252,12 +264,12 @@ def aggregate_infer():
     # for DATA_DIR, MODEL_DIR in zip(data_dir_list, model_dir_list):
             DS_NAME = 'catalyst_dx'
             LOAD_EPOCH = 80
-            SAVE_ROOT = os.path.join(DATA_DIR, 'test_domain{}/'.format(post_fix)) # Parent directory of input images in .jpg format
+            SAVE_ROOT = os.path.join(DATA_DIR, 'from_catalyst') # Parent directory of input images in .jpg format
 
             FILE_LIST = os.path.join(DATA_DIR, 'file_list_raw.txt') # A list of full path of images to be tested on in DATA_DIR 
             print('evaluating for {}'.format(DATA_DIR))
             infer_confidence_map(DATA_DIR=DATA_DIR, SAVE_ROOT=SAVE_ROOT, FILE_LIST=FILE_LIST,
-                                DS_NAME=DS_NAME, MODEL_DIR=MODEL_DIR ,LOAD_EPOCH=LOAD_EPOCH )
+                                DS_NAME=DS_NAME, MODEL_DIR=MODEL_DIR ,LOAD_EPOCH=LOAD_EPOCH, extra_save_name=os.path.basename(MODEL_DIR))
 
 if __name__ == '__main__':
     # # The individual evaluation

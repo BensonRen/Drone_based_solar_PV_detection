@@ -40,7 +40,7 @@ def get_area_covered(tile_name, tile_size):
 ################################################################################################################################################
 
 
-def plot_PR_curve(min_region, dilation_size, link_r, min_th, iou_th, conf_dir_list, tile_name_list, gt_dict, save_title, output_dir):
+def plot_PR_curve(min_region, dilation_size, link_r, min_th, iou_th, conf_dir_list, tile_name_list, gt_dict, save_title, output_dir, calculate_area=True):
     """
     The funciton to plot the PR curve
     :param min_region: The minimal number of pixels to count
@@ -65,14 +65,18 @@ def plot_PR_curve(min_region, dilation_size, link_r, min_th, iou_th, conf_dir_li
         area_list = []                                  # Getting the area for the normalized ROC curve
         # Loop over each tiles
         for tile in tqdm(tile_name_list, desc='Tiles'):
-            conf_img, lbl_img = conf_dict[tile]/255, gt_dict[tile][:, :, 0]                                 # Get the confidence image and the label image
+            if len(np.shape(gt_dict[tile])) == 3:
+                conf_img, lbl_img = conf_dict[tile]/255, gt_dict[tile][:, :, 0]                                 # Get the confidence image and the label image
+            else:
+                conf_img, lbl_img = conf_dict[tile]/255, gt_dict[tile]  
             conf_tile, true_tile = eval_utils.score(                                                        # Call a function in utils.score to score this
                 conf_img, lbl_img, min_region=min_region, min_th=min_th/255, 
                 dilation_size=dilation_size, link_r=link_r, iou_th=iou_th)    
             conf_list.extend(conf_tile)
             true_list.extend(true_tile)
-            area = get_area_covered(tile, np.shape(gt_dict[tile])[:2])
-            area_list.append(area)                      # Getting the area for the normalized ROC curve
+            if calculate_area:              # For RTI data this  is off
+                area = get_area_covered(tile, np.shape(gt_dict[tile])[:2])
+                area_list.append(area)                      # Getting the area for the normalized ROC curve
         #print('true_list = ', true_list)
         print('number of objects in ground truth = {}'.format(np.sum(true_list)))
         # Plotting the PR curve
@@ -133,20 +137,21 @@ def plot_PR_curve(min_region, dilation_size, link_r, min_th, iou_th, conf_dir_li
         plt.title('ROC_'+save_title)
         plt.savefig(save_path, dpi=300)
 
-        # Plotting the normalized ROC curve
-        negative_class_num = np.sum(np.equal(true_list, 0))
-        normalizing_factor = negative_class_num / np.sum(area_list)
-        normalized_fpr = fpr * normalizing_factor           # The normalized fpr value
-        f = plt.figure(figsize=(8,8))
-        plt.plot(normalized_fpr, tpr)
-        plt.xlabel('normalized_fpr, #/m^2')
-        plt.ylabel('tpr')
-        plt.ylim([0, 1])
-        save_path = os.path.join(output_dir, save_title + 'normalized_ROC.png')
-        plt.title('normalized_ROC_'+save_title)
-        plt.savefig(save_path, dpi=300)
-        nfpr_tpr_pair = np.concatenate([np.reshape(normalized_fpr, [-1, 1]), np.reshape(tpr, [-1, 1]), np.reshape(normalizing_factor * np.ones_like(tpr), [-1, 1])], axis=1)
-        np.savetxt(save_path.replace('.png','_nfpr_tpr_pair.txt'), nfpr_tpr_pair)
+        if calculate_area:
+            # Plotting the normalized ROC curve
+            negative_class_num = np.sum(np.equal(true_list, 0))
+            normalizing_factor = negative_class_num / np.sum(area_list)
+            normalized_fpr = fpr * normalizing_factor           # The normalized fpr value
+            f = plt.figure(figsize=(8,8))
+            plt.plot(normalized_fpr, tpr)
+            plt.xlabel('normalized_fpr, #/m^2')
+            plt.ylabel('tpr')
+            plt.ylim([0, 1])
+            save_path = os.path.join(output_dir, save_title + 'normalized_ROC.png')
+            plt.title('normalized_ROC_'+save_title)
+            plt.savefig(save_path, dpi=300)
+            nfpr_tpr_pair = np.concatenate([np.reshape(normalized_fpr, [-1, 1]), np.reshape(tpr, [-1, 1]), np.reshape(normalizing_factor * np.ones_like(tpr), [-1, 1])], axis=1)
+            np.savetxt(save_path.replace('.png','_nfpr_tpr_pair.txt'), nfpr_tpr_pair)
 
 
 def bulk_object_pr():
@@ -268,11 +273,66 @@ def take_pair_wise_object_pr(i, j, min_region, dilation_size, min_th, iou_th):
     plot_PR_curve(min_region=min_region, dilation_size=dilation_size, link_r=0, min_th=min_th, iou_th=iou_th, 
                 conf_dir_list=conf_dir_list, tile_name_list=tile_name_list, gt_dict=gt_dict, save_title=save_title, output_dir=output_dir)
 
+
+
+def take_object_pr_RTI(output_dir, conf_dir, gt_dir, prefix,  min_region, dilation_size, min_th, iou_th):
+    save_title = prefix + '_dial_{}_mireg_{}_mith_{}_iou_th_{}'.format(dilation_size, min_region, min_th, iou_th)
+    conf_dir_list = [conf_dir]
+    #for conf_dir, save_name in zip(conf_dir_list, save_name_list):
+    #    save_title = prefix + model_img_pair + '{}_dialation_{}_min_region_{}_min_th{}'.format(save_name, dilation_size, min_region, min_th)
+        
+    # creat folder if not exist
+    if not os.path.exists(output_dir):
+        try:
+            os.makedirs(output_dir)
+        except:
+            print('there is exception in os.makedirs step')
+    # Get tile name list from conf_dir_list
+    tile_name_list = ['_'.join(f.split('_')[:-1]) for f in os.listdir(conf_dir)]
+    # Get the list of ground truth
+    gt_list = [io.imread(os.path.join(gt_dir, f+'.png')) for f in tile_name_list]
+    gt_dict = dict(zip(tile_name_list, gt_list))
+    plot_PR_curve(min_region=min_region, dilation_size=dilation_size, link_r=0, min_th=min_th, iou_th=iou_th, 
+                conf_dir_list=conf_dir_list, tile_name_list=tile_name_list, gt_dict=gt_dict, 
+                save_title=save_title, output_dir=output_dir, calculate_area=False)
+
 if __name__ == '__main__':
+    # # For the Exp 1 & 2
+    # num_cpu = 64
+    # try: 
+    #     pool = Pool(num_cpu)
+    #     min_region = 30
+    #     dilation_size = 5
+    #     min_th = 2
+    #     iou_th = 0.2
+    #     args_list = []
+    #     min_th_list = np.array([0.3, 0.5, 0.7])
+    #     min_th_list = min_th_list * 255   
+    #     print(min_th_list)
+    #     for min_th in min_th_list:
+    #         for iou_th in [0.2, 0.4, 0.6]:
+    #         #for iou_th in [0.4]:
+    #             min_th = int(min_th)        # Make sure it is a integer
+    #             # Every 10 meters
+    #             # for i in range(5, 13):
+    #             #     for j in range(5, 13):
+    #             # Every 20 meters
+    #             for i in range(1, 5):
+    #                 for j in range(1, 5):
+    #                     args_list.append((i, j, min_region, dilation_size, min_th, iou_th))
+    #     print(args_list)
+    #     pool.starmap(take_pair_wise_object_pr, args_list)
+    # finally:
+    #     pool.close()
+    #     pool.join()
+    
+
+
+    # For the Exp 4 RTI work
     num_cpu = 64
     try: 
         pool = Pool(num_cpu)
-        min_region = 30
+        min_region = 10
         dilation_size = 5
         min_th = 2
         iou_th = 0.2
@@ -280,23 +340,35 @@ if __name__ == '__main__':
         min_th_list = np.array([0.3, 0.5, 0.7])
         min_th_list = min_th_list * 255   
         print(min_th_list)
+        gt_dir_list = ['/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/train_object_only/patches',
+                     '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/test_object_only/patches']
         for min_th in min_th_list:
-            for iou_th in [0.2, 0.4, 0.6]:
+            for iou_th in [0.2, 0.3, 0.4]:
             #for iou_th in [0.4]:
                 min_th = int(min_th)        # Make sure it is a integer
-                # Every 10 meters
-                # for i in range(5, 13):
-                #     for j in range(5, 13):
-                # Every 20 meters
-                for i in range(1, 5):
-                    for j in range(1, 5):
-                        args_list.append((i, j, min_region, dilation_size, min_th, iou_th))
+                for gt_dir in gt_dir_list:
+                    conf_dir_list = []
+                    # Add folder to the confidence directory
+                    mother_folder = os.path.join('/', *gt_dir.split('/')[:-1], 'from_catalyst')
+                    for folder in os.listdir(mother_folder):
+                        conf_dir_list.append(os.path.join(mother_folder, folder))
+                    mother_folder = os.path.join('/', *gt_dir.split('/')[:-1], 'from_ct')
+                    for folder in os.listdir(mother_folder):
+                        conf_dir_list.append(os.path.join(mother_folder, folder))
+
+                    # Loop through the confidence directory
+                    for conf_dir in conf_dir_list:
+                        output_folder = os.path.join('/home/sr365/Gaia/PR_curves/', gt_dir.split('/')[-2], os.path.basename(conf_dir))
+                        # Make sure printing the right thing
+                        print('gt folder ', gt_dir)
+                        print('conf dir ', conf_dir)
+                        print('output dir ', output_folder)
+                        args_list.append((output_folder, conf_dir, gt_dir, '', min_region, dilation_size, min_th, iou_th))
         print(args_list)
-        pool.starmap(take_pair_wise_object_pr, args_list)
+        pool.starmap(take_object_pr_RTI, args_list)
     finally:
         pool.close()
         pool.join()
-    
 
     # temporary for visualizatin purpose
     # take_pair_wise_object_pr(5, 5, 30, 5, 127, 0.3)

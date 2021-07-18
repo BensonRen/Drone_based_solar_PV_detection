@@ -1,49 +1,144 @@
-evaluating for /scratch/sr365/Catalyst_data/d1/images
-Loaded from /scratch/sr365/models/catalyst_from_ct_d1/d1_trail_2/epoch-80.pth.tar
-Use default (imagenet) mean and std stats: ((0.485Process 8343 has finished
-.224, 0.225))
-evaluating for /scratch/sr365/Catalyst_data/d1/images
-Loaded from /scratch/sr365/models/catalyst_from_ct_d2/d2_trail_2/epoch-80.pth.tar
-Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
-evaluating for /scratch/sr365/Catalyst_data/d1/images
-Loaded from /scratch/sr365/models/catalyst_from_ct_d3/d3_trail_2/epoch-80.pth.tar
-Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
-evaluating for /scratch/sr365/Catalyst_data/d1/images
-Loaded from /scratch/sr365/models/catalyst_from_ct_d4/d4_trail_2/epoch-80.pth.tar
-Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
-evaluating for /scratch/sr365/Catalyst_data/d2/images
-Loaded from /scratch/sr365/models/catalyst_from_ct_d1/d1_trail_2/epoch-80.pth.tar
-Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
-evaluating for /scratch/sr365/Catalyst_data/d2/images
-Loaded from /scratch/sr365/models/catalyst_from_ct_d2/d2_trail_2/epoch-80.pth.tar
-Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
-evaluating for /scratch/sr365/Catalyst_data/d2/images
-Loaded from /scratch/sr365/models/catalyst_from_ct_d3/d3_trail_2/epoch-80.pth.tar
-Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
-evaluating for /scratch/sr365/Catalyst_data/d2/images
-Loaded from /scratch/sr365/models/catalyst_from_ct_d4/d4_trail_2/epoch-80.pth.tar
-Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
-evaluating for /scratch/sr365/Catalyst_data/d3/images
-Loaded from /scratch/sr365/models/catalyst_from_ct_d1/d1_trail_2/epoch-80.pth.tar
-Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
-evaluating for /scratch/sr365/Catalyst_data/d3/images
-Loaded from /scratch/sr365/models/catalyst_from_ct_d2/d2_trail_2/epoch-80.pth.tar
-Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
-evaluating for /scratch/sr365/Catalyst_data/d3/images
-Loaded from /scratch/sr365/models/catalyst_from_ct_d3/d3_trail_2/epoch-80.pth.tar
-Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
-evaluating for /scratch/sr365/Catalyst_data/d3/images
-Loaded from /scratch/sr365/models/catalyst_from_ct_d4/d4_trail_2/epoch-80.pth.tar
-Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
-evaluating for /scratch/sr365/Catalyst_data/d4/images
-Loaded from /scratch/sr365/models/catalyst_from_ct_d1/d1_trail_2/epoch-80.pth.tar
-Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
-evaluating for /scratch/sr365/Catalyst_data/d4/images
-Loaded from /scratch/sr365/models/catalyst_from_ct_d2/d2_trail_2/epoch-80.pth.tar
-Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
-evaluating for /scratch/sr365/Catalyst_data/d4/images
-Loaded from /scratch/sr365/models/catalyst_from_ct_d3/d3_trail_2/epoch-80.pth.tar
-Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
-evaluating for /scratch/sr365/Catalyst_data/d4/images
-Loaded from /scratch/sr365/models/catalyst_from_ct_d4/d4_trail_2/epoch-80.pth.tar
-Use default (imagenet) mean and std stats: ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+original saveroot /home/sr365/Gaia/models/rwanda_rti_from_catalyst/random_5_percent_split
+Device being used: cuda:3
+Finetuning model from /home/sr365/Gaia/pre_trained/catalyst_d4/d4_trail_0/epoch-80.pth.tar
+Total params: 179.77M
+Dataset rwanda_rti is not supported, use default mean stats instead
+Training model on the rwanda_rti dataset
+Dataset rwanda_rti is not supported, use default mean stats instead
+[train] Epoch: 0/80 xent: 0.136 softIoU: 7.958 IoU: 0.023 
+Execution time: 1576.7049444075674
+
+[valid] Epoch: 0/80 xent: 0.052 softIoU: 7.777 IoU: 0.035 
+Execution time: 141.06261160969734[t[train] Epoch: 1/80 xent: 0.089 softIoU: 7.951 IoU: 0.044 
+Execution time: 1756.67706476897
+
+[valid] Epoch: 1/80 xent: 0.044 softIoU: 7.772 IoU: 0.036 
+Execution time: 141.18802497535944
+[[train] Epoch: 2/80 xent: 0.079 softIoU: 7.947 IoU: 0.044 
+Execution time: 1763.0897731743753
+
+[valid] Epoch: 2/80 xent: 0.056 softIoU: 7.780 IoU: 0.022 
+Execution time: 141.91823354549706
+
+[train] Epoch: 3/80 xent: 0.070 softIoU: 7.942 IoU: 0.049 
+Execution time: 1759.9237637314945
+
+[valid] Epoch: 3/80 xent: 0.038 softIoU: 7.769 IoU: 0.054 
+Execution time: 144.4500962626189
+
+[train] Epoch: 4/80 xent: 0.070 softIoU: 7.935 IoU: 0.061 
+Execution time: 1764.3931866325438
+
+[valid] Epoch: 4/80 xent: 0.040 softIoU: 7.769 IoU: 0.071 
+Execution time: 142.21624785289168
+
+[train] Epoch: 5/80 xent: 0.052 softIoU: 7.930 IoU: 0.077 
+Execution time: 1763.1070899460465
+
+[valid] Epoch: 5/80 xent: 0.045 softIoU: 7.776 IoU: 0.031 
+Execution time: 142.743688846007
+
+[train] Epoch: 6/80 xent: 0.060 softIoU: 7.930 IoU: 0.065 
+Execution time: 1760.6387286353856
+
+[valid] Epoch: 6/80 xent: 0.097 softIoU: 7.799 IoU: 0.010 
+Execution time: 143.18620982207358
+
+[train] Epoch: 7/80 xent: 0.064 softIoU: 7.932 IoU: 0.064 
+Execution time: 1762.8227503765374
+
+[valid] Epoch: 7/80 xent: 0.043 softIoU: 7.770 IoU: 0.026 
+Execution time: 141.55610400252044
+
+] Epoch: 8/80 xent: 0.037 softIoU: 7.928 IoU: 0.095 
+Execution time: 1199.1570749226958
+
+[valid] Epoch: 8/80 xent: 0.021 softIoU: 7.760 IoU: 0.092 
+Execution time: 83.8701156526804
+
+[train] Epoch: 9/80 xent: 0.034 softIoU: 7.925 IoU: 0.103 
+Execution time: 1183.3755500279367
+
+[valid] Epoch: 9/80 xent: 0.020 softIoU: 7.758 IoU: 0.104 
+Execution time: 84.33909413218498
+
+[train] Epoch: 10/80 xent: 0.033 softIoU: 7.925 IoU: 0.110 
+Execution time: 1197.6949739847332
+
+[valid] Epoch: 10/80 xent: 0.023 softIoU: 7.760 IoU: 0.061 
+Execution time: 84.5625422950834
+
+[train] Epoch: 11/80 xent: 0.032 softIoU: 7.922 IoU: 0.107 
+Execution time: 1169.544790783897
+
+[valid] Epoch: 11/80 xent: 0.020 softIoU: 7.756 IoU: 0.086 
+Execution time: 83.47953984700143
+
+Epoch: 12/80 xent: 0.046 softIoU: 7.909 IoU: 0.062 
+Execution time: 560.3128390666097
+
+[valid] Epoch: 12/80 xent: 0.024 softIoU: 7.746 IoU: 0.065 
+Execution time: 69.72804811224341
+
+[train] Epoch: 13/80 xent: 0.035 softIoU: 7.903 IoU: 0.083 
+Execution time: 560.8100464958698
+[[valid] Epoch: 13/80 xent: 0.020 softIoU: 7.742 IoU: 0.089 
+Execution time: 69.54541121609509
+[[train] Epoch: 14/80 xent: 0.038 softIoU: 7.904 IoU: 0.082 
+Execution time: 561.993764275685
+
+[valid] Epoch: 14/80 xent: 0.024 softIoU: 7.753 IoU: 0.045 
+Execution time: 69.69919366016984
+[[train] Epoch: 15/80 xent: 0.029 softIoU: 7.899 IoU: 0.099 
+Execution time: 562.303854143247
+
+[valid] Epoch: 15/80 xent: 0.027 softIoU: 7.757 IoU: 0.037 
+Execution time: 70.02481809444726
+
+[train] Epoch: 16/80 xent: 0.039 softIoU: 7.905 IoU: 0.068 
+Execution time: 561.2262790109962
+
+[valid] Epoch: 16/80 xent: 0.021 softIoU: 7.747 IoU: 0.061 
+Execution time: 68.78005862794816
+
+[train] Epoch: 17/80 xent: 0.037 softIoU: 7.905 IoU: 0.079 
+Execution time: 560.8066129721701
+
+[valid] Epoch: 17/80 xent: 0.019 softIoU: 7.746 IoU: 0.072 
+Execution time: 68.78178301267326
+[[train] Epoch: 18/80 xent: 0.038 softIoU: 7.904 IoU: 0.086 
+Execution time: 559.7936423625797
+[[valid] Epoch: 18/80 xent: 0.028 softIoU: 7.760 IoU: 0.037 
+Execution time: 69.77491158433259
+[train] Epoch: 19/80 xent: 0.025 softIoU: 7.898 IoU: 0.121 
+Execution time: 564.4412240758538
+
+[valid] Epoch: 19/80 xent: 0.023 softIoU: 7.754 IoU: 0.045 
+Execution time: 70.49944646656513
+
+[train] Epoch: 20/80 xent: 0.025 softIoU: 7.899 IoU: 0.120 
+Execution time: 562.7598926965147
+
+[valid] Epoch: 20/80 xent: 0.017 softIoU: 7.738 IoU: 0.117 
+Execution time: 70.30296179838479
+
+[train] Epoch: 21/80 xent: 0.030 softIoU: 7.904 IoU: 0.095 
+Execution time: 560.8944904040545
+
+[valid] Epoch: 21/80 xent: 0.026 softIoU: 7.759 IoU: 0.036 
+Execution time: 69.73417872749269
+
+[train] Epoch: 22/80 xent: 0.033 softIoU: 7.907 IoU: 0.097 
+Execution time: 562.2758639696985
+
+[valid] Epoch: 22/80 xent: 0.020 softIoU: 7.752 IoU: 0.054 
+Execution time: 70.33733321726322
+
+[train] Epoch: 23/80 xent: 0.025 softIoU: 7.899 IoU: 0.121 
+Execution time: 562.009369334206
+
+[valid] Epoch: 23/80 xent: 0.017 softIoU: 7.748 IoU: 0.067 
+Execution time: 69.30785739794374
+
+
+

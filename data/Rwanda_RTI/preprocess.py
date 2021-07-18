@@ -98,7 +98,9 @@ if __name__ == '__main__':
     ps = 512
     ol = 0
     pd = 0
-    #create_dataset(data_dir=r'/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/test',
-    #               save_dir=r'/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/test', patch_size=(ps, ps), pad=pd, overlap=ol, visualize=False)
-    create_dataset(data_dir=r'/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/train',
-                   save_dir=r'/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/train', patch_size=(ps, ps), pad=pd, overlap=ol, visualize=False)
+    create_dataset(data_dir=r'/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all',
+                   save_dir=r'/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all', patch_size=(ps, ps), pad=pd, overlap=ol, visualize=False)
+    #create_dataset(data_dir=r'/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/geo_test',
+    #               save_dir=r'/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/geo_test', patch_size=(ps, ps), pad=pd, overlap=ol, visualize=False)
+    #create_dataset(data_dir=r'/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/geo_train',
+    #               save_dir=r'/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/geo_train', patch_size=(ps, ps), pad=pd, overlap=ol, visualize=False)

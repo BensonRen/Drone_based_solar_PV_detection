@@ -1,5 +1,5 @@
 # This function counts the number of panels in the ground truth label images and then gives the estimates
-from numpy.core.defchararray import mod
+from numpy.core.defchararray import array, mod
 from numpy.core.numeric import _moveaxis_dispatcher
 from skimage import io
 import os
@@ -7,6 +7,8 @@ import numpy as np
 import pandas as pd
 import imagesize
 from skimage.transform import resize
+from shutil import copyfile
+
 mother_dir = '/home/sr365/Gaia/labels/'
 
 def count_panels(mother_dir):
@@ -103,7 +105,7 @@ def check_RTI_image_label_size_match():
     Due to cutting of RTI imagery, there are some of the images that does not have 8000x8000 patch size. 
     Therefore we are checking them here and adjusting the labels of them accordingly
     """
-    check_folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/test'
+    check_folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/geo_test'
     img_folder = os.path.join(check_folder, 'images')
     lbl_folder = os.path.join(check_folder, 'annotations')
     for file in os.listdir(img_folder):
@@ -118,10 +120,42 @@ def check_RTI_image_label_size_match():
         lbl_name = os.path.join(lbl_folder, file)
         # Until here, this means that the label size is mis-matched
         lbl_img = io.imread(lbl_name)
+        # Just to make sure this is a blank label image, the size difference is simply due to the fact that it was blamk image
+        assert np.sum(lbl_img) == 0, 'This is not an empty label image in the size checking function!'
         lbl_resize = resize(lbl_img, (width_img, height_img))
         io.imsave(lbl_name, lbl_resize)
         print('resizing {} to shape {}'.format(lbl_name, (width_img, height_img)))
 
+def get_label_pixel_intensity_from_1_to_255(folder):
+    """
+    This function takes the pixel intensity of 1 to 255 for folder of labels
+    """
+    for file in os.listdir(folder):
+        if not file.endswith('.png'): # Only work with .png files,  which is the only possible postfix for label files
+            continue
+        file_name = os.path.join(folder, file)
+        print('processing image ', file_name)
+        lbl = io.imread(file_name)
+        if np.max(lbl) == 1:
+            # This means that this is a label file and the max pixel intensity is 1
+            lbl *= 255
+            io.imsave(file_name, lbl)
+
+
+def get_label_pixel_intensity_from_255_to_1(folder):
+    """
+    This function takes the pixel intensity of 255 to 1 for folder of labels
+    """
+    for file in os.listdir(folder):
+        if not file.endswith('.png'): # Only work with .png files,  which is the only possible postfix for label files
+            continue
+        file_name = os.path.join(folder, file)
+        print('processing image ', file_name)
+        lbl = io.imread(file_name)
+        if len(np.unique(np.reshape(lbl, [-1, 1]))) and np.max(lbl) == 255:
+            # This means that this is a label file and the max pixel intensity is 1
+            lbl[lbl == 255] = 1
+            io.imsave(file_name, lbl)
 
 def get_rid_of_low_information_images(size_limit=14*1024, mode='image'):
     """
@@ -133,7 +167,7 @@ def get_rid_of_low_information_images(size_limit=14*1024, mode='image'):
     This function works in the patches folder and directly deletes the ones that does not have enough content by file size
     """
     # patch_folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/new_all/patches'
-    patch_folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/new_all/test_full_patches'
+    patch_folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all_conatains_object/patches'
     #patch_folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/train/patches'
     file_size_list = []
     for file in os.listdir(patch_folder):
@@ -162,14 +196,15 @@ def make_file_list_for_RTI_Rwanda():
     """
     # folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/train'
     # folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all'
-    # folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/new_all'
-    folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/test_object_only'
+    # folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all_conatains_object'
+    folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all_train_5_percent'
     if 'test' in folder:
         save_file = os.path.join(folder, 'file_list_test.txt')
     elif 'train' in folder:
         save_file = os.path.join(folder, 'file_list_train.txt')
     else:
         print("Your make_file_for_RTI_dataset does not have train or test in your folder name")
+        save_file = os.path.join(folder, 'file_list_raw.txt')
     with open(save_file, 'a') as f:
         for file in os.listdir(os.path.join(folder, 'patches')):
             if not file.endswith('.jpg'):
@@ -180,19 +215,23 @@ def make_file_list_for_RTI_Rwanda():
             f.write('\n')
 
 
-def sub_sample_randomly_image_label_pair(sample_size=0.1):
+def sub_sample_randomly_image_label_pair(sample_size=0.05, mode='mv'):
     """
     This function subsamples a random portion of the image and label pair for the RTI dataset
     """
-    source_folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/train/patches'
-    dest_folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/new_all/patches'
+    source_folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all/patches/'
+    dest_folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all_train_5_percent/patches/'
     for file in os.listdir(source_folder):
         if not file.endswith('.png'):
             continue
         if np.random.uniform(size=1) < sample_size:
-            os.rename(os.path.join(source_folder, file), os.path.join(dest_folder, file))
-            os.rename(os.path.join(source_folder, file.replace('.png', '.jpg')), os.path.join(dest_folder, file.replace('.png','.jpg')))
-
+            if mode == 'mv':
+                os.rename(os.path.join(source_folder, file), os.path.join(dest_folder, file))
+                os.rename(os.path.join(source_folder, file.replace('.png', '.jpg')), os.path.join(dest_folder, file.replace('.png','.jpg')))
+            elif mode == 'cp':
+                copyfile(os.path.join(source_folder, file), os.path.join(dest_folder, file))
+                copyfile(os.path.join(source_folder, file.replace('.png', '.jpg')), os.path.join(dest_folder, file.replace('.png','.jpg')))
+            
 
 def rename_infered_folder():
     """
@@ -201,17 +240,26 @@ def rename_infered_folder():
     This function aims to remove that folder name and move everything upwards
     """
     # Define the list of folders to lift upward (delete the model name and get everything up)
-    folder_to_move_upward_list = []
-    for i in range(1, 5):
-        # Loop over the d{} images
-        for j in range(1, 6):
-            # Loop over the trails
-            folder_to_move_upward_list.append('/scratch/sr365/models/catalyst_from_ct_d{}/d{}_trail_{}'.format(i, i, j))
+    # folder_to_move_upward_list = []
+    # for i in range(1, 5):
+    #     # Loop over the d{} images
+    #     for j in range(1, 6):
+    #         # Loop over the trails
+    #         folder_to_move_upward_list.append('/scratch/sr365/models/catalyst_from_ct_d{}/d{}_trail_{}'.format(i, i, j))
     
+    # RTI ones
+    mother_folder_list = ['/home/sr365/Gaia/models/rwanda_rti_from_ct', '/home/sr365/Gaia/models/rwanda_rti_from_catalyst']
+    folder_to_move_upward_list = []
+    for mother_folder in mother_folder_list:
+        for folder in os.listdir(mother_folder):
+            folder_to_move_upward_list.append(os.path.join(mother_folder, folder))
+
     # Start the upward movement
     for folder in folder_to_move_upward_list:
-        # Assert that there is only 1 model folder underneath
-        assert len(os.listdir(folder)) == 1, 'Folder {}, There is more than 1 model folder under your renaming folder, check again'.format(folder)
+        print('currently working on folder ', folder)
+        if len(os.listdir(folder)) > 1:
+            print('Folder {}, There is more than 1 model folder under your renaming folder, check again'.format(folder))
+            continue
         model_folder = os.path.join(folder, os.listdir(folder)[0])
         # move out all the files
         for files in os.listdir(model_folder):
@@ -219,20 +267,35 @@ def rename_infered_folder():
         # make sure that the folder dir is empty now
         assert len(os.listdir(model_folder)) == 0, 'The model folder should be empty, which is not?'
         # Delete the original model folder
-        os.remove(model_folder)
+        os.rmdir(model_folder)
+        
 
 if __name__ == '__main__':
     # count_panels(mother_dir)
     # check_labels_complete()
-    # check_RTI_image_label_size_match()
+    #check_RTI_image_label_size_match()
     #get_rid_of_low_information_images()
-    # make_file_list_for_RTI_Rwanda()
+    make_file_list_for_RTI_Rwanda()
 
     # Getting rid of the test files that does not contains any solar panels
     # An complete dark label has 334 Byte of information
     # get_rid_of_low_information_images(335, mode='label')
 
-    # sub_sample_randomly_image_label_pair()
+    # sub_sample_randomly_image_label_pair(mode='cp')
 
     # remove the model folder from the inference
-    # rename_infered_folder()
+    #rename_infered_folder()
+
+    # Change the maximum pixel intensity of files
+    # get_label_pixel_intensity_from_1_to_255('/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all/patches')
+    # get_label_pixel_intensity_from_1_to_255('/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/geo_train/patches')
+    # get_label_pixel_intensity_from_1_to_255('/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/geo_test/patches')
+    # get_label_pixel_intensity_from_1_to_255('/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all_backup/patches')
+    
+    #get_label_pixel_intensity_from_1_to_255('/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all/annotations')
+    #get_label_pixel_intensity_from_1_to_255('/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/geo_train/annotations')
+    #get_label_pixel_intensity_from_1_to_255('/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/geo_test/annotations')
+    #get_label_pixel_intensity_from_1_to_255('/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all_backup/annotations')
+    # get_label_pixel_intensity_from_1_to_255('/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all_conatains_object/patches')
+
+    # get_label_pixel_intensity_from_255_to_1('/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all_train_5_percent/patches')

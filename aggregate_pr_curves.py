@@ -5,6 +5,8 @@ from numpy.lib.npyio import save
 import pandas as pd
 import numpy as np
 import os
+
+from sklearn.utils.extmath import _incremental_mean_and_var
 from adjustText import adjust_text
 from seaborn.matrix import heatmap
 from sklearn import metrics
@@ -256,7 +258,8 @@ def get_hyper_param_axis_unique(mother_folder, draw_type, x_axis, y_axis):
     print('unique values in y axis', y_axis_unique)
     return x_axis_unique, y_axis_unique
 
-def draw_things_into_one_plot(mother_folder, draw_type='AUPR', x_axis = 'iou_th', y_axis = 'min_th', save_name='agg_plot', fpr_threshold=FPR_THRESHOLD):
+def draw_things_into_one_plot(mother_folder, draw_type='AUPR', x_axis = 'iou_th', y_axis = 'min_th',
+                             save_name='agg_plot', fpr_threshold=FPR_THRESHOLD):
     """
     This function draws a number of plots into a single plot so that I do not have to put them one-by-one into a damn ppt slide
     Note that the third variable has to stay constant in this process, otherwise the program would break
@@ -361,6 +364,102 @@ def plot_mean_variance_from_aggregate(mother_dir_list, save_dir, draw_type='AUPR
     plot_heat_map(x_len, y_len, x_axis_unique, y_axis_unique, mean_mat, save_name='mean_mat.jpg')
     plot_heat_map(x_len, y_len, x_axis_unique, y_axis_unique, range_mat, save_name='range_mat.jpg')
     
+def get_RTI_unique_iou_min_list(folder):
+    """
+    This function gets an input folder and get all the unique values  (sorted) of iou_th and min_th
+    """
+    iou_th_list = []
+    min_th_list = []
+    print('the master folder working at ', folder)
+    for file in os.listdir(folder):
+        # print('working on file ', file)
+        if 'iou_th' not in file or 'mith' not in file:
+            print('there is not keywords, skipping')
+            continue
+        iouth = float(os.path.splitext(file)[0].split('iou_th_')[-1].split('_')[0].split('ROC')[0])
+        # print('iou th extracted: ', iouth)
+        minth = int(os.path.splitext(file)[0].split('mith_')[-1].split('_')[0])
+        # print('iou th extracted: ', minth)
+        iou_th_list.append(iouth)
+        min_th_list.append(minth)
+    # print(iou_th_list)
+    iou_unique_list, min_th_unique_list = np.sort(np.unique(np.array(iou_th_list))),  np.sort(np.unique(np.array(min_th_list)))
+    dial = os.path.splitext(file)[0]
+    dial = dial.split('dial_')[-1]
+    dial = int(dial.split('_')[0])
+    minreg = int(os.path.splitext(file)[0].split('mireg_')[-1].split('_')[0])
+    # print(dial, minreg)
+    return iou_unique_list, min_th_unique_list, dial, minreg
+
+def plot_RTI_aggregate(mother_folder, mode='PR'):
+    """
+    This function aggregates the RTI heatmap plots together
+    """
+    print('mother folder working at ', mother_folder)
+    for folder in os.listdir(mother_folder):
+        if not os.path.isdir(os.path.join(mother_folder, folder)):
+            continue
+        # Get into each subfolder
+        cur_folder = os.path.join(mother_folder, folder)
+        # print('cur_folder', cur_folder)
+        PR_curve_dir = cur_folder
+        # Get unique values of iou_th and mith
+        iou_th_list, min_th_list, dial, minreg = get_RTI_unique_iou_min_list(cur_folder)
+        # print('unique values of iou th and min th are', iou_th_list, min_th_list)
+        if 'PR' in mode:
+            ap_table = np.zeros([len(iou_th_list), len(min_th_list)])
+            max_recall_table =np.zeros([len(iou_th_list), len(min_th_list)])
+            precision_at_max_recall_table = np.zeros([len(iou_th_list), len(min_th_list)])
+            best_f1_table = np.zeros([len(iou_th_list), len(min_th_list)])
+        elif 'ROC' in mode:
+            AUROC_table = np.zeros([len(iou_th_list), len(min_th_list)])
+        for ind_x, iou_th in enumerate(iou_th_list):
+            for ind_y, mith in enumerate(min_th_list):
+                name = '_dial_{}_mireg_{}_mith_{}_iou_th_{}.txt'.format(dial, minreg, mith, iou_th)
+                if 'ROC' in mode:
+                    name = name.replace('.txt', '_conf_label_pair.txt')
+                value = pd.read_csv(os.path.join(PR_curve_dir, name), header=None, sep=' ').values
+                if 'PR' in mode:
+                    r, p = value[:, 0], value[:, 1]       # Get P, R values
+                    # ap = metrics.auc(r[1:], p[1:])    # Aera under PR curve, which is the Average Precision
+                    ap = metrics.auc(r, p)
+                    max_recall = r[1]
+                    precision_at_max_recall = p[1]
+                    f1  = 2 * (p * r) / (p + r + 0.000001)
+                    best_f1 = np.max(f1[1:])
+                    ap_table[ind_x, ind_y] = ap
+                    max_recall_table[ind_x, ind_y] = max_recall
+                    precision_at_max_recall_table[ind_x, ind_y] = precision_at_max_recall
+                    best_f1_table[ind_x, ind_y] = best_f1
+                elif 'ROC' in mode:
+                    conf_list, true_list = value[:, 0], value[:, 1].astype('int')
+                    fpr, tpr, thresholds = metrics.roc_curve(true_list, conf_list, pos_label=1)
+                    auroc = metrics.auc(fpr, tpr)
+                    AUROC_table[ind_x, ind_y] = auroc
+        if 'PR' in mode:
+            table_list = ['ap_table','max_recall_table','precision_at_max_recall_table','best_f1_table']
+        elif 'ROC' in mode:
+            table_list = ['AUROC_table']    
+        for table in table_list:
+            f = plt.figure()
+            ax = plt.gca()
+            # ax = plt.Axes(f, [0., 0., 1., 1.])
+            # ax.set_axis_off()
+            f.add_axes(ax)
+            sns.set(font_scale=2)
+            # print('plotting ', table)
+            # print('shape of PR table ', np.shape(ap_table))
+            # print('it has shape ', np.shape(eval(table)))
+            # ax = sns.heatmap(eval(table),annot=True, fmt=".0%", cmap="YlGnBu", xticklabels=iou_th_list, yticklabels=min_th_list)
+            ax = sns.heatmap(eval(table),annot=True, fmt=".0%", cmap="YlGnBu", xticklabels=min_th_list, yticklabels=iou_th_list)
+            plt.title(table)
+            plt.ylabel('iou_th')
+            plt.xlabel('min_th')
+            heatmap_name = os.path.join('/', *PR_curve_dir.split('/')[:-1], os.path.basename(PR_curve_dir) + '_' + mode + table)
+            plt.savefig(heatmap_name + '.jpg')
+            np.savetxt(heatmap_name +'.txt', eval(table))
+            plt.close('all')
+        
 if __name__ == '__main__':
     # The function to plot all the curves on one plot
     #draw_on_one_plot()
@@ -386,37 +485,26 @@ if __name__ == '__main__':
     #                     '/scratch/sr365/PR_curves/dx_train_trail_0',
     #                     '/scratch/sr365/PR_curves/dx_train_trail_1',
     #                     '/scratch/sr365/PR_curves/dx_train_trail_2']
-    mother_dir_list = ['/scratch/sr365/PR_curves/dx_dx_train_set_ensemble']
-    fpr_threshold_list = [1e-4, 2e-4, 3e-4, 4e-4, 5e-4]
-    num_cpu = 64
+    #mother_dir_list = ['/scratch/sr365/PR_curves/dx_dx_train_set_ensemble']
+    # fpr_threshold_list = [1e-4, 2e-4, 3e-4, 4e-4, 5e-4]
+    
+    # RTI Rwanda dataset
+    num_cpu = 4
 
     # Trying different iou_threshold and min threshold for confidence intensity
-    if num_cpu > 1:
+    if num_cpu > 0:
         try: 
             pool = Pool(num_cpu)
             # The value agnostic version where directory is provided
             args_list = []
-            for mother_dir in mother_dir_list:
-                for folder in os.listdir(mother_dir):
-                    if 'iou_th' not in folder:      # Make sure this is a iou_th and hyper-param sweeping folder
-                            continue
-                    for fpr_threshold in fpr_threshold_list:
-                        iou_th, min_th, dila = get_iou_th_min_th_dila_from_name(folder)
-                        args_list.append((os.path.join(mother_dir, folder), dila, 30, min_th, iou_th, fpr_threshold))         # 30 is the min region parameter
-            pool.starmap(draw_a_lot_of_curves, args_list)
+            for mode in ['PR', 'ROC']:
+                for mother_list in ['/home/sr365/Gaia/PR_curves/test_object_only/', '/home/sr365/Gaia/PR_curves/train_object_only/']:
+                    args_list.append((mother_list, mode))         # 30 is the min region parameter
+            pool.starmap(plot_RTI_aggregate, args_list)
         finally:
             pool.close()
             pool.join()
-    else:
-        for mother_dir in mother_dir_list:
-            for folder in os.listdir(mother_dir):
-                if 'iou_th' not in folder:      # Make sure this is a iou_th and hyper-param sweeping folder
-                    continue
-                for fpr_threshold in fpr_threshold_list:
-                    iou_th, min_th, dila = get_iou_th_min_th_dila_from_name(folder)
-                    draw_a_lot_of_curves(os.path.join(mother_dir, folder), dila, 30, min_th, iou_th, fpr_threshold)          # 30 is the min region parameter
-            
-    
+
     # draw_type_list = ['AUPR', 'F1PR','max_recall_recall_PR','max_recall_precision_PR']
     # try: 
     #     pool = Pool(num_cpu)
