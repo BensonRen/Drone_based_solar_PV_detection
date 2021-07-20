@@ -50,95 +50,1112 @@ Execution time: 1762.8227503765374
 [valid] Epoch: 7/80 xent: 0.043 softIoU: 7.770 IoU: 0.026 
 Execution time: 141.55610400252044
 
-] Epoch: 8/80 xent: 0.037 softIoU: 7.928 IoU: 0.095 
-Execution time: 1199.1570749226958
+[train] Epoch: 8/80 xent: 0.048 softIoU: 7.926 IoU: 0.070 
+Execution time: 1762.8901128284633
 
-[valid] Epoch: 8/80 xent: 0.021 softIoU: 7.760 IoU: 0.092 
-Execution time: 83.8701156526804
+[valid] Epoch: 8/80 xent: 0.031 softIoU: 7.762 IoU: 0.054 
+Execution time: 141.6079737432301
 
-[train] Epoch: 9/80 xent: 0.034 softIoU: 7.925 IoU: 0.103 
-Execution time: 1183.3755500279367
+[train] Epoch: 9/80 xent: 0.046 softIoU: 7.920 IoU: 0.084 
+Execution time: 1759.979571269825
 
-[valid] Epoch: 9/80 xent: 0.020 softIoU: 7.758 IoU: 0.104 
-Execution time: 84.33909413218498
+[valid] Epoch: 9/80 xent: 0.064 softIoU: 7.782 IoU: 0.015 
+Execution time: 142.55711839720607
 
-[train] Epoch: 10/80 xent: 0.033 softIoU: 7.925 IoU: 0.110 
-Execution time: 1197.6949739847332
+[train] Epoch: 10/80 xent: 0.046 softIoU: 7.923 IoU: 0.079 
+Execution time: 1763.3420464079827
 
-[valid] Epoch: 10/80 xent: 0.023 softIoU: 7.760 IoU: 0.061 
-Execution time: 84.5625422950834
+[valid] Epoch: 10/80 xent: 0.031 softIoU: 7.762 IoU: 0.055 
+Execution time: 141.81971878744662
 
-[train] Epoch: 11/80 xent: 0.032 softIoU: 7.922 IoU: 0.107 
-Execution time: 1169.544790783897
+[train] Epoch: 11/80 xent: 0.044 softIoU: 7.918 IoU: 0.083 
+Execution time: 1762.7450083605945
 
-[valid] Epoch: 11/80 xent: 0.020 softIoU: 7.756 IoU: 0.086 
-Execution time: 83.47953984700143
+[valid] Epoch: 11/80 xent: 0.028 softIoU: 7.754 IoU: 0.086 
+Execution time: 140.38987048901618
 
-Epoch: 12/80 xent: 0.046 softIoU: 7.909 IoU: 0.062 
-Execution time: 560.3128390666097
+[train] Epoch: 12/80 xent: 0.038 softIoU: 7.914 IoU: 0.088 
+Execution time: 1728.5256250947714
 
-[valid] Epoch: 12/80 xent: 0.024 softIoU: 7.746 IoU: 0.065 
-Execution time: 69.72804811224341
+[valid] Epoch: 12/80 xent: 0.024 softIoU: 7.749 IoU: 0.095 
+Execution time: 137.87064724043012
 
-[train] Epoch: 13/80 xent: 0.035 softIoU: 7.903 IoU: 0.083 
-Execution time: 560.8100464958698
-[[valid] Epoch: 13/80 xent: 0.020 softIoU: 7.742 IoU: 0.089 
-Execution time: 69.54541121609509
-[[train] Epoch: 14/80 xent: 0.038 softIoU: 7.904 IoU: 0.082 
-Execution time: 561.993764275685
+[train] Epoch: 13/80 xent: 0.038 softIoU: 7.914 IoU: 0.096 
+Execution time: 1714.5924149602652
 
-[valid] Epoch: 14/80 xent: 0.024 softIoU: 7.753 IoU: 0.045 
-Execution time: 69.69919366016984
-[[train] Epoch: 15/80 xent: 0.029 softIoU: 7.899 IoU: 0.099 
-Execution time: 562.303854143247
+[valid] Epoch: 13/80 xent: 0.025 softIoU: 7.751 IoU: 0.070 
+Execution time: 140.46641343645751
 
-[valid] Epoch: 15/80 xent: 0.027 softIoU: 7.757 IoU: 0.037 
-Execution time: 70.02481809444726
+[train] Epoch: 14/80 xent: 0.046 softIoU: 7.918 IoU: 0.091 
+Execution time: 1719.1194635555148
 
-[train] Epoch: 16/80 xent: 0.039 softIoU: 7.905 IoU: 0.068 
-Execution time: 561.2262790109962
+[valid] Epoch: 14/80 xent: 0.026 softIoU: 7.759 IoU: 0.059 
+Execution time: 134.0940026603639
 
-[valid] Epoch: 16/80 xent: 0.021 softIoU: 7.747 IoU: 0.061 
-Execution time: 68.78005862794816
+[train] Epoch: 15/80 xent: 0.032 softIoU: 7.915 IoU: 0.099 
+Execution time: 1718.5666334964335
 
-[train] Epoch: 17/80 xent: 0.037 softIoU: 7.905 IoU: 0.079 
-Execution time: 560.8066129721701
+[valid] Epoch: 15/80 xent: 0.021 softIoU: 7.747 IoU: 0.088 
+Execution time: 139.06069007143378
 
-[valid] Epoch: 17/80 xent: 0.019 softIoU: 7.746 IoU: 0.072 
-Execution time: 68.78178301267326
-[[train] Epoch: 18/80 xent: 0.038 softIoU: 7.904 IoU: 0.086 
-Execution time: 559.7936423625797
-[[valid] Epoch: 18/80 xent: 0.028 softIoU: 7.760 IoU: 0.037 
-Execution time: 69.77491158433259
-[train] Epoch: 19/80 xent: 0.025 softIoU: 7.898 IoU: 0.121 
-Execution time: 564.4412240758538
+[train] Epoch: 16/80 xent: 0.040 softIoU: 7.917 IoU: 0.087 
+Execution time: 1712.1033319793642
 
-[valid] Epoch: 19/80 xent: 0.023 softIoU: 7.754 IoU: 0.045 
-Execution time: 70.49944646656513
+[valid] Epoch: 16/80 xent: 0.032 softIoU: 7.764 IoU: 0.039 
+Execution time: 139.73415345326066
 
-[train] Epoch: 20/80 xent: 0.025 softIoU: 7.899 IoU: 0.120 
-Execution time: 562.7598926965147
+[train] Epoch: 17/80 xent: 0.031 softIoU: 7.908 IoU: 0.115 
+Execution time: 1727.9230468515307
 
-[valid] Epoch: 20/80 xent: 0.017 softIoU: 7.738 IoU: 0.117 
-Execution time: 70.30296179838479
+[valid] Epoch: 17/80 xent: 0.021 softIoU: 7.749 IoU: 0.085 
+Execution time: 136.1135835852474
 
-[train] Epoch: 21/80 xent: 0.030 softIoU: 7.904 IoU: 0.095 
-Execution time: 560.8944904040545
+[train] Epoch: 18/80 xent: 0.039 softIoU: 7.914 IoU: 0.096 
+Execution time: 1721.5262637846172
 
-[valid] Epoch: 21/80 xent: 0.026 softIoU: 7.759 IoU: 0.036 
-Execution time: 69.73417872749269
+[valid] Epoch: 18/80 xent: 0.035 softIoU: 7.770 IoU: 0.032 
+Execution time: 140.40992906689644
 
-[train] Epoch: 22/80 xent: 0.033 softIoU: 7.907 IoU: 0.097 
-Execution time: 562.2758639696985
+[train] Epoch: 19/80 xent: 0.033 softIoU: 7.914 IoU: 0.109 
+Execution time: 1717.8057265654206
 
-[valid] Epoch: 22/80 xent: 0.020 softIoU: 7.752 IoU: 0.054 
-Execution time: 70.33733321726322
+[valid] Epoch: 19/80 xent: 0.022 softIoU: 7.749 IoU: 0.067 
+Execution time: 141.9134980943054
 
-[train] Epoch: 23/80 xent: 0.025 softIoU: 7.899 IoU: 0.121 
-Execution time: 562.009369334206
+[train] Epoch: 20/80 xent: 0.034 softIoU: 7.909 IoU: 0.100 
+Execution time: 1718.1713348086923
 
-[valid] Epoch: 23/80 xent: 0.017 softIoU: 7.748 IoU: 0.067 
-Execution time: 69.30785739794374
+[valid] Epoch: 20/80 xent: 0.021 softIoU: 7.746 IoU: 0.080 
+Execution time: 138.608073040843
 
+[train] Epoch: 21/80 xent: 0.033 softIoU: 7.909 IoU: 0.116 
+Execution time: 1718.0379797555506
 
+[valid] Epoch: 21/80 xent: 0.024 softIoU: 7.757 IoU: 0.095 
+Execution time: 134.58694467134774
+
+[train] Epoch: 22/80 xent: 0.032 softIoU: 7.910 IoU: 0.107 
+Execution time: 1713.5106056630611
+
+[valid] Epoch: 22/80 xent: 0.022 softIoU: 7.750 IoU: 0.053 
+Execution time: 143.6096506807953
+
+[train] Epoch: 23/80 xent: 0.031 softIoU: 7.906 IoU: 0.111 
+Execution time: 1723.4818297103047
+
+[valid] Epoch: 23/80 xent: 0.019 softIoU: 7.746 IoU: 0.087 
+Execution time: 139.30582988634706
+
+[train] Epoch: 24/80 xent: 0.029 softIoU: 7.908 IoU: 0.114 
+Execution time: 1723.6190745290369
+
+[valid] Epoch: 24/80 xent: 0.019 softIoU: 7.745 IoU: 0.083 
+Execution time: 128.91658213362098
+
+[train] Epoch: 25/80 xent: 0.026 softIoU: 7.905 IoU: 0.120 
+Execution time: 1717.5956386644393
+
+[valid] Epoch: 25/80 xent: 0.022 softIoU: 7.752 IoU: 0.055 
+Execution time: 137.45118390023708
+
+[train] Epoch: 26/80 xent: 0.027 softIoU: 7.901 IoU: 0.132 
+Execution time: 1718.4719000533223
+
+[valid] Epoch: 26/80 xent: 0.027 softIoU: 7.754 IoU: 0.039 
+Execution time: 140.3705025035888
+
+[train] Epoch: 27/80 xent: 0.033 softIoU: 7.907 IoU: 0.117 
+Execution time: 1729.6681330185384
+
+[valid] Epoch: 27/80 xent: 0.029 softIoU: 7.762 IoU: 0.048 
+Execution time: 128.41703059338033
+
+[train] Epoch: 28/80 xent: 0.034 softIoU: 7.909 IoU: 0.099 
+Execution time: 1725.4651595000178
+
+[valid] Epoch: 28/80 xent: 0.018 softIoU: 7.743 IoU: 0.098 
+Execution time: 142.47792410105467
+
+[train] Epoch: 29/80 xent: 0.030 softIoU: 7.902 IoU: 0.126 
+Execution time: 1716.8285071160644
+
+[valid] Epoch: 29/80 xent: 0.022 softIoU: 7.753 IoU: 0.053 
+Execution time: 142.6293899230659
+
+[train] Epoch: 30/80 xent: 0.025 softIoU: 7.904 IoU: 0.128 
+Execution time: 1757.3337084967643
+
+[valid] Epoch: 30/80 xent: 0.016 softIoU: 7.742 IoU: 0.112 
+Execution time: 138.88064803928137
+
+[train] Epoch: 31/80 xent: 0.028 softIoU: 7.904 IoU: 0.125 
+Execution time: 1752.6160109918565
+
+[valid] Epoch: 31/80 xent: 0.017 softIoU: 7.743 IoU: 0.106 
+Execution time: 142.45717019587755
+
+[train] Epoch: 32/80 xent: 0.024 softIoU: 7.903 IoU: 0.128 
+Execution time: 1753.5174377318472
+
+[valid] Epoch: 32/80 xent: 0.022 softIoU: 7.751 IoU: 0.056 
+Execution time: 141.47405240498483
+
+[train] Epoch: 33/80 xent: 0.026 softIoU: 7.904 IoU: 0.137 
+Execution time: 1748.3877425305545
+
+[valid] Epoch: 33/80 xent: 0.017 softIoU: 7.744 IoU: 0.091 
+Execution time: 142.64216827228665
+
+[train] Epoch: 34/80 xent: 0.026 softIoU: 7.902 IoU: 0.134 
+Execution time: 1755.0635413564742
+
+[valid] Epoch: 34/80 xent: 0.020 softIoU: 7.749 IoU: 0.070 
+Execution time: 141.4355379473418
+
+[train] Epoch: 35/80 xent: 0.025 softIoU: 7.902 IoU: 0.133 
+Execution time: 1750.3778899405152
+
+[valid] Epoch: 35/80 xent: 0.020 softIoU: 7.752 IoU: 0.059 
+Execution time: 141.19977314211428
+
+[train] Epoch: 36/80 xent: 0.026 softIoU: 7.902 IoU: 0.132 
+Execution time: 1746.2547018267214
+
+[valid] Epoch: 36/80 xent: 0.021 softIoU: 7.746 IoU: 0.129 
+Execution time: 141.15335949137807
+
+[train] Epoch: 37/80 xent: 0.027 softIoU: 7.906 IoU: 0.138 
+Execution time: 1745.8785160761327
+
+[valid] Epoch: 37/80 xent: 0.021 softIoU: 7.750 IoU: 0.089 
+Execution time: 140.32605052925646
+
+[train] Epoch: 38/80 xent: 0.028 softIoU: 7.905 IoU: 0.129 
+Execution time: 1749.0885560754687
+
+[valid] Epoch: 38/80 xent: 0.021 softIoU: 7.746 IoU: 0.079 
+Execution time: 141.7481851838529
+
+[train] Epoch: 39/80 xent: 0.027 softIoU: 7.903 IoU: 0.123 
+Execution time: 1749.7445726487786
+
+[valid] Epoch: 39/80 xent: 0.017 softIoU: 7.745 IoU: 0.092 
+Execution time: 139.17679502815008
+
+[train] Epoch: 40/80 xent: 0.027 softIoU: 7.906 IoU: 0.134 
+Execution time: 1750.3183387555182
+
+[valid] Epoch: 40/80 xent: 0.015 softIoU: 7.741 IoU: 0.117 
+Execution time: 140.47873927094042
+
+Saved model at /home/sr365/Gaia/models/rwanda_rti_from_catalyst/random_5_percent_split/class_weight_100_loss_weight_0.1_trail_0/ecresnet50_dcdlinknet_dsrwanda_rti_lre1e-03_lrd1e-02_ep80_bs16_ds50_75_dr0p1_crxent1p0_softiou0p1/epoch-40.pth.tar
+[train] Epoch: 41/80 xent: 0.027 softIoU: 7.902 IoU: 0.136 
+Execution time: 1746.1539341900498
+
+[valid] Epoch: 41/80 xent: 0.016 softIoU: 7.741 IoU: 0.093 
+Execution time: 133.44407207518816
+
+[train] Epoch: 42/80 xent: 0.028 softIoU: 7.905 IoU: 0.132 
+Execution time: 1696.644982157275
+
+[valid] Epoch: 42/80 xent: 0.015 softIoU: 7.743 IoU: 0.107 
+Execution time: 129.56378120556474
+
+[train] Epoch: 43/80 xent: 0.021 softIoU: 7.899 IoU: 0.156 
+Execution time: 1694.1717687956989
+
+[valid] Epoch: 43/80 xent: 0.015 softIoU: 7.741 IoU: 0.109 
+Execution time: 136.28714291751385
+
+[train] Epoch: 44/80 xent: 0.021 softIoU: 7.895 IoU: 0.162 
+Execution time: 1691.286762110889
+
+[valid] Epoch: 44/80 xent: 0.017 softIoU: 7.746 IoU: 0.080 
+Execution time: 133.1352231092751
+
+[train] Epoch: 45/80 xent: 0.022 softIoU: 7.898 IoU: 0.143 
+Execution time: 1694.8467618655413
+
+[valid] Epoch: 45/80 xent: 0.014 softIoU: 7.739 IoU: 0.124 
+Execution time: 135.50505872629583
+
+[train] Epoch: 46/80 xent: 0.031 softIoU: 7.906 IoU: 0.125 
+Execution time: 1697.0882199872285
+
+[valid] Epoch: 46/80 xent: 0.017 softIoU: 7.751 IoU: 0.070 
+Execution time: 140.48473989404738
+
+[train] Epoch: 47/80 xent: 0.024 softIoU: 7.902 IoU: 0.131 
+Execution time: 1703.8822224307805
+
+[valid] Epoch: 47/80 xent: 0.014 softIoU: 7.744 IoU: 0.104 
+Execution time: 132.47564809210598
+
+[train] Epoch: 48/80 xent: 0.020 softIoU: 7.895 IoU: 0.151 
+Execution time: 1693.0154465790838
+
+[valid] Epoch: 48/80 xent: 0.016 softIoU: 7.745 IoU: 0.071 
+Execution time: 133.52160762250423
+
+[train] Epoch: 49/80 xent: 0.026 softIoU: 7.899 IoU: 0.141 
+Execution time: 1692.760860690847
+
+[valid] Epoch: 49/80 xent: 0.084 softIoU: 7.796 IoU: 0.010 
+Execution time: 131.02870517410338
+
+[train] Epoch: 50/80 xent: 0.028 softIoU: 7.904 IoU: 0.140 
+Execution time: 1697.957153847441
+
+[valid] Epoch: 50/80 xent: 0.017 softIoU: 7.748 IoU: 0.066 
+Execution time: 131.09287786483765
+
+[train] Epoch: 51/80 xent: 0.022 softIoU: 7.902 IoU: 0.127 
+Execution time: 1697.5355592146516
+
+[valid] Epoch: 51/80 xent: 0.017 softIoU: 7.748 IoU: 0.065 
+Execution time: 125.1687719617039
+
+[train] Epoch: 52/80 xent: 0.022 softIoU: 7.899 IoU: 0.140 
+Execution time: 1703.680441500619
+
+[valid] Epoch: 52/80 xent: 0.015 softIoU: 7.743 IoU: 0.093 
+Execution time: 132.38375993445516
+
+[train] Epoch: 53/80 xent: 0.019 softIoU: 7.896 IoU: 0.158 
+Execution time: 1686.5603647716343
+
+[valid] Epoch: 53/80 xent: 0.014 softIoU: 7.743 IoU: 0.098 
+Execution time: 120.28232907690108
+
+[train] Epoch: 54/80 xent: 0.019 softIoU: 7.896 IoU: 0.161 
+Execution time: 1354.1794526074082
+
+[valid] Epoch: 54/80 xent: 0.014 softIoU: 7.741 IoU: 0.110 
+Execution time: 79.46056106127799
+
+[train] Epoch: 55/80 xent: 0.018 softIoU: 7.897 IoU: 0.169 
+Execution time: 658.8690211530775
+
+[valid] Epoch: 55/80 xent: 0.014 softIoU: 7.743 IoU: 0.100 
+Execution time: 80.07701901718974
+
+[train] Epoch: 56/80 xent: 0.019 softIoU: 7.896 IoU: 0.166 
+Execution time: 637.0253070741892
+
+[valid] Epoch: 56/80 xent: 0.014 softIoU: 7.741 IoU: 0.112 
+Execution time: 79.90964932739735
+
+[train] Epoch: 57/80 xent: 0.018 softIoU: 7.896 IoU: 0.179 
+Execution time: 640.9224176667631
+
+[valid] Epoch: 57/80 xent: 0.013 softIoU: 7.739 IoU: 0.128 
+Execution time: 77.20258217677474
+
+[train] Epoch: 58/80 xent: 0.021 softIoU: 7.893 IoU: 0.183 
+Execution time: 605.4879260994494
+
+[valid] Epoch: 58/80 xent: 0.014 softIoU: 7.742 IoU: 0.099 
+Execution time: 70.5571064222604
+
+[train] Epoch: 59/80 xent: 0.018 softIoU: 7.891 IoU: 0.175 
+Execution time: 574.5567213706672
+
+[valid] Epoch: 59/80 xent: 0.013 softIoU: 7.739 IoU: 0.131 
+Execution time: 71.42125805094838
+
+[train] Epoch: 60/80 xent: 0.020 softIoU: 7.895 IoU: 0.181 
+Execution time: 572.8542691990733
+
+[valid] Epoch: 60/80 xent: 0.013 softIoU: 7.739 IoU: 0.132 
+Execution time: 70.9110910538584
+
+[train] Epoch: 61/80 xent: 0.018 softIoU: 7.895 IoU: 0.170 
+Execution time: 571.3379638958722
+
+[valid] Epoch: 61/80 xent: 0.013 softIoU: 7.740 IoU: 0.122 
+Execution time: 70.7693345118314
+
+[train] Epoch: 62/80 xent: 0.021 softIoU: 7.896 IoU: 0.163 
+Execution time: 572.270329773426
+
+[valid] Epoch: 62/80 xent: 0.013 softIoU: 7.741 IoU: 0.127 
+Execution time: 71.50600621849298
+
+[train] Epoch: 63/80 xent: 0.017 softIoU: 7.894 IoU: 0.177 
+Execution time: 572.9127553272992
+
+[valid] Epoch: 63/80 xent: 0.014 softIoU: 7.740 IoU: 0.112 
+Execution time: 71.62249415367842
+
+[train] Epoch: 64/80 xent: 0.018 softIoU: 7.894 IoU: 0.179 
+Execution time: 571.3787227198482
+
+[valid] Epoch: 64/80 xent: 0.013 softIoU: 7.740 IoU: 0.121 
+Execution time: 70.79057710245252
+
+[train] Epoch: 65/80 xent: 0.018 softIoU: 7.892 IoU: 0.182 
+Execution time: 570.5307881664485
+
+[valid] Epoch: 65/80 xent: 0.013 softIoU: 7.740 IoU: 0.124 
+Execution time: 70.94085663370788
+
+[train] Epoch: 66/80 xent: 0.018 softIoU: 7.894 IoU: 0.173 
+Execution time: 572.0540988892317
+
+[valid] Epoch: 66/80 xent: 0.014 softIoU: 7.743 IoU: 0.096 
+Execution time: 71.00189386308193
+
+[train] Epoch: 67/80 xent: 0.019 softIoU: 7.891 IoU: 0.175 
+Execution time: 570.9169462658465
+
+[valid] Epoch: 67/80 xent: 0.013 softIoU: 7.740 IoU: 0.116 
+Execution time: 71.01708625815809
+
+[train] Epoch: 68/80 xent: 0.020 softIoU: 7.892 IoU: 0.177 
+Execution time: 571.1881997119635
+
+[valid] Epoch: 68/80 xent: 0.013 softIoU: 7.739 IoU: 0.127 
+Execution time: 71.02592704072595
+
+[train] Epoch: 69/80 xent: 0.017 softIoU: 7.892 IoU: 0.174 
+Execution time: 570.00963964127
+
+[valid] Epoch: 69/80 xent: 0.013 softIoU: 7.739 IoU: 0.114 
+Execution time: 71.24325398728251
+
+[train] Epoch: 70/80 xent: 0.021 softIoU: 7.892 IoU: 0.170 
+Execution time: 569.8769726771861
+
+[valid] Epoch: 70/80 xent: 0.014 softIoU: 7.740 IoU: 0.119 
+Execution time: 71.08362810872495
+
+[train] Epoch: 71/80 xent: 0.019 softIoU: 7.897 IoU: 0.171 
+Execution time: 570.997625136748
+
+[valid] Epoch: 71/80 xent: 0.014 softIoU: 7.742 IoU: 0.109 
+Execution time: 71.07591175660491
+
+[train] Epoch: 72/80 xent: 0.018 softIoU: 7.892 IoU: 0.183 
+Execution time: 577.426833871752
+
+[valid] Epoch: 72/80 xent: 0.014 softIoU: 7.741 IoU: 0.107 
+Execution time: 77.56411687843502
+
+[train] Epoch: 73/80 xent: 0.017 softIoU: 7.892 IoU: 0.181 
+Execution time: 639.0834299512208
+
+[valid] Epoch: 73/80 xent: 0.013 softIoU: 7.741 IoU: 0.110 
+Execution time: 80.34380276314914
+
+[train] Epoch: 74/80 xent: 0.017 softIoU: 7.892 IoU: 0.191 
+Execution time: 644.8514610007405
+
+[valid] Epoch: 74/80 xent: 0.014 softIoU: 7.743 IoU: 0.103 
+Execution time: 84.65830534137785
+
+[train] Epoch: 75/80 xent: 0.018 softIoU: 7.893 IoU: 0.174 
+Execution time: 636.1846172790974
+
+[valid] Epoch: 75/80 xent: 0.013 softIoU: 7.739 IoU: 0.124 
+Execution time: 80.49146712012589
+
+[train] Epoch: 76/80 xent: 0.017 softIoU: 7.897 IoU: 0.177 
+Execution time: 647.5158089045435
+
+[valid] Epoch: 76/80 xent: 0.014 softIoU: 7.742 IoU: 0.100 
+Execution time: 77.94810344092548
+
+[train] Epoch: 77/80 xent: 0.018 softIoU: 7.892 IoU: 0.183 
+Execution time: 637.1217894051224
+
+[valid] Epoch: 77/80 xent: 0.014 softIoU: 7.742 IoU: 0.102 
+Execution time: 78.97734949551523
+
+[train] Epoch: 78/80 xent: 0.017 softIoU: 7.891 IoU: 0.184 
+Execution time: 632.3726277220994
+
+[valid] Epoch: 78/80 xent: 0.015 softIoU: 7.743 IoU: 0.097 
+Execution time: 78.03607251308858
+
+[train] Epoch: 79/80 xent: 0.017 softIoU: 7.893 IoU: 0.180 
+Execution time: 646.8289152886719
+
+[valid] Epoch: 79/80 xent: 0.014 softIoU: 7.741 IoU: 0.113 
+Execution time: 81.17575423792005
+
+Saved model at /home/sr365/Gaia/models/rwanda_rti_from_catalyst/random_5_percent_split/class_weight_100_loss_weight_0.1_trail_0/ecresnet50_dcdlinknet_dsrwanda_rti_lre1e-03_lrd1e-02_ep80_bs16_ds50_75_dr0p1_crxent1p0_softiou0p1/epoch-80.pth.tar
+original saveroot /home/sr365/Gaia/models/rwanda_rti_from_catalyst/random_5_percent_split
+Device being used: cuda:3
+Finetuning model from /home/sr365/Gaia/pre_trained/catalyst_d4/d4_trail_0/epoch-80.pth.tar
+Total params: 179.77M
+Dataset rwanda_rti is not supported, use default mean stats instead
+Training model on the rwanda_rti dataset
+Dataset rwanda_rti is not supported, use default mean stats instead
+52
+
+[valid] Epoch: 0/80 xent: 0.163 softIoU: 7.790 IoU: 0.011 
+Execution time: 77.09604430757463
+
+[train] Epoch: 1/80 xent: 0.306 softIoU: 7.970 IoU: 0.010 
+Execution time: 578.0531837549061
+
+[valid] Epoch: 1/80 xent: 0.126 softIoU: 7.792 IoU: 0.008 
+Execution time: 70.74783845059574
+
+[train] Epoch: 2/80 xent: 0.253 softIoU: 7.960 IoU: 0.013 
+Execution time: 560.5431245509535
+
+[valid] Epoch: 2/80 xent: 0.116 softIoU: 7.776 IoU: 0.021 
+Execution time: 70.77552767470479
+
+[train] Epoch: 3/80 xent: 0.182 softIoU: 7.955 IoU: 0.017 
+Execution time: 557.7826747875661
+
+[valid] Epoch: 3/80 xent: 0.116 softIoU: 7.795 IoU: 0.007 
+Execution time: 70.05964657664299
+
+[train] Epoch: 4/80 xent: 0.157 softIoU: 7.944 IoU: 0.020 
+Execution time: 557.556428052485
+
+[valid] Epoch: 4/80 xent: 0.070 softIoU: 7.770 IoU: 0.018 
+Execution time: 69.27110116556287
+
+[train] Epoch: 5/80 xent: 0.125 softIoU: 7.939 IoU: 0.023 
+Execution time: 560.3346074894071
+
+[valid] Epoch: 5/80 xent: 0.072 softIoU: 7.768 IoU: 0.017 
+Execution time: 70.28728236444294
+
+[train] Epoch: 6/80 xent: 0.143 softIoU: 7.934 IoU: 0.025 
+Execution time: 558.6841630898416
+
+[valid] Epoch: 6/80 xent: 0.406 softIoU: 7.844 IoU: 0.002 
+Execution time: 69.23670492134988
+
+[train] Epoch: 7/80 xent: 0.156 softIoU: 7.941 IoU: 0.021 
+Execution time: 551.3495590090752
+
+[valid] Epoch: 7/80 xent: 0.064 softIoU: 7.774 IoU: 0.015 
+Execution time: 70.51197868958116
+
+[train] Epoch: 8/80 xent: 0.117 softIoU: 7.931 IoU: 0.026 
+Execution time: 552.608387440443
+
+[valid] Epoch: 8/80 xent: 0.047 softIoU: 7.765 IoU: 0.026 
+Execution time: 69.1502340938896
+
+[train] Epoch: 9/80 xent: 0.078 softIoU: 7.920 IoU: 0.041 
+Execution time: 550.9181225374341
+
+[valid] Epoch: 9/80 xent: 0.046 softIoU: 7.745 IoU: 0.065 
+Execution time: 69.68935579806566
+
+[train] Epoch: 10/80 xent: 0.074 softIoU: 7.916 IoU: 0.050 
+Execution time: 550.2787111401558
+
+[valid] Epoch: 10/80 xent: 0.087 softIoU: 7.786 IoU: 0.010 
+Execution time: 69.14276272431016
+
+[train] Epoch: 11/80 xent: 0.112 softIoU: 7.922 IoU: 0.026 
+Execution time: 552.6242823656648
+
+[valid] Epoch: 11/80 xent: 0.036 softIoU: 7.759 IoU: 0.035 
+Execution time: 70.02139512263238
+
+[train] Epoch: 12/80 xent: 0.052 softIoU: 7.909 IoU: 0.062 
+Execution time: 557.3235347997397
+
+[valid] Epoch: 12/80 xent: 0.029 softIoU: 7.747 IoU: 0.058 
+Execution time: 69.22023187950253
+
+[train] Epoch: 13/80 xent: 0.050 softIoU: 7.907 IoU: 0.072 
+Execution time: 555.8524680808187
+
+[valid] Epoch: 13/80 xent: 0.026 softIoU: 7.747 IoU: 0.057 
+Execution time: 69.94054066203535
+
+[train] Epoch: 14/80 xent: 0.049 softIoU: 7.905 IoU: 0.078 
+Execution time: 555.2376707997173
+
+[valid] Epoch: 14/80 xent: 0.023 softIoU: 7.748 IoU: 0.051 
+Execution time: 69.25333025306463
+
+[train] Epoch: 15/80 xent: 0.044 softIoU: 7.900 IoU: 0.089 
+Execution time: 555.2294850461185
+
+[valid] Epoch: 15/80 xent: 0.075 softIoU: 7.778 IoU: 0.012 
+Execution time: 70.04077370092273
+
+[train] Epoch: 16/80 xent: 0.047 softIoU: 7.908 IoU: 0.058 
+Execution time: 550.9028638415039
+
+[valid] Epoch: 16/80 xent: 0.024 softIoU: 7.749 IoU: 0.048 
+Execution time: 69.61616919375956
+
+[train] Epoch: 17/80 xent: 0.043 softIoU: 7.900 IoU: 0.089 
+Execution time: 550.2305379901081
+
+[valid] Epoch: 17/80 xent: 0.046 softIoU: 7.766 IoU: 0.021 
+Execution time: 70.02393735386431
+
+[train] Epoch: 18/80 xent: 0.040 softIoU: 7.902 IoU: 0.072 
+Execution time: 550.5275781713426
+
+[valid] Epoch: 18/80 xent: 0.027 softIoU: 7.742 IoU: 0.076 
+Execution time: 70.1734256464988
+
+[train] Epoch: 19/80 xent: 0.034 softIoU: 7.898 IoU: 0.105 
+Execution time: 553.3578698392957
+
+[valid] Epoch: 19/80 xent: 0.022 softIoU: 7.745 IoU: 0.063 
+Execution time: 68.7233275808394
+
+[train] Epoch: 20/80 xent: 0.034 softIoU: 7.898 IoU: 0.096 
+Execution time: 550.3417813647538
+
+[valid] Epoch: 20/80 xent: 0.021 softIoU: 7.745 IoU: 0.061 
+Execution time: 69.09144882299006
+
+[train] Epoch: 21/80 xent: 0.045 softIoU: 7.900 IoU: 0.080 
+Execution time: 551.9937759917229
+
+[valid] Epoch: 21/80 xent: 0.030 softIoU: 7.743 IoU: 0.074 
+Execution time: 69.5759343765676
+
+[train] Epoch: 22/80 xent: 0.036 softIoU: 7.899 IoU: 0.101 
+Execution time: 550.4767914861441
+
+[valid] Epoch: 22/80 xent: 0.022 softIoU: 7.747 IoU: 0.062 
+Execution time: 69.12660931050777
+
+[train] Epoch: 23/80 xent: 0.033 softIoU: 7.900 IoU: 0.101 
+Execution time: 553.2828747034073
+
+[valid] Epoch: 23/80 xent: 0.027 softIoU: 7.754 IoU: 0.040 
+Execution time: 69.56611876003444
+
+[train] Epoch: 24/80 xent: 0.028 softIoU: 7.895 IoU: 0.118 
+Execution time: 555.9940004684031
+
+[valid] Epoch: 24/80 xent: 0.021 softIoU: 7.742 IoU: 0.083 
+Execution time: 69.3743332605809
+
+[train] Epoch: 25/80 xent: 0.033 softIoU: 7.895 IoU: 0.119 
+Execution time: 550.6921451557428
+
+[valid] Epoch: 25/80 xent: 0.021 softIoU: 7.742 IoU: 0.082 
+Execution time: 70.2741561755538
+
+[train] Epoch: 26/80 xent: 0.029 softIoU: 7.897 IoU: 0.113 
+Execution time: 552.7332766707987
+
+[valid] Epoch: 26/80 xent: 0.018 softIoU: 7.742 IoU: 0.078 
+Execution time: 69.34036629088223
+
+[train] Epoch: 27/80 xent: 0.027 softIoU: 7.894 IoU: 0.135 
+Execution time: 555.1017687730491
+
+[valid] Epoch: 27/80 xent: 0.018 softIoU: 7.742 IoU: 0.081 
+Execution time: 70.47689217887819
+
+[train] Epoch: 28/80 xent: 0.031 softIoU: 7.898 IoU: 0.116 
+Execution time: 548.7744218930602
+
+[valid] Epoch: 28/80 xent: 0.019 softIoU: 7.747 IoU: 0.059 
+Execution time: 69.98507744632661
+
+[train] Epoch: 29/80 xent: 0.026 softIoU: 7.895 IoU: 0.126 
+Execution time: 555.0507870446891
+
+[valid] Epoch: 29/80 xent: 0.018 softIoU: 7.738 IoU: 0.112 
+Execution time: 68.87180959619582
+
+[train] Epoch: 30/80 xent: 0.028 softIoU: 7.895 IoU: 0.127 
+Execution time: 551.1639421377331
+
+[valid] Epoch: 30/80 xent: 0.016 softIoU: 7.740 IoU: 0.092 
+Execution time: 69.08291547745466
+
+[train] Epoch: 31/80 xent: 0.022 softIoU: 7.892 IoU: 0.160 
+Execution time: 553.892953434959
+
+[valid] Epoch: 31/80 xent: 0.016 softIoU: 7.743 IoU: 0.074 
+Execution time: 69.51075462810695
+
+[train] Epoch: 32/80 xent: 0.020 softIoU: 7.889 IoU: 0.159 
+Execution time: 555.6091324631125
+
+[valid] Epoch: 32/80 xent: 0.013 softIoU: 7.735 IoU: 0.123 
+Execution time: 70.10879267007113
+
+[train] Epoch: 33/80 xent: 0.021 softIoU: 7.888 IoU: 0.161 
+Execution time: 553.8728009480983
+
+[valid] Epoch: 33/80 xent: 0.016 softIoU: 7.735 IoU: 0.134 
+Execution time: 70.52532513067126
+
+[train] Epoch: 34/80 xent: 0.022 softIoU: 7.892 IoU: 0.164 
+Execution time: 556.2540655843914
+
+[valid] Epoch: 34/80 xent: 0.013 softIoU: 7.739 IoU: 0.097 
+Execution time: 68.99704783596098
+
+[train] Epoch: 35/80 xent: 0.030 softIoU: 7.893 IoU: 0.118 
+Execution time: 549.6653059534729
+
+[valid] Epoch: 35/80 xent: 0.016 softIoU: 7.742 IoU: 0.079 
+Execution time: 68.75824040360749
+
+[train] Epoch: 36/80 xent: 0.021 softIoU: 7.889 IoU: 0.161 
+Execution time: 553.1728704404086
+
+[valid] Epoch: 36/80 xent: 0.014 softIoU: 7.741 IoU: 0.092 
+Execution time: 68.60082238912582
+
+[train] Epoch: 37/80 xent: 0.020 softIoU: 7.889 IoU: 0.165 
+Execution time: 579.7780504859984
+
+[valid] Epoch: 37/80 xent: 0.015 softIoU: 7.737 IoU: 0.117 
+Execution time: 82.20120465382934
+
+[train] Epoch: 38/80 xent: 0.022 softIoU: 7.891 IoU: 0.181 
+Execution time: 633.0216133706272
+
+[valid] Epoch: 38/80 xent: 0.030 softIoU: 7.758 IoU: 0.034 
+Execution time: 80.12708591111004
+
+[train] Epoch: 39/80 xent: 0.023 softIoU: 7.896 IoU: 0.130 
+Execution time: 621.8543455321342
+
+[valid] Epoch: 39/80 xent: 0.016 softIoU: 7.738 IoU: 0.116 
+Execution time: 81.97937675565481
+
+[train] Epoch: 40/80 xent: 0.026 softIoU: 7.893 IoU: 0.154 
+Execution time: 633.5578527599573
+
+[valid] Epoch: 40/80 xent: 0.021 softIoU: 7.749 IoU: 0.051 
+Execution time: 83.69286160729825
+
+Saved model at /home/sr365/Gaia/models/rwanda_rti_from_catalyst/random_5_percent_split/class_weight_1000_loss_weight_0.5_trail_0/ecresnet50_dcdlinknet_dsrwanda_rti_lre1e-03_lrd1e-02_ep80_bs16_ds50_75_dr0p1_crxent1p0_softiou0p5/epoch-40.pth.tar
+[train] Epoch: 41/80 xent: 0.020 softIoU: 7.892 IoU: 0.154 
+Execution time: 634.2398926597089
+
+[valid] Epoch: 41/80 xent: 0.014 softIoU: 7.741 IoU: 0.093 
+Execution time: 81.82330874539912
+
+[train] Epoch: 42/80 xent: 0.023 softIoU: 7.890 IoU: 0.140 
+Execution time: 625.9071658346802
+
+[valid] Epoch: 42/80 xent: 0.012 softIoU: 7.737 IoU: 0.116 
+Execution time: 80.90305766277015
+
+[train] Epoch: 43/80 xent: 0.020 softIoU: 7.890 IoU: 0.164 
+Execution time: 632.2989862691611
+
+[valid] Epoch: 43/80 xent: 0.015 softIoU: 7.736 IoU: 0.126 
+Execution time: 78.47157926857471
+
+[train] Epoch: 44/80 xent: 0.020 softIoU: 7.890 IoU: 0.175 
+Execution time: 625.6033496391028
+
+[valid] Epoch: 44/80 xent: 0.015 softIoU: 7.743 IoU: 0.073 
+Execution time: 84.54887392744422
+
+[train] Epoch: 45/80 xent: 0.016 softIoU: 7.887 IoU: 0.190 
+Execution time: 646.9089907035232
+
+[valid] Epoch: 45/80 xent: 0.013 softIoU: 7.736 IoU: 0.122 
+Execution time: 81.78786556236446
+
+[train] Epoch: 46/80 xent: 0.017 softIoU: 7.886 IoU: 0.193 
+Execution time: 627.1667810641229
+
+[valid] Epoch: 46/80 xent: 0.014 softIoU: 7.734 IoU: 0.152 
+Execution time: 82.50834221206605
+
+[train] Epoch: 47/80 xent: 0.020 softIoU: 7.888 IoU: 0.187 
+Execution time: 628.9490560274571
+
+[valid] Epoch: 47/80 xent: 0.014 softIoU: 7.737 IoU: 0.121 
+Execution time: 80.49350814148784
+
+[train] Epoch: 48/80 xent: 0.022 softIoU: 7.892 IoU: 0.162 
+Execution time: 629.2611900586635
+
+[valid] Epoch: 48/80 xent: 0.013 softIoU: 7.738 IoU: 0.111 
+Execution time: 85.4843928348273
+
+[train] Epoch: 49/80 xent: 0.022 softIoU: 7.889 IoU: 0.157 
+Execution time: 631.1020605191588
+
+[valid] Epoch: 49/80 xent: 0.013 softIoU: 7.736 IoU: 0.125 
+Execution time: 81.74871469289064
+
+[train] Epoch: 50/80 xent: 0.019 softIoU: 7.888 IoU: 0.207 
+Execution time: 633.7687720358372
+
+[valid] Epoch: 50/80 xent: 0.013 softIoU: 7.737 IoU: 0.120 
+Execution time: 79.46217719651759
+
+[train] Epoch: 51/80 xent: 0.021 softIoU: 7.887 IoU: 0.197 
+Execution time: 622.2175585143268
+
+[valid] Epoch: 51/80 xent: 0.013 softIoU: 7.738 IoU: 0.111 
+Execution time: 79.5408046245575
+
+[train] Epoch: 52/80 xent: 0.021 softIoU: 7.890 IoU: 0.186 
+Execution time: 628.491691570729
+
+[valid] Epoch: 52/80 xent: 0.013 softIoU: 7.737 IoU: 0.119 
+Execution time: 78.58807912282646
+
+[train] Epoch: 53/80 xent: 0.020 softIoU: 7.891 IoU: 0.183 
+Execution time: 634.6629056725651
+
+[valid] Epoch: 53/80 xent: 0.013 softIoU: 7.739 IoU: 0.104 
+Execution time: 80.32355866767466
+
+[train] Epoch: 54/80 xent: 0.019 softIoU: 7.888 IoU: 0.196 
+Execution time: 635.6266866270453
+
+[valid] Epoch: 54/80 xent: 0.013 softIoU: 7.738 IoU: 0.113 
+Execution time: 81.84184121154249
+
+[train] Epoch: 55/80 xent: 0.017 softIoU: 7.891 IoU: 0.189 
+Execution time: 626.6238297969103
+
+[valid] Epoch: 55/80 xent: 0.013 softIoU: 7.737 IoU: 0.119 
+Execution time: 81.881447898224
+
+[train] Epoch: 56/80 xent: 0.017 softIoU: 7.888 IoU: 0.193 
+Execution time: 623.4114673566073
+
+[valid] Epoch: 56/80 xent: 0.012 softIoU: 7.738 IoU: 0.116 
+Execution time: 79.02572776377201
+
+[train] Epoch: 57/80 xent: 0.016 softIoU: 7.892 IoU: 0.197 
+Execution time: 636.8705485276878
+
+[valid] Epoch: 57/80 xent: 0.013 softIoU: 7.736 IoU: 0.131 
+Execution time: 78.91350603103638
+
+[train] Epoch: 58/80 xent: 0.022 softIoU: 7.887 IoU: 0.189 
+Execution time: 625.1423329692334
+
+[valid] Epoch: 58/80 xent: 0.013 softIoU: 7.739 IoU: 0.107 
+Execution time: 81.98480666056275
+
+[train] Epoch: 59/80 xent: 0.018 softIoU: 7.891 IoU: 0.194 
+Execution time: 629.2531660478562
+
+[valid] Epoch: 59/80 xent: 0.013 softIoU: 7.739 IoU: 0.110 
+Execution time: 81.15594042278826
+
+[train] Epoch: 60/80 xent: 0.018 softIoU: 7.889 IoU: 0.185 
+Execution time: 621.8052961044014
+
+[valid] Epoch: 60/80 xent: 0.013 softIoU: 7.737 IoU: 0.129 
+Execution time: 79.66388458199799
+
+[train] Epoch: 61/80 xent: 0.027 softIoU: 7.889 IoU: 0.188 
+Execution time: 634.0669980254024
+
+[valid] Epoch: 61/80 xent: 0.013 softIoU: 7.736 IoU: 0.123 
+Execution time: 83.19149988889694
+
+[train] Epoch: 62/80 xent: 0.017 softIoU: 7.890 IoU: 0.183 
+Execution time: 624.043153995648
+
+[valid] Epoch: 62/80 xent: 0.013 softIoU: 7.737 IoU: 0.122 
+Execution time: 79.75607677549124
+
+[train] Epoch: 63/80 xent: 0.018 softIoU: 7.887 IoU: 0.191 
+Execution time: 623.2910806052387
+
+[valid] Epoch: 63/80 xent: 0.013 softIoU: 7.736 IoU: 0.127 
+Execution time: 79.14747226983309
+
+[train] Epoch: 64/80 xent: 0.018 softIoU: 7.890 IoU: 0.202 
+Execution time: 619.2962090652436
+
+[valid] Epoch: 64/80 xent: 0.013 softIoU: 7.739 IoU: 0.104 
+Execution time: 81.48490653559566
+
+[train] Epoch: 65/80 xent: 0.017 softIoU: 7.891 IoU: 0.191 
+Execution time: 617.1320107523352
+
+[valid] Epoch: 65/80 xent: 0.013 softIoU: 7.738 IoU: 0.120 
+Execution time: 76.73770474642515
+
+[train] Epoch: 66/80 xent: 0.016 softIoU: 7.887 IoU: 0.208 
+Execution time: 626.842188892886
+
+[valid] Epoch: 66/80 xent: 0.012 softIoU: 7.736 IoU: 0.128 
+Execution time: 77.57173909246922
+
+[train] Epoch: 67/80 xent: 0.018 softIoU: 7.888 IoU: 0.195 
+Execution time: 617.8975567854941
+
+[valid] Epoch: 67/80 xent: 0.013 softIoU: 7.737 IoU: 0.124 
+Execution time: 80.11587470769882
+
+[train] Epoch: 68/80 xent: 0.017 softIoU: 7.887 IoU: 0.204 
+Execution time: 637.2396974414587
+
+[valid] Epoch: 68/80 xent: 0.013 softIoU: 7.737 IoU: 0.119 
+Execution time: 83.27379288710654
+
+[train] Epoch: 69/80 xent: 0.016 softIoU: 7.888 IoU: 0.206 
+Execution time: 632.7046899348497
+
+[valid] Epoch: 69/80 xent: 0.012 softIoU: 7.737 IoU: 0.124 
+Execution time: 79.84672184102237
+
+[train] Epoch: 70/80 xent: 0.015 softIoU: 7.887 IoU: 0.206 
+Execution time: 633.7418886832893
+
+[valid] Epoch: 70/80 xent: 0.013 softIoU: 7.738 IoU: 0.114 
+Execution time: 76.83488498069346
+
+[train] Epoch: 71/80 xent: 0.020 softIoU: 7.887 IoU: 0.202 
+Execution time: 630.4386779516935
+
+[valid] Epoch: 71/80 xent: 0.012 softIoU: 7.738 IoU: 0.115 
+Execution time: 80.63933605886996
+
+[train] Epoch: 72/80 xent: 0.021 softIoU: 7.889 IoU: 0.200 
+Execution time: 612.227516811341
+
+[valid] Epoch: 72/80 xent: 0.012 softIoU: 7.738 IoU: 0.114 
+Execution time: 77.5619155280292
+
+[train] Epoch: 73/80 xent: 0.018 softIoU: 7.889 IoU: 0.193 
+Execution time: 619.5350345186889
+
+[valid] Epoch: 73/80 xent: 0.013 softIoU: 7.738 IoU: 0.116 
+Execution time: 76.95629660226405
+
+[train] Epoch: 74/80 xent: 0.019 softIoU: 7.890 IoU: 0.186 
+Execution time: 586.1945445556194
+
+[valid] Epoch: 74/80 xent: 0.012 softIoU: 7.739 IoU: 0.106 
+Execution time: 69.29767449200153
+
+[train] Epoch: 75/80 xent: 0.018 softIoU: 7.888 IoU: 0.184 
+Execution time: 548.7402112614363
+
+[valid] Epoch: 75/80 xent: 0.013 softIoU: 7.737 IoU: 0.124 
+Execution time: 68.51257159933448
+
+[train] Epoch: 76/80 xent: 0.018 softIoU: 7.889 IoU: 0.187 
+Execution time: 546.8432567082345
+
+[valid] Epoch: 76/80 xent: 0.012 softIoU: 7.737 IoU: 0.125 
+Execution time: 69.85957854241133
+
+[train] Epoch: 77/80 xent: 0.017 softIoU: 7.890 IoU: 0.194 
+Execution time: 552.5512526351959
+
+[valid] Epoch: 77/80 xent: 0.013 softIoU: 7.736 IoU: 0.132 
+Execution time: 69.10235338285565
+
+[train] Epoch: 78/80 xent: 0.017 softIoU: 7.887 IoU: 0.193 
+Execution time: 547.3056305088103
+
+[valid] Epoch: 78/80 xent: 0.013 softIoU: 7.737 IoU: 0.120 
+Execution time: 69.72062907367945
+
+[train] Epoch: 79/80 xent: 0.019 softIoU: 7.890 IoU: 0.189 
+Execution time: 547.0073311459273
+
+[valid] Epoch: 79/80 xent: 0.013 softIoU: 7.737 IoU: 0.128 
+Execution time: 68.91348865628242
+
+Saved model at /home/sr365/Gaia/models/rwanda_rti_from_catalyst/random_5_percent_split/class_weight_1000_loss_weight_0.5_trail_0/ecresnet50_dcdlinknet_dsrwanda_rti_lre1e-03_lrd1e-02_ep80_bs16_ds50_75_dr0p1_crxent1p0_softiou0p5/epoch-80.pth.tar
+original saveroot /home/sr365/Gaia/models/rwanda_rti_from_catalyst/random_5_percent_split
+Device being used: cuda:3
+Finetuning model from /home/sr365/Gaia/pre_trained/catalyst_d4/d4_trail_0/epoch-80.pth.tar
+Total params: 179.77M
+Dataset rwanda_rti is not supported, use default mean stats instead
+Training model on the rwanda_rti dataset
+Dataset rwanda_rti is not supported, use default mean stats instead
+[train] Epoch: 0/80 xent: 0.479 softIoU: 7.985 IoU: 0.006 
+Execution time: 545.9923473764211
+
+[valid] Epoch: 0/80 xent: 0.210 softIoU: 7.812 IoU: 0.005 
+Execution time: 68.83414851501584
+
+[train] Epoch: 1/80 xent: 0.282 softIoU: 7.965 IoU: 0.013 
+Execution time: 552.1925480104983
+
+[valid] Epoch: 1/80 xent: 0.248 softIoU: 7.826 IoU: 0.004 
+Execution time: 70.33707639016211
+
+[train] Epoch: 2/80 xent: 0.250 softIoU: 7.964 IoU: 0.011 
+Execution time: 546.5968288611621
+
+[valid] Epoch: 2/80 xent: 0.184 softIoU: 7.809 IoU: 0.005 
+Execution time: 69.02943354658782
+
+[train] Epoch: 3/80 xent: 0.206 softIoU: 7.952 IoU: 0.018 
+Execution time: 544.736671788618
+
+[valid] Epoch: 3/80 xent: 0.098 softIoU: 7.772 IoU: 0.017 
+Execution time: 69.05828027613461
+
+[train] Epoch: 4/80 xent: 0.186 softIoU: 7.946 IoU: 0.017 
+Execution time: 547.253734247759
+
+[valid] Epoch: 4/80 xent: 0.111 softIoU: 7.787 IoU: 0.009 
+Execution time: 70.1780407000333
+
+[train] Epoch: 5/80 xent: 0.187 softIoU: 7.944 IoU: 0.019 
+Execution time: 549.6964325066656
+
+[valid] Epoch: 5/80 xent: 0.077 softIoU: 7.770 IoU: 0.023 
+Execution time: 68.59597845375538
+
+[train] Epoch: 6/80 xent: 0.154 softIoU: 7.941 IoU: 0.022 
+Execution time: 545.8298283517361
+
+[valid] Epoch: 6/80 xent: 0.078 softIoU: 7.777 IoU: 0.013 
+Execution time: 68.81024928949773
+
+[train] Epoch: 7/80 xent: 0.123 softIoU: 7.928 IoU: 0.032 
+Execution time: 551.0651961509138
+
+[valid] Epoch: 7/80 xent: 0.054 softIoU: 7.757 IoU: 0.037 
+Execution time: 69.04640000127256
+
+[train] Epoch: 8/80 xent: 0.144 softIoU: 7.935 IoU: 0.026 
+Execution time: 545.137730628252
+
+[valid] Epoch: 8/80 xent: 0.060 softIoU: 7.773 IoU: 0.019 
+Execution time: 69.4793999698013
+
+[train] Epoch: 9/80 xent: 0.095 softIoU: 7.920 IoU: 0.039 
+Execution time: 579.453536849469
+
+[valid] Epoch: 9/80 xent: 0.047 softIoU: 7.765 IoU: 0.023 
+Execution time: 78.78846419975162
+
+[train] Epoch: 10/80 xent: 0.109 softIoU: 7.922 IoU: 0.035 
+Execution time: 623.5538531951606
+
+[valid] Epoch: 10/80 xent: 0.055 softIoU: 7.750 IoU: 0.053 
+Execution time: 78.77889324352145
+
+[train] Epoch: 11/80 xent: 0.078 softIoU: 7.916 IoU: 0.048 
+Execution time: 629.866573555395
+
+[valid] Epoch: 11/80 xent: 0.036 softIoU: 7.745 IoU: 0.058 
+Execution time: 80.4158124960959
+
+[train] Epoch: 12/80 xent: 0.106 softIoU: 7.916 IoU: 0.033 
+Execution time: 621.0556057915092
+
+[valid] Epoch: 12/80 xent: 0.040 softIoU: 7.756 IoU: 0.043 
+Execution time: 80.6324209664017
+
+[train] Epoch: 13/80 xent: 0.106 softIoU: 7.913 IoU: 0.052 
+Execution time: 625.7386167868972
+
+[valid] Epoch: 13/80 xent: 0.036 softIoU: 7.761 IoU: 0.037 
+Execution time: 81.50998833589256
+
+[train] Epoch: 14/80 xent: 0.065 softIoU: 7.907 IoU: 0.057 
+Execution time: 611.705068225041
+
+[valid] Epoch: 14/80 xent: 0.026 softIoU: 7.747 IoU: 0.053 
+Execution time: 75.12939529120922
+
+[train] Epoch: 15/80 xent: 0.051 softIoU: 7.901 IoU: 0.081 
+Execution time: 608.1305889710784
+
+[valid] Epoch: 15/80 xent: 0.035 softIoU: 7.755 IoU: 0.033 
+Execution time: 77.60459272190928
+
+[train] Epoch: 16/80 xent: 0.056 softIoU: 7.902 IoU: 0.069 
+Execution time: 621.3776454627514
+
+[valid] Epoch: 16/80 xent: 0.025 softIoU: 7.747 IoU: 0.060 
+Execution time: 76.21053523384035
+
+[train] Epoch: 17/80 xent: 0.052 softIoU: 7.901 IoU: 0.078 
+Execution time: 591.7592194080353
+
+[valid] Epoch: 17/80 xent: 0.021 softIoU: 7.747 IoU: 0.055 
+Execution time: 72.6690875608474
+
+[train] Epoch: 18/80 xent: 0.050 softIoU: 7.901 IoU: 0.078 
+Execution time: 585.8493546191603
+
+[valid] Epoch: 18/80 xent: 0.020 softIoU: 7.743 IoU: 0.066 
+Execution time: 72.5281686950475
+
+[train] Epoch: 19/80 xent: 0.075 softIoU: 7.900 IoU: 0.078 
+Execution time: 589.2313540913165
+
+[valid] Epoch: 19/80 xent: 0.027 softIoU: 7.752 IoU: 0.042 
+Execution time: 71.56799727119505
+
+[train] Epoch: 20/80 xent: 0.045 softIoU: 7.899 IoU: 0.084 
+Execution time: 587.0648093838245
+
+[valid] Epoch: 20/80 xent: 0.024 softIoU: 7.740 IoU: 0.085 
+Execution time: 72.52405220456421
+
+[train] Epoch: 21/80 xent: 0.039 softIoU: 7.896 IoU: 0.109 
+Execution time: 587.784859796986
+
+[valid] Epoch: 21/80 xent: 0.022 softIoU: 7.744 IoU: 0.065 
+Execution time: 72.74913665279746
+
+[train] Epoch: 22/80 xent: 0.041 softIoU: 7.893 IoU: 0.110 
+Execution time: 580.8709619864821
+
+[valid] Epoch: 22/80 xent: 0.019 softIoU: 7.743 IoU: 0.064 
+Execution time: 73.40806036628783
+
+[train] Epoch: 23/80 xent: 0.047 softIoU: 7.897 IoU: 0.091 
+Execution time: 588.0461409278214
+
+[valid] Epoch: 23/80 xent: 0.023 softIoU: 7.745 IoU: 0.059 
+Execution time: 73.37770523317158
+
+[train] Epoch: 24/80 xent: 0.033 softIoU: 7.895 IoU: 0.118 
+Execution time: 583.2737742960453
+
+[valid] Epoch: 24/80 xent: 0.023 softIoU: 7.738 IoU: 0.095 
+Execution time: 71.97630744799972
+
+[train] Epoch: 25/80 xent: 0.033 softIoU: 7.892 IoU: 0.124 
+Execution time: 589.1548307575285
+
+[valid] Epoch: 25/80 xent: 0.018 softIoU: 7.736 IoU: 0.108 
+Execution time: 71.84930727444589
+
+[train] Epoch: 26/80 xent: 0.039 softIoU: 7.895 IoU: 0.110 
+Execution time: 588.723344899714
+
+[valid] Epoch: 26/80 xent: 0.020 softIoU: 7.743 IoU: 0.066 
+Execution time: 73.4296902641654
+
+[train] Epoch: 27/80 xent: 0.031 softIoU: 7.892 IoU: 0.125 
+Execution time: 590.220314944163
+
+[valid] Epoch: 27/80 xent: 0.021 softIoU: 7.736 IoU: 0.107 
+Execution time: 71.47732246108353
+
+[train] Epoch: 28/80 xent: 0.036 softIoU: 7.892 IoU: 0.132 
+Execution time: 584.1624718569219
+
+[valid] Epoch: 28/80 xent: 0.019 softIoU: 7.746 IoU: 0.062 
+Execution time: 72.17183263041079
+
+[train] Epoch: 29/80 xent: 0.032 softIoU: 7.892 IoU: 0.142 
+Execution time: 584.0593559648842
+
+[valid] Epoch: 29/80 xent: 0.023 softIoU: 7.751 IoU: 0.046 
+Execution time: 73.36088211461902
 

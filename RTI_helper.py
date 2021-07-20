@@ -215,12 +215,12 @@ def make_file_list_for_RTI_Rwanda():
             f.write('\n')
 
 
-def sub_sample_randomly_image_label_pair(sample_size=0.05, mode='mv'):
+def sub_sample_randomly_image_label_pair(sample_size=0.005, mode='mv'):
     """
     This function subsamples a random portion of the image and label pair for the RTI dataset
     """
-    source_folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all/patches/'
-    dest_folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all_train_5_percent/patches/'
+    source_folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/geo_test/patches/'
+    dest_folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/geo_test_sample_10_percent/patches/'
     for file in os.listdir(source_folder):
         if not file.endswith('.png'):
             continue
@@ -275,13 +275,13 @@ if __name__ == '__main__':
     # check_labels_complete()
     #check_RTI_image_label_size_match()
     #get_rid_of_low_information_images()
-    make_file_list_for_RTI_Rwanda()
+    # make_file_list_for_RTI_Rwanda()
 
     # Getting rid of the test files that does not contains any solar panels
     # An complete dark label has 334 Byte of information
     # get_rid_of_low_information_images(335, mode='label')
 
-    # sub_sample_randomly_image_label_pair(mode='cp')
+    sub_sample_randomly_image_label_pair(mode='cp')
 
     # remove the model folder from the inference
     #rename_infered_folder()
