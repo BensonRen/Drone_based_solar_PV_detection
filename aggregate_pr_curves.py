@@ -258,8 +258,8 @@ def get_hyper_param_axis_unique(mother_folder, draw_type, x_axis, y_axis):
     print('unique values in y axis', y_axis_unique)
     return x_axis_unique, y_axis_unique
 
-def draw_things_into_one_plot(mother_folder, draw_type='AUPR', x_axis = 'iou_th', y_axis = 'min_th',
-                             save_name='agg_plot', fpr_threshold=FPR_THRESHOLD):
+def draw_things_into_one_plot(mother_folder, draw_type='AUPR', x_axis = 'iou_th', y_axis = 'min_th', 
+                            save_name='agg_plot', fpr_threshold=FPR_THRESHOLD, dila=5):
     """
     This function draws a number of plots into a single plot so that I do not have to put them one-by-one into a damn ppt slide
     Note that the third variable has to stay constant in this process, otherwise the program would break
@@ -468,13 +468,23 @@ if __name__ == '__main__':
     #                     '/scratch/sr365/PR_curves/dx_test_trail_2']
     
     # # Comparing various PR curve values
+    compare_dir_list = ['/scratch/sr365/PR_curves/dx_train_trail_{}'.format(i) for i in range(4)]
     # compare_dir_list = ['/scratch/sr365/PR_curves/dx_train_trail_0',
     #                     '/scratch/sr365/PR_curves/dx_train_trail_1',
     #                     '/scratch/sr365/PR_curves/dx_train_trail_2']
-    # draw_type_list = ['AUPR', 'F1PR','max_recall_recall_PR','max_recall_precision_PR']
-    # for draw_type in draw_type_list:
-    #     plot_mean_variance_from_aggregate(compare_dir_list, save_dir='/scratch/sr365/PR_curves/compare_plot_dx_train/',
-    #                                         draw_type=draw_type)
+    fpr_threshold_list = [1e-4, 2e-4, 3e-4, 4e-4, 5e-4]
+
+    draw_type_list = ['AUPR', 'F1PR','max_recall_recall_PR','max_recall_precision_PR']
+    # for fpr_thres in fpr_threshold_list:
+    #     draw_things_into_one_plot('/scratch/sr365/PR_curves/dx_dx_test_set_ensemble', 
+    #                             draw_type='normalized_fpr_ROC', fpr_threshold=fpr_thres)
+    #     draw_things_into_one_plot('/scratch/sr365/PR_curves/dx_dx_train_set_ensemble',
+    #                             draw_type='normalized_fpr_ROC', fpr_threshold=fpr_thres)
+    for draw_type in draw_type_list:
+        # draw_things_into_one_plot('/scratch/sr365/PR_curves/dx_dx_test_set_ensemble', draw_type=draw_type)
+        # draw_things_into_one_plot('/scratch/sr365/PR_curves/dx_dx_train_set_ensemble', draw_type=draw_type)
+        plot_mean_variance_from_aggregate(compare_dir_list, save_dir='/scratch/sr365/PR_curves/compare_plot_dx_train/',
+                                            draw_type=draw_type)
     
     # mother_dir = '/scratch/sr365/PR_curves/dx_dx_test_set'
     # mother_dir = '/scratch/sr365/PR_curves/every_10_meter_test'
@@ -485,6 +495,44 @@ if __name__ == '__main__':
     #                     '/scratch/sr365/PR_curves/dx_train_trail_0',
     #                     '/scratch/sr365/PR_curves/dx_train_trail_1',
     #                     '/scratch/sr365/PR_curves/dx_train_trail_2']
+    #################
+    # Gaia specific #
+    #################
+    mother_dir_list = ['/scratch/sr365/PR_curves/dx_dx_test_set_ensemble']#,
+    #                   '/scratch/sr365/PR_curves/dx_dx_train_set_ensemble']
+    num_cpu = 64
+
+    # # Trying different iou_threshold and min threshold for confidence intensity
+    # if num_cpu > 1:
+    #     try: 
+    #         pool = Pool(num_cpu)
+    #         # The value agnostic version where directory is provided
+    #         args_list = []
+    #         for mother_dir in mother_dir_list:
+    #             for folder in os.listdir(mother_dir):
+    #                 if 'iou_th' not in folder:      # Make sure this is a iou_th and hyper-param sweeping folder
+    #                         continue
+    #                 for fpr_threshold in fpr_threshold_list:
+    #                     iou_th, min_th, dila = get_iou_th_min_th_dila_from_name(folder)
+    #                     args_list.append((os.path.join(mother_dir, folder), dila, 30, min_th, iou_th, fpr_threshold))         # 30 is the min region parameter
+    #         pool.starmap(draw_a_lot_of_curves, args_list)
+    #     finally:
+    #         pool.close()
+    #         pool.join()
+    # else:
+    #     for mother_dir in mother_dir_list:
+    #         for folder in os.listdir(mother_dir):
+    #             if 'iou_th' not in folder:      # Make sure this is a iou_th and hyper-param sweeping folder
+    #                 continue
+    #             for fpr_threshold in fpr_threshold_list:
+    #                 iou_th, min_th, dila = get_iou_th_min_th_dila_from_name(folder)
+    #                 draw_a_lot_of_curves(os.path.join(mother_dir, folder), dila, 30, min_th, iou_th, fpr_threshold)          # 30 is the min region parameter
+
+    
+    #################
+    # quad specific #
+    #################
+    """
     #mother_dir_list = ['/scratch/sr365/PR_curves/dx_dx_train_set_ensemble']
     # fpr_threshold_list = [1e-4, 2e-4, 3e-4, 4e-4, 5e-4]
     
@@ -504,7 +552,7 @@ if __name__ == '__main__':
         finally:
             pool.close()
             pool.join()
-
+    """
     # draw_type_list = ['AUPR', 'F1PR','max_recall_recall_PR','max_recall_precision_PR']
     # try: 
     #     pool = Pool(num_cpu)
