@@ -1,5 +1,5 @@
 {
-    "gpu": "0",
+    "gpu": "3",
     "encoder_name": "resnet50",
     "decoder_name": "dlinknet",
     "random_seed": 1,
@@ -10,10 +10,10 @@
       "class_num": 2,
       "mean" : "(0.485, 0.456, 0.406)",
       "std" : "(0.229, 0.224, 0.225)",
-      "data_dir": "/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/new_all/patches",
-      "train_file": "/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/new_all/file_list_train.txt",
-      "valid_file": "/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/new_all/file_list_valid.txt",
-      "batch_size": 32,
+      "data_dir": "/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all_train_5_percent/patches",
+      "train_file": "/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all_train_5_percent/file_list_train.txt",
+      "valid_file": "/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all_train_5_percent/file_list_test.txt",
+      "batch_size": 16,
       "num_workers": 16
     },
     "optimizer": {
@@ -32,8 +32,8 @@
       "epochs": 80,
       "save_epoch": 40,
       "resume_epoch": 0,
-      "finetune_dir": "/home/sr365/Gaia/pre_trained/ct/epoch-80.pth.tar",
-      "save_root": "/home/sr365/Gaia/models/rwanda_rti_from_ct_class_weight_200"
+      "finetune_dir": "/home/sr365/Gaia/pre_trained/catalyst_d4/d4_trail_0/epoch-80.pth.tar",
+      "save_root": "/home/sr365/Gaia/models/rwanda_rti_from_catalyst/random_5_percent_split"
     }
   }
   
