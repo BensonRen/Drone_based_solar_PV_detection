@@ -69,9 +69,13 @@ def plot_PR_curve(min_region, dilation_size, link_r, min_th, iou_th, conf_dir_li
                 conf_img, lbl_img = conf_dict[tile]/255, gt_dict[tile][:, :, 0]                                 # Get the confidence image and the label image
             else:
                 conf_img, lbl_img = conf_dict[tile]/255, gt_dict[tile]  
+            # save_confusion_map = conf_dir.split('Catalyst_data')[-1].split('image')[0].replace('/','_') + tile    # THis is for 
+            save_confusion_map = conf_dir.split('images/')[-1].replace('/','_') + tile
+            print('the save confusion plot name is :', save_confusion_map)
             conf_tile, true_tile = eval_utils.score(                                                        # Call a function in utils.score to score this
                 conf_img, lbl_img, min_region=min_region, min_th=min_th/255, 
-                dilation_size=dilation_size, link_r=link_r, iou_th=iou_th)    
+                dilation_size=dilation_size, link_r=link_r, iou_th=iou_th,
+                save_confusion_map=save_confusion_map)    
             conf_list.extend(conf_tile)
             true_list.extend(true_tile)
             if calculate_area:              # For RTI data this  is off
@@ -232,7 +236,7 @@ def bulk_object_pr():
     # save_title = 'single_image'
     # plot_PR_curve(min_region, dilation_size, link_r, min_th)
 
-def take_pair_wise_object_pr(i, j, min_region, dilation_size, min_th, iou_th, trail):
+def take_pair_wise_object_pr(i, j, min_region, dilation_size, min_th, iou_th, trail=0):
     # # Every 10 meters
     # output_dir = '/scratch/sr365/PR_curves/every_10_meter_train/iou_th_{}_min_th_{}_dila_{}'.format(iou_th, min_th, dilation_size)
     # # output_dir = '/scratch/sr365/PR_curves/every_10_meter_test/iou_th_{}_min_th_{}_dila_{}'.format(iou_th, min_th, dilation_size)
@@ -243,14 +247,26 @@ def take_pair_wise_object_pr(i, j, min_region, dilation_size, min_th, iou_th, tr
     # prefix = 'train_model_{}0m_test_{}0m'.format(j, i)
 
     # Every 20 meters
+    ###############################
+    # The 20m ensemble test group #
+    ###############################
     prefix = 'model_d{}_test_d{}'.format(j, i)
-    gt_dir = '/scratch/sr365/Catalyst_data/d{}/annotations'.format(i)
+    gt_dir = '/scratch/sr365/Catalyst_data/every_20m/d{}/annotations'.format(i)
+    output_dir = '/scratch/sr365/PR_curves/dx_dx_test_set_ensemble/iou_th_{}_min_th_{}_dila_{}'.format(iou_th, min_th, dilation_size)
+    conf_dir = '/scratch/sr365/Catalyst_data/every_20m/d{}/images/test_domain_ensembled_img_d{}_model_d{}'.format(i, i, j)
+    ############################
+    # The 20m change res group #
+    ############################
+    # prefix = 'd{}_change_res_to_d{}'.format(j, i)
+    # gt_dir = '/scratch/sr365/Catalyst_data/every_20m_change_res/d{}_change_res_to_d{}/annotations'.format(j, i)
+    # output_dir = '/scratch/sr365/PR_curves/d{}_change_res_to_d{}/iou_th_{}_min_th_{}_dila_{}'.format(j, i, iou_th, min_th, dilation_size)
+    # conf_dir = '/scratch/sr365/Catalyst_data/every_20m_change_res/d{}_change_res_to_d{}/images/from_catalyst/best_model/'.format(j, i)
+    
     # output_dir = '/scratch/sr365/PR_curves/dx_dx_test_set/iou_th_{}_min_th_{}_dila_{}'.format(iou_th, min_th, dilation_size)
-    # output_dir = '/scratch/sr365/PR_curves/dx_dx_test_set_ensemble/iou_th_{}_min_th_{}_dila_{}'.format(iou_th, min_th, dilation_size)
-    output_dir = '/scratch/sr365/PR_curves/dx_test_trail_{}/iou_th_{}_min_th_{}_dila_{}'.format(trail, iou_th, min_th, dilation_size)
+    # output_dir = '/scratch/sr365/PR_curves/dx_test_trail_{}/iou_th_{}_min_th_{}_dila_{}'.format(trail, iou_th, min_th, dilation_size)
     # conf_dir = '/scratch/sr365/Catalyst_data/d{}/images/train_set/ecresnet50_dcdlinknet_dscatalyst_d{}_lre1e-03_lrd1e-02_ep120_bs16_ds50_75_dr0p1_crxent1p0_softiou0p5'.format(i, j)
-    # conf_dir = '/scratch/sr365/Catalyst_data/d{}/images/test_domain_ensembled_img_d{}_model_d{}'.format(i, i, j)
-    conf_dir = '/scratch/sr365/Catalyst_data/d{}/images/test_domain_trail_{}/ecresnet50_dcdlinknet_dscatalyst_d{}_lre1e-03_lrd1e-02_ep80_bs16_ds50_75_dr0p1_crxent1p0_softiou0p5'.format(i, trail, j)
+    
+    # conf_dir = '/scratch/sr365/Catalyst_data/d{}/images/test_domain_trail_{}/ecresnet50_dcdlinknet_dscatalyst_d{}_lre1e-03_lrd1e-02_ep80_bs16_ds50_75_dr0p1_crxent1p0_softiou0p5'.format(i, trail, j)
     #output_dir = '/scratch/sr365/PR_curves/dx_dx_test_set/iou_th_{}_min_th_{}_dila_{}'.format(iou_th, min_th, dilation_size)
     #conf_dir = '/scratch/sr365/Catalyst_data/d{}/images/train_set/ecresnet50_dcdlinknet_dscatalyst_d{}_lre1e-03_lrd1e-02_ep120_bs16_ds50_75_dr0p1_crxent1p0_softiou0p5'.format(i, j)
     
@@ -297,37 +313,42 @@ def take_object_pr_RTI(output_dir, conf_dir, gt_dir, prefix,  min_region, dilati
                 save_title=save_title, output_dir=output_dir, calculate_area=False)
 
 if __name__ == '__main__':
-    # # For the Exp 1 & 2
-    # num_cpu = 64
-    # try: 
-    #     pool = Pool(num_cpu)
-    #     min_region = 30
-    #     dilation_size = 5
-    #     min_th = 2
-    #     iou_th = 0.2
-    #     args_list = []
-    #     min_th_list = np.array([0.3, 0.5, 0.7])
-    #     min_th_list = min_th_list * 255   
-    #     print(min_th_list)
-    #     for min_th in min_th_list:
-    #         for iou_th in [0.2, 0.4, 0.6]:
-    #         #for iou_th in [0.4]:
-    #             min_th = int(min_th)        # Make sure it is a integer
-    #             # Every 10 meters
-    #             # for i in range(5, 13):
-    #             #     for j in range(5, 13):
-    #             # Every 20 meters
-    #             for i in range(1, 5):
-    #                 for j in range(1, 5):
-    #                     args_list.append((i, j, min_region, dilation_size, min_th, iou_th))
-    #     print(args_list)
-    #     pool.starmap(take_pair_wise_object_pr, args_list)
-    # finally:
-    #     pool.close()
-    #     pool.join()
+    # For the Exp 1 & 2
+    num_cpu = 64
+    try: 
+        pool = Pool(num_cpu)
+        min_region = 30
+        dilation_size = 5
+        min_th = 2
+        iou_th = 0.2
+        args_list = []
+        min_th_list = np.array([0.5])
+        min_th_list = min_th_list * 255   
+        print(min_th_list)
+        for min_th in min_th_list:
+            for iou_th in [0.2, 0.5]:
+            #for iou_th in [0.4]:
+                min_th = int(min_th)        # Make sure it is a integer
+                # Every 10 meters
+                # for i in range(5, 13):
+                #     for j in range(5, 13):
+                # Every 20 meters
+                for i in range(1, 5):
+                    for j in range(1, 5):
+                        ######################################
+                        # This if for the change res setting #
+                        ######################################
+                        if i == j:
+                            continue
+                        args_list.append((i, j, min_region, dilation_size, min_th, iou_th))
+        print(args_list)
+        pool.starmap(take_pair_wise_object_pr, args_list)
+    finally:
+        pool.close()
+        pool.join()
     
 
-
+    """
     # For the Exp 4 RTI work
     num_cpu = 64
     try: 
@@ -343,24 +364,12 @@ if __name__ == '__main__':
         gt_dir_list = ['/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/train_object_only/patches',
                      '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/test_object_only/patches']
         for min_th in min_th_list:
-            for iou_th in [0.2, 0.3, 0.4]:
-            #for iou_th in [0.4]:
+            for iou_th in [0.2, 0.5]:
                 min_th = int(min_th)        # Make sure it is a integer
-                #################
-                # Gaia specific #
-                #################
-                # Every 10 meters
-                # for i in range(5, 13):
-                #     for j in range(5, 13):
-                # Every 20 meters
-                for i in range(1, 5):
-                    for j in range(1, 5):
-                        for trail in range(5):
-                            args_list.append((i, j, min_region, dilation_size, min_th, iou_th, trail))
                 ######################
                 # quad 3090 specific #
                 ######################
-                """
+                ""
                 for gt_dir in gt_dir_list:
                     conf_dir_list = []
                     # Add folder to the confidence directory
@@ -379,12 +388,12 @@ if __name__ == '__main__':
                         print('conf dir ', conf_dir)
                         print('output dir ', output_folder)
                         args_list.append((output_folder, conf_dir, gt_dir, '', min_region, dilation_size, min_th, iou_th))
-                """
+                ""
         print(args_list)
         pool.starmap(take_object_pr_RTI, args_list)
     finally:
         pool.close()
         pool.join()
-
+    """
     # temporary for visualizatin purpose
     # take_pair_wise_object_pr(5, 5, 30, 5, 127, 0.3)

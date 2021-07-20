@@ -48,16 +48,19 @@ if __name__ == '__main__':
     #make_file_list(data_dir)
     
     # Make file list for a group of folders
-    dir_group = ['/scratch/sr365/Catalyst_data/d{}/images'.format(i) for i in range(1, 5)]
+    # dir_group = ['/scratch/sr365/Catalyst_data/d{}/images'.format(i) for i in range(1, 5)]
 
     
     # The cross validation
-    # dir_group = []
+    dir_group = []
     # for i in range(5, 13):
     #     for j in range(5, 13):
-    #         if i == j:
-    #             continue
-    #         dir_group.append('/scratch/sr365/Catalyst_data/every_10m_change_res/{}0m_resample_to_{}0m/images'.format(i, j))
+    for i in range(1, 5):
+        for j in range(1, 5):
+            if i == j:
+                continue
+            dir_group.append('/scratch/sr365/Catalyst_data/every_20m_change_res/d{}_change_res_to_d{}/images'.format(i,j ))
+            #dir_group.append('/scratch/sr365/Catalyst_data/every_10m_change_res/{}0m_resample_to_{}0m/images'.format(i, j))
 
     # Test set
     group_make_file_list(dir_group, must_have='BW', must_not_have=None)

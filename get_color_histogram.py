@@ -1,11 +1,12 @@
 # This function/script is to get the color histogram of a set of images so that to compare the domain difference between 2 domains
 import cv2
 import numpy as np
+from skimage.morphology import dilation, disk
 import os
 from matplotlib import pyplot as plt
 
 
-def get_color_histogram(folder, save_name, save_dir, post_fix='.jpg' ,mask_option=False, normalize=True):
+def get_color_histogram(folder, save_name, save_dir, post_fix='.jpg' ,mask_option=False, normalize=True, dilation=0):
     """
     The main function to plot the comparison of color histogram of 2 folders
     :param folder: The folder containing the images
@@ -33,8 +34,9 @@ def get_color_histogram(folder, save_name, save_dir, post_fix='.jpg' ,mask_optio
             if np.max(mask) > 1:    #  Normalize the mask
                 print('normalizing mask')
                 mask = mask / np.max(mask)
-            elif np.max(mask) == 1:
-                print('the mask max is 1')
+            # Adding dilation to the labels so that local information is accounted for
+            if dilation > 0:
+                mask = dilation(mask, disk(dilation))
         else:
             # print('getting only the content pixels')
             # If we calculate all of them, we want to get rid of the total black pixles which is artifact from 
@@ -90,16 +92,33 @@ if __name__ == '__main__':
     
 
     # Batch process
+    """
+    #################
+    # quad specific #
+    #################
     folder_list = ['/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/geo_train/patches',
                     '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/geo_train/patches',
                     '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/geo_test/patches',
                     '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/geo_test/patches']
                     
     save_name_list = ['geo_train', 'geo_train_object', 'geo_test','geo_test_object']
+    save_dir = '/home/sr365/Gaia/color_hist'
+    """ 
+    #################
+    # Gaia specific #
+    ################# 
+    folder_list = ['/scratch/sr365/Catalyst_data/d{}/test_patches'.format(i) for i in range(1, 5)] + \
+                  ['/scratch/sr365/Catalyst_data/d{}/train_patches'.format(i) for i in range(1, 5)] +\
+                  ['/scratch/sr365/Catalyst_data/d{}/test_patches'.format(i) for i in range(1, 5)] + \
+                  ['/scratch/sr365/Catalyst_data/d{}/train_patches'.format(i) for i in range(1, 5)] 
+                    
+    save_name_list = ['d{}_BW'.format(i) for i in range(1, 5)] + ['d{}_Couch'.format(i) for i in range(1, 5)] + \
+                    ['d{}_BW_object'.format(i) for i in range(1, 5)] + ['d{}_Couch_object'.format(i) for i in range(1, 5)]
+    save_dir = '/scratch/sr365/color_hist'
     for folder, save_name in zip(folder_list, save_name_list):
         # If the name has object, then it is using the mask
         if 'object' in save_name:
             mask_option = True
         else:
             mask_option = False
-        get_color_histogram(folder, save_name, save_dir='/home/sr365/Gaia/color_hist', mask_option=mask_option)
+        get_color_histogram(folder, save_name, save_dir=save_dir, mask_option=mask_option)

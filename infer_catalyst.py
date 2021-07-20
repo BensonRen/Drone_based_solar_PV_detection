@@ -17,7 +17,7 @@ from network import network_io, network_utils
 from make_file_list import make_file_list
 # Settings
 
-GPU = 0
+GPU = 2
 #general_folder = r'/scratch/sr365/Catalyst_data/'
 #general_folder = r'/scratch/sr365/RTI_data/positive_class'
 #general_folder = r'/scratch/sr365/Catalyst_data/moving_imgs/labelled/img'
@@ -75,7 +75,7 @@ FILE_LIST = os.path.join(DATA_DIR, 'file_list_raw.txt') # A list of full path of
 DS_NAME = 'Catalyst_video' # Whatever you like to name it
 
 
-PATCH_SIZE = (2048, 2048)
+PATCH_SIZE = (1024, 1024)
 
 
 def calculate_intersection(image_1: np.ndarray, image_2: np.ndarray):
@@ -235,6 +235,10 @@ def infer_confidence_map(DATA_DIR=DATA_DIR, SAVE_ROOT=SAVE_ROOT, FILE_LIST=FILE_
 
 def aggregate_infer():
     # # Re-sampled list
+    ###################
+    # Gaia specific   #
+    # Every 10 meters #
+    ###################
     # data_dir_list, model_dir_list = [], []
     # for i in range(9, 13):      # Model index
     #     for j in range(5, 13):  # Test index
@@ -246,22 +250,39 @@ def aggregate_infer():
     # data_dir_list = ['/scratch/sr365/Catalyst_data/every_10m/{}0m/images/'.format(i) for i in range(9, 13)]
     # model_dir_list = ['/scratch/sr365/models/catalyst_10m/catalyst_from_ct_{}0m/best_model'.format(i) for i in range(5, 13)]
     
+    ###################
+    # Gaia specific   #
+    # Every 20 meters #
+    ###################
+    data_dir_list, model_dir_list = [], []
+    # for i in range(1, 5):      # Model index
+    i=4
+    for j in range(1, 5):  # Test index
+        if i == j:          # Do not make inference for the same resolution
+            continue
+        data_dir_list.append('/scratch/sr365/Catalyst_data/every_20m_change_res/d{}_change_res_to_d{}/images'.format(j, i))
+        model_dir_list.append('/scratch/sr365/models/catalyst_from_ct_d{}/best_model'.format(i))
 
-    data_dir_list = ['/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/train_object_only',
-                     '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/test_object_only']
-    # model_mother_folder_list = ['/home/sr365/Gaia/models/rwanda_rti_from_ct']
-    model_mother_folder_list = [ '/home/sr365/Gaia/models/rwanda_rti_from_catalyst']
-    model_dir_list = []
-    for mother_folder in model_mother_folder_list:
-        for folder in os.listdir(mother_folder):
-            model_dir_list.append(os.path.join(mother_folder, folder))
+    
+    ###################
+    # quad specific   #
+    # Rwanda RTI data #
+    ###################
+    # data_dir_list = ['/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/train_object_only',
+    #                  '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/test_object_only']
+    # # model_mother_folder_list = ['/home/sr365/Gaia/models/rwanda_rti_from_ct']
+    # model_mother_folder_list = [ '/home/sr365/Gaia/models/rwanda_rti_from_catalyst']
+    # model_dir_list = []
+    # for mother_folder in model_mother_folder_list:
+    #     for folder in os.listdir(mother_folder):
+    #         model_dir_list.append(os.path.join(mother_folder, folder))
 
     # For the pair-wise evaluations
-    for DATA_DIR in data_dir_list:
-        for MODEL_DIR in model_dir_list:
+    # for DATA_DIR in data_dir_list:
+    #     for MODEL_DIR in model_dir_list:
     
     # The single loop is for the within-domain evaluation
-    # for DATA_DIR, MODEL_DIR in zip(data_dir_list, model_dir_list):
+    for DATA_DIR, MODEL_DIR in zip(data_dir_list, model_dir_list):
             DS_NAME = 'catalyst_dx'
             LOAD_EPOCH = 80
             SAVE_ROOT = os.path.join(DATA_DIR, 'from_catalyst') # Parent directory of input images in .jpg format
