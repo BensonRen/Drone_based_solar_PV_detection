@@ -19,7 +19,7 @@ from skimage.morphology import dilation, disk, erosion
 from scipy.spatial import KDTree
 import pydensecrf.densecrf as dcrf
 from pydensecrf.utils import unary_from_softmax
-from sklearn.metrics import precision_recall_curve, average_precision_score
+from sklearn.metrics import precision_recall_curve, auc
 import matplotlib.pyplot as plt
 from skimage import io
 import cv2
@@ -237,11 +237,7 @@ def dummyfy(original_img, reg_props):
         dummy[coords[:, 0], coords[:, 1]] = 1
     return dummy
 
-def score(pred, lbl, min_region=5, min_th=0.5, dilation_size=5, link_r=20, eps=2, iou_th=0.5, save_confusion_map=None):
-    """
-    Added new feature of saving confusion map of prediction for problem diagnose
-    :param save_confusion_map: Default None. Typically pass the name of the tile inferred
-    """
+def score(pred, lbl, min_region=5, min_th=0.5, dilation_size=5, link_r=20, eps=2, iou_th=0.5):
     obj_scorer = ObjectScorer(min_region, min_th, dilation_size, link_r, eps)
 
     # Get the list of groups (each group represent a group of pixels that are connected)
@@ -253,46 +249,48 @@ def score(pred, lbl, min_region=5, min_th=0.5, dilation_size=5, link_r=20, eps=2
     group_pred = obj_scorer.get_object_groups(pred)  # Ben added
     # print('doing object group for labels')        # Ben added
     group_lbl = obj_scorer. get_object_groups(lbl)
-    # Plotting the 
-    pred_map = dummyfy(pred, group_pred)
-    # f = plt.figure()
-    # pred_map = np.reshape(pred_map, [-1, 1])
-    lbl_map = lbl > 0
-    # lbl_map = np.reshape(lbl, [-1, 1])
-    TP =  np.logical_and(np.equal(pred_map, lbl_map), np.equal(pred_map, 1))
-    FP =  np.logical_and(np.not_equal(pred_map, lbl_map), np.equal(pred_map, 1))
-    FN =  np.logical_and(np.not_equal(pred_map, lbl_map), np.equal(pred_map, 0))
-    TN =  np.logical_and(np.equal(pred_map, lbl_map), np.equal(pred_map, 0))
-    # print('number of true positive', np.sum(TP))
-    # print('number of false positive', np.sum(FP))
-    # print('number of false negative', np.sum(FN))
-    confusion_plot = np.zeros([*np.shape(lbl), 3])
+    # # Plotting the 
+    # pred_map = dummyfy(pred, group_pred)
+    # # f = plt.figure()
+    # # pred_map = np.reshape(pred_map, [-1, 1])
+    # lbl_map = lbl > 0
+    # # lbl_map = np.reshape(lbl, [-1, 1])
+    # TP =  np.logical_and(np.equal(pred_map, lbl_map), np.equal(pred_map, 1))
+    # FP =  np.logical_and(np.not_equal(pred_map, lbl_map), np.equal(pred_map, 1))
+    # FN =  np.logical_and(np.not_equal(pred_map, lbl_map), np.equal(pred_map, 0))
+    # TN =  np.logical_and(np.equal(pred_map, lbl_map), np.equal(pred_map, 0))
+    # # print('number of true positive', np.sum(TP))
+    # # print('number of false positive', np.sum(FP))
+    # # print('number of false negative', np.sum(FN))
+    # confusion_plot = np.zeros([*np.shape(lbl), 3])
     # print(np.shape(confusion_plot))
-    for i in range(np.shape(TP)[0]):
-        for j in range(np.shape(TP)[1]):
-            if TP[i, j] == 1:
-                confusion_plot[i, j, 0] = 255
-            elif FP[i, j] == 1:
-                confusion_plot[i, j, 1] = 255
-            elif FN[i, j] == 1:
-                confusion_plot[i, j, 2] = 255
-    # # Add text for labelling the size of the 
-    for pred_object in group_pred:
-        text_pos = (int(pred_object.centroid[1]), int(pred_object.centroid[0]))
-        cv2.putText(img=confusion_plot, text='{}'.format(pred_object.area), org=text_pos, 
-                    fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.5, color=(255, 255, 0))
-    for lbl_object in group_lbl:
-        text_pos = (int(lbl_object.centroid[1])+10, int(lbl_object.centroid[0])+10)
-        cv2.putText(img=confusion_plot, text='{}'.format(lbl_object.area),  org=text_pos,
-                    fontFace=cv2.FONT_HERSHEY_SIMPLEX,  fontScale=0.5, color=(0, 255, 255))
-    io.imsave('/scratch/sr365/PR_curves/confusion_plots_0720/{}.png'.format(save_confusion_map), confusion_plot)
-    # Plotting the prediction map
-    prediction_map_over_threshold = pred > min_th
-    io.imsave('/scratch/sr365/PR_curves/confusion_plots_0720/original_pred_map_{}.png'.format(save_confusion_map), prediction_map_over_threshold)
-    #plt.imshow(confusion_plot)
-    #plt.savefig('/scratch/sr365/PR_curves/confusion_plot.png')
-    # confusion_plot[TP]
-    # quit()        # Ben added
+    # for i in range(np.shape(TP)[0]):
+    #     for j in range(np.shape(TP)[1]):
+    #         if TP[i, j] == 1:
+    #             confusion_plot[i, j, 0] = 255
+    #         elif FP[i, j] == 1:
+    #             confusion_plot[i, j, 1] = 255
+    #         elif FN[i, j] == 1:
+    #             confusion_plot[i, j, 2] = 255
+    # # # Add text for labelling the size of the 
+    # # for pred_object in group_pred:
+    # #     text_pos = (int(pred_object.centroid[1]), int(pred_object.centroid[0]))
+    # #     cv2.putText(img=confusion_plot, text='{}'.format(pred_object.area), org=text_pos, 
+    # #                 fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.5, color=(255, 255, 0))
+    # # for lbl_object in group_lbl:
+    # #     text_pos = (int(lbl_object.centroid[1])+10, int(lbl_object.centroid[0])+10)
+    # #     cv2.putText(img=confusion_plot, text='{}'.format(lbl_object.area),  org=text_pos,
+    # #                 fontFace=cv2.FONT_HERSHEY_SIMPLEX,  fontScale=0.5, color=(0, 255, 255))
+    # img_label_num = len(os.listdir('/scratch/sr365/PR_curves/confusion_plots_0617'))
+    # io.imsave('/scratch/sr365/PR_curves/confusion_plots_0617/{}.png'.format(img_label_num), confusion_plot)
+    # # cv2.imwrite('/scratch/sr365/PR_curves/confusion_plots_0617/{}.png'.format(img_label_num), confusion_plot)
+    # # Plotting the prediction map
+    # prediction_map_over_threshold = pred > min_th
+    # io.imsave('/scratch/sr365/PR_curves/confusion_plots_0617/original_pred_map_{}.png'.format(img_label_num), prediction_map_over_threshold)
+    # #plt.imshow(confusion_plot)
+    # #plt.savefig('/scratch/sr365/PR_curves/confusion_plot.png')
+    #confusion_plot[TP]
+    #quit()        # Ben added
 
 
     conf_list, true_list = [], []
@@ -411,8 +409,14 @@ def read_results(result_name, regex=None, sum_results=False, delta=1e-6, class_n
 
 
 def get_precision_recall(conf, true):
-    ap = average_precision_score(true, conf)
+    # This calling SKlearn package is incorrect!!
+    #ap = average_precision_score(true, conf)
     p, r, th = precision_recall_curve(true, conf)
+    if len(r) <= 2:
+        ap = 0
+    else:
+        ap = auc(r[1:], p[1:])
+    print('using the new calculation!')
     return ap, p, r, th
 
 

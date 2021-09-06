@@ -6,43 +6,74 @@ import os
 import numpy as np
 import pandas as pd
 import imagesize
+from mrs_utils.eval_utils import ObjectScorer, dummyfy, get_stats_from_group
 from skimage.transform import resize
 from shutil import copyfile
 
 mother_dir = '/home/sr365/Gaia/labels/'
 
-def count_panels(mother_dir):
+def count_panels(mother_dir, size_warning=3000):
+    obj_scorer = ObjectScorer(min_region=5, min_th=0.5, dilation_size=1, link_r=0, eps=0)
     def get_num_solar_panels(lbl_name, obj_scorer):
         lbl = io.imread(lbl_name)[:, :, 0]
         reg_props = obj_scorer.get_object_groups(lbl)
+        del lbl
         #print('This image has {} solar panels'.format(len(reg_props)))
-        return len(reg_props)
+        return [ a.area for a in reg_props]
 
+    ################################################
+    # Counting individual villages solar panel num #
+    ################################################
     # Read in the ground truth labels
-    for folder in os.listdir(mother_dir):
-        cur_folder = os.path.join(mother_dir, folder)
-        if not os.path.isdir(cur_folder):
-            continue
-        for phase_folder in os.listdir(cur_folder):
-            cur_phase = os.path.join(cur_folder, phase_folder)
-            if not os.path.isdir(cur_phase):
-                continue
-            PV_count = 0
-            for files in os.listdir(cur_phase):
-                if not files.endswith('.csv'):
-                    continue
-                data = pd.read_csv(os.path.join(cur_phase, files))
-                data = data['Object'].values
-                if len(data) > 0:
-                    PV_count += data[-1]
-            #     if not files.endswith('.png'):
-            #         continue
-            #     cur_file = os.path.join(cur_phase, files)
-            #     # This is a lbl file
-            #     num_panels = get_num_solar_panels(cur_file, obj_scorer)
-            #     PV_count += num_panels
+    # for folder in os.listdir(mother_dir):
+    #     cur_folder = os.path.join(mother_dir, folder)
+    #     # Go into all subfolders
+    #     if not os.path.isdir(cur_folder):
+    #         continue
+    #     for phase_folder in os.listdir(cur_folder):
+    #         cur_phase = os.path.join(cur_folder, phase_folder)
+    #         if not os.path.isdir(cur_phase):
+    #             continue
+    #         PV_count = 0
+    #         for files in os.listdir(cur_phase):
+    #             if not files.endswith('.csv'):
+    #                 continue
+    #             data = pd.read_csv(os.path.join(cur_phase, files))
+    #             data = data['Object'].values
+    #             if len(data) > 0:
+    #                 PV_count += data[-1]
+    #         #     if not files.endswith('.png'):
+    #         #         continue
+    #         #     cur_file = os.path.join(cur_phase, files)
+    #         #     # This is a lbl file
+    #         #     num_panels = get_num_solar_panels(cur_file, obj_scorer)
+    #         #     PV_count += num_panels
+    #         print('Folder {} has {} solar panels'.format(cur_phase, PV_count))
 
-            print('Folder {} has {} solar panels'.format(cur_phase, PV_count))
+    ##########################################################
+    # Counting the whole annotation folder in aggregate form #
+    ##########################################################
+    size_list = []
+    size_warn_list = []
+    for file in os.listdir(mother_dir):
+        # Skip if not 
+        if not file.endswith('.png'):
+            continue
+        current_panel_list = get_num_solar_panels(os.path.join(mother_dir, file), obj_scorer)
+        size_list.extend(current_panel_list)
+        # Check for oversized solar panels and make sure they are correct
+        if len(current_panel_list) > 0 and np.sum(np.array(current_panel_list) > size_warning) > 0:
+            size_warn_list.append(file)
+            print('Check!!! There is panel larger than {} pixels in : {}'.format(size_warning, file))
+        print('finished counting {}, currently there are {} solar panels'.format(file, len(size_list)))
+    print(size_list)
+    #np.savetxt('/home/sr365/Gaia/Rwanda_RTI/panel_size_count.txt', size_list)
+
+    print('printing the oversized solar panel files')
+    for file_warn in size_warn_list:
+        print(file_warn)
+    print('Finished! Largest panel {} pixels, smallest panel {} pixels'.format(np.max(size_list), np.min(size_list)))
+
 
 def check_labels_complete():
     # Checking for each label if there is a corresponding image
@@ -91,14 +122,6 @@ def check_labels_complete():
             #print(new_name)
             if not os.path.exists(new_name):
                 print('Thiere is only image but not label!! {}'.format(file))
-
-def have_img_lbl_pair_in_same_folder():
-    """
-    During the moving of the image and labels, there are odd numbers of patches, which is really strange
-    This function is to check whether there are pairs of image and label
-    """
-    check_folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/train/patches'
-
 
 def check_RTI_image_label_size_match():
     """
@@ -197,7 +220,7 @@ def make_file_list_for_RTI_Rwanda():
     # folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/train'
     # folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all'
     # folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all_conatains_object'
-    folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all_train_5_percent'
+    folder = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all_train_5_percent/train_patches'
     if 'test' in folder:
         save_file = os.path.join(folder, 'file_list_test.txt')
     elif 'train' in folder:
@@ -269,19 +292,143 @@ def rename_infered_folder():
         # Delete the original model folder
         os.rmdir(model_folder)
         
+def remove_long_model_middle_folder(mother_folder):
+    """
+    This function removes the long middle name of a model
+    """
+    for folder in os.listdir(mother_folder):
+        cur_folder = os.path.join(mother_folder, folder)
+        print('currently working in folder', cur_folder)
+        assert len(os.listdir(cur_folder)) == 1, 'There are more than 1 file in your folder, check again!'
+        middle_name = os.listdir(cur_folder)[0]
+        for files in os.listdir(os.path.join(cur_folder, middle_name)):
+            # Move everything out
+            os.rename(os.path.join(cur_folder, middle_name, files), os.path.join(cur_folder, files))
+
+
+def copy_according_to_file_list(folder, file_list_path, dest_folder):
+    """
+    The funciton to copy files according to a file list to destination folder
+    """
+    # Creat the folder if not exist
+    if not os.path.isdir(os.path.join(folder, dest_folder)):
+        os.makedirs(os.path.join(folder, dest_folder))
+    # Get the file list into list
+    with open(os.path.join(folder, file_list_path), "r") as file:
+        file_list = file.readlines()
+    # Loop over the file list and 
+    for line in file_list:
+        img, lbl = line.split(' ')[0], line.split(' ')[1]
+        lbl = lbl.replace("\n", '')
+        print('moving {} and {} to new folder {}'.format(img, lbl, dest_folder))
+        copyfile(os.path.join(folder, 'patches', img), os.path.join(folder, dest_folder, img))
+        copyfile(os.path.join(folder, 'patches', lbl), os.path.join(folder, dest_folder, lbl))
+    
+
+def rename_PR_curves(mother_folder):
+    """
+    Renaming all the PR curves file so that they can be put into the same folder and downloaded
+    """
+    for folder in os.listdir(mother_folder):
+        cur_folder = os.path.join(mother_folder, folder)
+        # Skip if this is not a folder
+        if not os.path.isdir(cur_folder):
+            continue
+        for file in os.listdir(cur_folder):
+            cur_file = os.path.join(cur_folder, file)
+            # Skip if this is not a regular file (should be only .txt, .pngs)
+            if not os.path.isfile(cur_file):
+                continue
+            os.rename(cur_file, os.path.join(mother_folder, folder + file))
+
+
+def post_processing(mother_folder, min_region=10, min_th=0.5, 
+                    dilation_size=5, link_r=0, eps=2, 
+                    operating_object_confidence_thres=0.9):
+    """
+    For the Rwanda imagery predicted confidence map, do the post-processing just like the evaluation does
+    """
+    # Loop over all the prediction maps
+    for conf_map_name in os.listdir(mother_folder):
+        # Skip and only work on the conf_map
+        if 'conf.png' not in conf_map_name:
+            continue
+        print('post processing {}'.format(conf_map_name))
+        # Read this conf map
+        conf_map = io.imread(os.path.join(mother_folder, conf_map_name))
+        # Rescale to 0, 1 interval
+        conf_map  = conf_map / 255
+        # Create the object scorer to do the post processing
+        obj_scorer = ObjectScorer(min_region, min_th, dilation_size, link_r, eps)
+        # Get the object groups after post processing
+        group_conf = obj_scorer.get_object_groups(conf_map)
+        # If no groups are around, continue
+        if len(group_conf) == 0:
+            continue
+        # Loop over each individual groups
+        for g_pred in group_conf:
+            # Assigning flags for whether to keep this group
+            g_pred.keep = True
+            # Calculate the average confidence value (to be thresholded)
+            _, conf = get_stats_from_group(g_pred, conf_map)
+            # IF this object is smaller than what it should be
+            if conf < operating_object_confidence_thres:
+                # Throw this group away
+                g_pred.keep = False
+        # Threshold the objects by their confidence values
+        group_conf = [a for a in group_conf if a.keep == True]
+        # dummyfy the result into a binary plot
+        conf_dummy = dummyfy(conf_map, group_conf)
+        io.imsave(os.path.join(mother_folder, conf_map_name.replace('conf', 'conf_post_processed')), conf_dummy)
+
+def check_over_sized_RTI_panel():
+    """
+    Check the oversized RTI panels check from the panel size function above
+    """
+    image_list = ['rti_rwanda_crop_type_raw_Rwakigarati_Processed_Phase3_y0x5920.png',
+                    'rti_rwanda_crop_type_raw_Cyampirita_Processed_Phase2_y18177x0.png',
+                    'rti_rwanda_crop_type_raw_Kabarama_Processed_Phase1_y21099x20755.png',
+                    'rti_rwanda_crop_type_raw_Cyampirita_Processed_Phase3_y13510x7989.png',
+                    'rti_rwanda_crop_type_raw_Kabarama_Processed_Phase1_y21099x13837.png',
+                    'rti_rwanda_crop_type_raw_Cyampirita_Processed_Phase3_y20266x0.png',
+                    'rti_rwanda_crop_type_raw_Kabarama_Processed_Phase1_y28132x20755.png',
+                    'rti_rwanda_crop_type_raw_Kabarama_Processed_Phase1_y7033x20755.png',
+                    'rti_rwanda_crop_type_raw_Cyampirita_Processed_Phase2_y12118x0.png',
+                    'rti_rwanda_crop_type_raw_Cyampirita_Processed_Phase1_y19272x6668.png',
+                    'rti_rwanda_crop_type_raw_Cyampirita_Processed_Phase1_y12848x6668.png',
+                    'rti_rwanda_crop_type_raw_Cyampirita_Processed_Phase1_y12848x0.png',
+                    'rti_rwanda_crop_type_raw_Cyampirita_Processed_Phase3_y13510x0.png',
+                    'rti_rwanda_crop_type_raw_Kabarama_Processed_Phase1_y28132x27674.png',
+                    'rti_rwanda_crop_type_raw_Rwakigarati_Processed_Phase2_y15095x10788.png',
+                    'rti_rwanda_crop_type_raw_Cyampirita_Processed_Phase1_y19272x0.png',
+                    'rti_rwanda_crop_type_raw_Kabarama_Processed_Phase1_y35165x6918.png',
+                    'rti_rwanda_crop_type_raw_Kabarama_Processed_Phase1_y42199x20755.png',
+                    'rti_rwanda_crop_type_raw_Kabarama_Processed_Phase3_y21343x17480.png',
+                    'rti_rwanda_crop_type_raw_Cyampirita_Processed_Phase2_y12118x7888.png']
+    image_dir = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all/'
+    image_dest = '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all/strange_large_panel'
+    for image in image_list:
+        for mode in ['images','annotations']:
+            # Copy the file to a new directory for further investigation
+            copyfile(os.path.join(image_dir, mode, image), os.path.join(image_dest, mode, image))
+    
+
+
+
 
 if __name__ == '__main__':
-    # count_panels(mother_dir)
+    count_panels('/scratch/sr365/Catalyst_data/every_20m/d1/annotations')
+    #count_panels('/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all/strange_large_panel/annotations')
     # check_labels_complete()
     #check_RTI_image_label_size_match()
     #get_rid_of_low_information_images()
-    # make_file_list_for_RTI_Rwanda()
+    #make_file_list_for_RTI_Rwanda()
 
     # Getting rid of the test files that does not contains any solar panels
     # An complete dark label has 334 Byte of information
     # get_rid_of_low_information_images(335, mode='label')
 
-    sub_sample_randomly_image_label_pair(mode='cp')
+    # sub_sample_randomly_image_label_pair(mode='cp')
 
     # remove the model folder from the inference
     #rename_infered_folder()
@@ -299,3 +446,19 @@ if __name__ == '__main__':
     # get_label_pixel_intensity_from_1_to_255('/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all_conatains_object/patches')
 
     # get_label_pixel_intensity_from_255_to_1('/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all_train_5_percent/patches')
+
+    # Copying the train and test files to get
+    # copy_according_to_file_list(folder='/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all_train_10_percent_half',
+    #                             file_list_path='file_list_test.txt', dest_folder='test_patches')
+    # copy_according_to_file_list(folder='/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/all_train_10_percent_half',
+    #                             file_list_path='file_list_train.txt', dest_folder='train_patches')
+    
+    #remove_long_model_middle_folder('/home/sr365/Gaia/models/rwanda_rti_from_catalyst/random_10_percent_split/')
+
+
+    #rename_PR_curves('/home/sr365/Gaia/PR_curves/Catalyst_E4_train')
+
+    # post_processing('/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/geo_train/images/save_root/ecresnet50_dcdlinknet_dsrwanda_rti_lre1e-03_lrd1e-02_ep80_bs16_ds50_75_dr0p1_crxent1p0_softiou0p1')
+
+    # Check oversized
+    #check_over_sized_RTI_panel()

@@ -71,11 +71,10 @@ def plot_PR_curve(min_region, dilation_size, link_r, min_th, iou_th, conf_dir_li
                 conf_img, lbl_img = conf_dict[tile]/255, gt_dict[tile]  
             # save_confusion_map = conf_dir.split('Catalyst_data')[-1].split('image')[0].replace('/','_') + tile    # THis is for 
             save_confusion_map = conf_dir.split('images/')[-1].replace('/','_') + tile
-            print('the save confusion plot name is :', save_confusion_map)
+            # print('the save confusion plot name is :', save_confusion_map)
             conf_tile, true_tile = eval_utils.score(                                                        # Call a function in utils.score to score this
                 conf_img, lbl_img, min_region=min_region, min_th=min_th/255, 
-                dilation_size=dilation_size, link_r=link_r, iou_th=iou_th,
-                save_confusion_map=save_confusion_map)    
+                dilation_size=dilation_size, link_r=link_r, iou_th=iou_th)#, save_confusion_map=save_confusion_map)    
             conf_list.extend(conf_tile)
             true_list.extend(true_tile)
             if calculate_area:              # For RTI data this  is off
@@ -85,7 +84,7 @@ def plot_PR_curve(min_region, dilation_size, link_r, min_th, iou_th, conf_dir_li
         print('number of objects in ground truth = {}'.format(np.sum(true_list)))
         # Plotting the PR curve
         ap, p, r, _ = eval_utils.get_precision_recall(conf_list, true_list) 
-        print('len p = {}, len r = {}, ap = {}'.format(len(p), len(r), ap))
+        # print('len p = {}, len r = {}, ap = {}'.format(len(p), len(r), ap))
         f1  = 2 * (p * r) / (p + r + 0.000001)
         best_f1_idx = np.argmax(f1[1:]) + 1
         print('best_f1_idx = {}, p = {}, r = {}'.format(best_f1_idx, p[best_f1_idx], r[best_f1_idx]))
@@ -99,7 +98,7 @@ def plot_PR_curve(min_region, dilation_size, link_r, min_th, iou_th, conf_dir_li
         plt.plot(r[best_f1_idx], p[best_f1_idx], 'ro')
         plt.annotate(
             'Best F1 point (F1={:.2f})\nPrecision={:.2f}\nRecall={:.2f}'.format(
-                np.max(f1),
+                f1[best_f1_idx],
                 p[best_f1_idx], 
                 r[best_f1_idx]
             ),
@@ -252,15 +251,19 @@ def take_pair_wise_object_pr(i, j, min_region, dilation_size, min_th, iou_th, tr
     ###############################
     prefix = 'model_d{}_test_d{}'.format(j, i)
     gt_dir = '/scratch/sr365/Catalyst_data/every_20m/d{}/annotations'.format(i)
-    output_dir = '/scratch/sr365/PR_curves/dx_dx_test_set_ensemble/iou_th_{}_min_th_{}_dila_{}'.format(iou_th, min_th, dilation_size)
-    conf_dir = '/scratch/sr365/Catalyst_data/every_20m/d{}/images/test_domain_ensembled_img_d{}_model_d{}'.format(i, i, j)
+    # The ensemble version
+    # output_dir = '/scratch/sr365/PR_curves/dx_dx_test_set_ensemble/iou_th_{}_min_th_{}_dila_{}'.format(iou_th, min_th, dilation_size)
+    # conf_dir = '/scratch/sr365/Catalyst_data/every_20m/d{}/images/test_domain_ensembled_img_d{}_model_d{}'.format(i, i, j)
+    output_dir = '/scratch/sr365/PR_curves/dx_dx_test_set_best_model/iou_th_{}_min_th_{}_dila_{}'.format(iou_th, min_th, dilation_size)
+    conf_dir = '/scratch/sr365/Catalyst_data/every_20m/d{}/images/catalyst_from_ct_d{}/best_model/'.format(i, j)
+    
     ############################
     # The 20m change res group #
-    ############################
+    # ############################
     # prefix = 'd{}_change_res_to_d{}'.format(j, i)
     # gt_dir = '/scratch/sr365/Catalyst_data/every_20m_change_res/d{}_change_res_to_d{}/annotations'.format(j, i)
     # output_dir = '/scratch/sr365/PR_curves/d{}_change_res_to_d{}/iou_th_{}_min_th_{}_dila_{}'.format(j, i, iou_th, min_th, dilation_size)
-    # conf_dir = '/scratch/sr365/Catalyst_data/every_20m_change_res/d{}_change_res_to_d{}/images/from_catalyst/best_model/'.format(j, i)
+    # conf_dir = '/scratch/sr365/Catalyst_data/every_20m_change_res/d{}_change_res_to_d{}/images/from_best_catalyst/best_model/'.format(j, i)
     
     # output_dir = '/scratch/sr365/PR_curves/dx_dx_test_set/iou_th_{}_min_th_{}_dila_{}'.format(iou_th, min_th, dilation_size)
     # output_dir = '/scratch/sr365/PR_curves/dx_test_trail_{}/iou_th_{}_min_th_{}_dila_{}'.format(trail, iou_th, min_th, dilation_size)
@@ -281,8 +284,10 @@ def take_pair_wise_object_pr(i, j, min_region, dilation_size, min_th, iou_th, tr
             os.makedirs(output_dir)
         except:
             print('there is exception in os.makedirs step')
+    
     # Get tile name list from conf_dir_list
     tile_name_list = ['_'.join(f.split('_')[:-1]) for f in os.listdir(conf_dir)]
+    print(tile_name_list)
     # Get the list of ground truth
     gt_list = [io.imread(os.path.join(gt_dir, f+'.png')) for f in tile_name_list]
     gt_dict = dict(zip(tile_name_list, gt_list))
@@ -316,36 +321,38 @@ if __name__ == '__main__':
     # For the Exp 1 & 2
     num_cpu = 64
     try: 
-        pool = Pool(num_cpu)
-        min_region = 30
-        dilation_size = 5
-        min_th = 2
-        iou_th = 0.2
-        args_list = []
-        min_th_list = np.array([0.5])
-        min_th_list = min_th_list * 255   
-        print(min_th_list)
-        for min_th in min_th_list:
-            for iou_th in [0.2, 0.5]:
-            #for iou_th in [0.4]:
-                min_th = int(min_th)        # Make sure it is a integer
-                # Every 10 meters
-                # for i in range(5, 13):
-                #     for j in range(5, 13):
-                # Every 20 meters
-                for i in range(1, 5):
-                    for j in range(1, 5):
-                        ######################################
-                        # This if for the change res setting #
-                        ######################################
-                        if i == j:
-                            continue
-                        args_list.append((i, j, min_region, dilation_size, min_th, iou_th))
-        print(args_list)
-        pool.starmap(take_pair_wise_object_pr, args_list)
+       pool = Pool(num_cpu)
+       min_region = [100, 90, 60, 40]
+       #min_region = [40, 40, 40, 40]
+       dilation_size = 10
+       min_th = 127.5
+       iou_th = 0.2
+       args_list = []
+       min_th_list = np.array([0.1, 0.3, 0.5])
+       #min_th_list = np.array([0.5])
+       min_th_list = min_th_list * 255   
+       print(min_th_list)
+       for min_th in min_th_list:
+           for iou_th in [0.2]:
+           #for iou_th in [0.4]:
+               min_th = int(min_th)        # Make sure it is a integer
+               # Every 10 meters
+               # for i in range(5, 13):
+               #     for j in range(5, 13):
+               # Every 20 meters
+               for i in range(1, 5):
+                   for j in range(1, 5):
+                       ######################################
+                       # This if for the change res setting #
+                       ######################################
+                       # if i != j:
+                       #     continue
+                       args_list.append((i, j, min_region[i-1], dilation_size, min_th, iou_th))
+       print(args_list)
+       pool.starmap(take_pair_wise_object_pr, args_list)
     finally:
-        pool.close()
-        pool.join()
+       pool.close()
+       pool.join()
     
 
     """
@@ -395,5 +402,96 @@ if __name__ == '__main__':
         pool.close()
         pool.join()
     """
+
+
+    ##################################
+    # Gaia specific                  #
+    # Exp 1 extension                #
+    # Simulated satellite resolution #
+    ##################################
+    # height_list = [210, 420, 840]
+    # # gt_dir = '/scratch/sr365/Catalyst_data/simulated_satellite_height_210/images'
+    
+    # conf_dir_list = []
+    # # for cw in [50, 200, 1000]:
+    # for iou_th in [0.2]:
+    #     for height in height_list:
+    #         conf_dir_mother = '/scratch/sr365/Catalyst_data/simulated_satellite_height_{}/images/from_best_catalyst/'.format(height)
+    #         for folder in os.listdir(conf_dir_mother):
+    #             conf_dir = os.path.join(conf_dir_mother, folder)
+    #             conf_dir_list = [conf_dir]
+    #             #print('entering cw {}, iou th {}, height {}'.format(cw, iou_th, height))
+    #             gt_dir = '/scratch/sr365/Catalyst_data/simulated_satellite_height_{}/annotations'.format(height)
+    #             cw = int(folder.split('weight')[1].split('_')[1])
+    #             #conf_dir = conf_dir_list[0]
+    #             tile_name_list = ['_'.join(f.split('_')[:-1]) for f in os.listdir(conf_dir)]
+    #             gt_list = [io.imread(os.path.join(gt_dir, f+'.png')) for f in tile_name_list]
+    #             gt_dict = dict(zip(tile_name_list, gt_list))
+    #             output_dir = '/scratch/sr365/PR_curves/simulated_satellite_res/'
+    #             min_region=5
+    #             dilation_size=5
+    #             min_th=0.5*255
+    #             save_title = '_{}_cw_{}_min_region_{}_dial_{}_min_th_{}_iou_th_{}'.format(height, cw, min_region, dilation_size, min_th, iou_th)
+    #             plot_PR_curve(min_region=min_region, dilation_size=dilation_size, link_r=0, min_th=min_th, iou_th=iou_th, 
+    #                         conf_dir_list=conf_dir_list, tile_name_list=tile_name_list, gt_dict=gt_dict, 
+    #                         save_title=save_title, output_dir=output_dir)
+
+
+    ##################################
+    # Gaia specific                  #
+    # Exp 2                          #
+    ##################################
+    # for i in range(1, 5):      # Model index
+    #     for mode in ['Normal','Sports']:  # Test index
+    #         data_dir_list.append('/scratch/sr365/Catalyst_data/test_moving_imgs/{}/d{}/images'.format(mode, i))
+    #         model_dir_list.append('/scratch/sr365/models/catalyst_from_ct_d{}/best_model'.format(i))
+
+    # conf_dir_list = []
+    # for i in range(1, 5):      # Model index
+    #     for mode in ['Normal','Sports']:  # Test index
+    #         for iou_th in [0.2, 0.5]: 
+    #             print('entering d{}, mode {}'.format(i, mode))
+    #             gt_dir = '/scratch/sr365/Catalyst_data/test_moving_imgs/{}/d{}/annotations'.format(mode, i)
+    #             conf_dir_list = ['/scratch/sr365/Catalyst_data/test_moving_imgs/{}/d{}/images/from_catalyst_stationary/best_model'.format(mode, i)]
+    #             conf_dir = conf_dir_list[0]
+    #             tile_name_list = ['_'.join(f.split('_')[:-1]) for f in os.listdir(conf_dir)]
+    #             gt_list = [io.imread(os.path.join(gt_dir, f+'.png')) for f in tile_name_list]
+    #             gt_dict = dict(zip(tile_name_list, gt_list))
+    #             output_dir = '/scratch/sr365/PR_curves/simulated_satellite_res/'
+    #             min_region=5
+    #             dilation_size=5
+    #             min_th=0.5*255
+    #             save_title = '_d{}_moving_{}_min_region_{}_dial_{}_min_th_{}_iou_th_{}'.format(i, mode, min_region, dilation_size, min_th, iou_th)
+    #             plot_PR_curve(min_region=min_region, dilation_size=dilation_size, link_r=0, min_th=min_th, iou_th=iou_th, 
+    #                         conf_dir_list=conf_dir_list, tile_name_list=tile_name_list, gt_dict=gt_dict, 
+    #                         save_title=save_title, output_dir=output_dir)
     # temporary for visualizatin purpose
     # take_pair_wise_object_pr(5, 5, 30, 5, 127, 0.3)
+
+    ##################################
+    # Gaia specific                  #
+    # Exp 2   artificial motion blur # 
+    ##################################
+    # gt_dir = '/scratch/sr365/Catalyst_data/simulated_satellite_height_210/images'
+    
+    # conf_dir_list = []
+    # # for cw in [50, 200, 1000]:
+    # for iou_th in [0.2]:
+    #     for mb in [2, 4, 6, 8, 10, 20]:
+    #         for i in range(1, 5):
+    #             # Get the confidence map prediction folder
+    #             conf_dir = '/scratch/sr365/Catalyst_data/every_20m/motion_blur/d{}_mb_{}/images/from_best_catalyst/best_model'.format(i, mb)
+    #             conf_dir_list = [conf_dir]
+    #             # Get the ground truth folder
+    #             gt_dir = '/scratch/sr365/Catalyst_data/every_20m/motion_blur/d{}_mb_{}/annotations'.format(i, mb)
+    #             tile_name_list = ['_'.join(f.split('_')[:-1]) for f in os.listdir(conf_dir)]
+    #             gt_list = [io.imread(os.path.join(gt_dir, f+'.png')) for f in tile_name_list]
+    #             gt_dict = dict(zip(tile_name_list, gt_list))
+    #             output_dir = '/scratch/sr365/PR_curves/motion_blur/'
+    #             min_region=30
+    #             dilation_size=5
+    #             min_th=0.5*255
+    #             save_title = '_d{}_mb_{}_min_region_{}_dial_{}_min_th_{}_iou_th_{}'.format(i, mb, min_region, dilation_size, min_th, iou_th)
+    #             plot_PR_curve(min_region=min_region, dilation_size=dilation_size, link_r=0, min_th=min_th, iou_th=iou_th, 
+    #                         conf_dir_list=conf_dir_list, tile_name_list=tile_name_list, gt_dict=gt_dict, 
+    #                         save_title=save_title, output_dir=output_dir)

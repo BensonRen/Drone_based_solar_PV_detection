@@ -32,8 +32,9 @@ def change_resolution(img_name, target_res=sat_res):
     current_res = get_current_res(height)                               # Get current resolution
     scale = current_res / target_res                                       # Calculate scale 
     new_shape = (int(scale*img.shape[1]), int(scale*img.shape[0]))      # prepare new shape
-    resized = cv2.resize(img, new_shape)                                # resize
-    return resized
+    resized = cv2.resize(img, new_shape, interpolation=cv2.INTER_AREA)  # resize to small size
+    resize_back = cv2.resize(resized, (img.shape[1], img.shape[0]), interpolation=cv2.INTER_LINEAR) # Rescale back to larger size
+    return resize_back
 
 def mirroring_to_get_larger_size(img):
     """
@@ -111,6 +112,12 @@ if __name__ == '__main__':
     #####################################################
     # Change the resolution to the satellite resolution #
     #####################################################
+    # height_list = [840]
+    # for height in height_list:
+    #     change_height_to_new_height(master_folder='/scratch/sr365/Catalyst_data/every_20m/d4/', 
+    #                 target_height=height, 
+    #                 dest_folder='/scratch/sr365/Catalyst_data/simulated_satellite_height_{}'.format(height))
+        
     # for folder in ['images','annotations']:
     #     # Get the image folder and save folder name
     #     img_dir = os.path.join(img_folder_big, folder) 
@@ -152,9 +159,9 @@ if __name__ == '__main__':
             if i == j:              # The same resolution therefore no need to proceed
                 continue
             # The main function to change the resolution
-            change_height_to_new_height(master_folder='/scratch/sr365/Catalyst_data/d{}/'.format(i), 
+            change_height_to_new_height(master_folder='/scratch/sr365/Catalyst_data/every_20m/d{}/'.format(i), 
                                         target_height=height_list[j-1], 
-                                        dest_folder='/scratch/sr365/Catalyst_data/d{}_change_res_to_d{}'.format(i, j))
+                                        dest_folder='/scratch/sr365/Catalyst_data/every_20m_change_res/d{}_change_res_to_d{}'.format(i, j))
     
 
     #################################
@@ -180,6 +187,14 @@ if __name__ == '__main__':
         for j in range(1, 5):
             if i == j:
                 continue
-            folder_list.append('/scratch/sr365/Catalyst_data/d{}_change_res_to_d{}/images'.format(i, j))
-            folder_list.append('/scratch/sr365/Catalyst_data/d{}_change_res_to_d{}/annotations'.format(i, j))
+            folder_list.append('/scratch/sr365/Catalyst_data/every_20m_change_res/d{}_change_res_to_d{}/images'.format(i, j))
+            folder_list.append('/scratch/sr365/Catalyst_data/every_20m_change_res/d{}_change_res_to_d{}/annotations'.format(i, j))
+    
+    ##############################
+    # Change to satellite height #
+    ##############################
+    # for height in height_list:
+    #     folder_list.append('/scratch/sr365/Catalyst_data/simulated_satellite_height_{}/images'.format(height))
+    #     folder_list.append('/scratch/sr365/Catalyst_data/simulated_satellite_height_{}/annotations'.format(height))
+    
     cut_img_into_even_pixel_number(folder_list)

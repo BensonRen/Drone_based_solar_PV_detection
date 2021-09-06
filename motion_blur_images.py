@@ -56,17 +56,21 @@ def copy_files_in_list(scr_dir, dest_dir, file_list):
 if __name__ == '__main__':
     
     #src_dir_list = ['/scratch/sr365/Catalyst_data/2021_03_21_15_C_90_test_set/H2_raw', '/scratch/sr365/Catalyst_data/2021_03_21_15_C_90_test_set/H3_raw']
-    src_dir_list = ['/scratch/sr365/Catalyst_data/h2', '/scratch/sr365/Catalyst_data/h3']
+    src_dir_list = ['/scratch/sr365/Catalyst_data/every_20m/d{}'.format(i) for i in range(1, 5)]
     
+    motion_blur_list = [3, 5, 7, 9, 11, 21]
+
     for src_dir in src_dir_list:
-        for motion_blur in range(2, 7):
+        for motion_blur in motion_blur_list:
             # The test cases in 2021_03_21_15_C_90
             #dest_dir = src_dir + '_mb_{}'.format(motion_blur - 1)
             #apply_motion_blur_and_save(src_dir, dest_dir, motion_blur_kernel_size=motion_blur)
             
             # The training cases in h2, h3
             dest_dir = src_dir + '_mb_{}'.format(motion_blur - 1)
-            #apply_motion_blur_and_save(os.path.join(src_dir, 'images'), os.path.join(dest_dir, 'images'), motion_blur_kernel_size=motion_blur)
+            apply_motion_blur_and_save( os.path.join(src_dir, 'images'), 
+                                        os.path.join(dest_dir, 'images'), 
+                                        motion_blur_kernel_size=motion_blur)
             # copy the rest of the files/dir to the dest dir
             file_list = ['annotations']
             copy_files_in_list(src_dir, dest_dir, file_list)

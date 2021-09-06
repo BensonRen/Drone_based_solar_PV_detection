@@ -5,9 +5,9 @@ import sys
 import numpy as np
 import shutil
 
-save_img_big_dir = '/scratch/sr365/Catalyst_data/video_cut'
-video_big_dir = '/scratch/sr365/Catalyst_data'
-post_fix = '.mp4'
+save_img_big_dir = '/scratch/sr365/Catalyst_data/test_video_cut'
+video_big_dir = '/scratch/sr365/Catalyst_data/BW'
+post_fix = '.MP4'
 
 # Function that gets the list of videos
 def get_video_list(video_big_dir, post_fix):
@@ -81,7 +81,7 @@ def label_imgs_with_folder_name(mother_dir):
             os.rename(cur_img, new_name)
 
 
-def sample_from_video_cuts(mother_dir, save_dir, exclude_pre=0.1, exclude_post=0.2, sample_num=5):
+def sample_from_video_cuts(mother_dir, save_dir, exclude_pre=0.1, exclude_post=0.2, sample_num=3):
     """
     This function samples a subset of the video cuts to form a dataset 
     :param moether_dir: The source dir with all the video cuts inside, each one is a folder with all the images inside
@@ -89,6 +89,8 @@ def sample_from_video_cuts(mother_dir, save_dir, exclude_pre=0.1, exclude_post=0
     :param sample_num: The number of samples drawn from each of the videos
     :param save_dir: The directory to save the video
     """
+    if not os.path.isdir(save_dir):
+        os.makedirs(save_dir)
     total_samples_got = 0
     for folders in os.listdir(mother_dir):
         cur_folders = os.path.join(mother_dir, folders)
@@ -122,6 +124,6 @@ if __name__ == '__main__':
     #label_imgs_with_folder_name(save_img_big_dir)
 
     # The third step of sampling a subset of them
-    sample_from_video_cuts(save_img_big_dir, save_dir='/scratch/sr365/Catalyst_data/moving_imgs')
+    sample_from_video_cuts(save_img_big_dir, save_dir='/scratch/sr365/Catalyst_data/test_moving_imgs')
         
 

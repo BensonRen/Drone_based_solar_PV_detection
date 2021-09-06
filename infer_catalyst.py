@@ -17,21 +17,27 @@ from network import network_io, network_utils
 from make_file_list import make_file_list
 # Settings
 
-GPU = 2
+GPU = 0
 #general_folder = r'/scratch/sr365/Catalyst_data/'
 #general_folder = r'/scratch/sr365/RTI_data/positive_class'
 #general_folder = r'/scratch/sr365/Catalyst_data/moving_imgs/labelled/img'
 #general_folder = r'/scratch/sr365/Catalyst_data/2021_03_21_15_C_90_test_set/H3_raw'
 #general_folder = r'/scratch/sr365/RTI_Rwanda_full/cut_tiles_ps_8000/rti_rwanda_crop_type_raw_Ngarama_Processed_Phase3'
 #general_folder = r'/scratch/sr365/RTI_Rwanda_full/cut_tiles_ps_8000/rti_rwanda_crop_type_raw_Rwakigarati_Processed_Phase1'
-general_folder = r'/scratch/sr365/RTI_data/'
+#general_folder = r'/scratch/sr365/RTI_data/'
+# general_folder = r'/scratch/sr365/Catalyst_data/simulated_satellite_height_210/images'
+general_folder = r'/scratch/sr365/Catalyst_data/simulated_satellite_height_210/images'
 data_specific_folder = r'.'
+
+# Simulated satellite resolution
+MODEL_DIR = r'/scratch/sr365/models/catalyst_simulated_sate_res_210_cw_500/ecresnet50_dcdlinknet_dsrwanda_rti_lre1e-03_lrd1e-02_ep80_bs16_ds50_75_dr0p1_crxent1p0_softiou0p5'
+LOAD_EPOCH = 80 
 
 #MODEL_DIR = r'/scratch/wh145/models/solarmapper_final/ct' # Parent directory of trained model
 #LOAD_EPOCH = 180 
 
-MODEL_DIR = r'/scratch/wh145/models/solarmapper_final/sd' # Parent directory of trained model
-LOAD_EPOCH = 180 
+# MODEL_DIR = r'/scratch/wh145/models/solarmapper_final/sd' # Parent directory of trained model
+#LOAD_EPOCH = 180 
 
 # H3 best model
 #MODEL_DIR = '/scratch/sr365/models/catalyst/loss_weight/catalystloss_weight=0.5/ecresnet50_dcdlinknet_dscatalyst_h3_lre1e-03_lrd1e-02_ep80_bs16_ds50_100_dr0p1_crxent1p0_softiou0p5'
@@ -72,10 +78,10 @@ LOAD_EPOCH = 180
 DATA_DIR = os.path.join(general_folder, data_specific_folder)  # Parent directory of input images in .jpg format
 SAVE_ROOT = os.path.join(DATA_DIR, 'save_root/') # Parent directory of input images in .jpg format
 FILE_LIST = os.path.join(DATA_DIR, 'file_list_raw.txt') # A list of full path of images to be tested on in DATA_DIR
-DS_NAME = 'Catalyst_video' # Whatever you like to name it
+DS_NAME = 'Catalyst_sat' # Whatever you like to name it
 
 
-PATCH_SIZE = (1024, 1024)
+PATCH_SIZE = (512, 512)
 
 
 def calculate_intersection(image_1: np.ndarray, image_2: np.ndarray):
@@ -252,16 +258,63 @@ def aggregate_infer():
     
     ###################
     # Gaia specific   #
+    # Every 20 meters
+    # Extra resolution simulated #
+    ###################
+    #data_dir_list, model_dir_list = [], []
+    #model_prefix_name ='/scratch/sr365/models/catalyst_simulated_sate_res_'
+    #data_prefix_name = '/scratch/sr365/Catalyst_data/simulated_satellite_height_'
+    #for res in [210, 420, 840]:
+    #    # Get the model folder name
+    #    model_mother_folder = model_prefix_name+str(res)
+    #    # list the subfolders and add them into  
+    #    for folder in os.listdir(model_mother_folder):
+    #        cur_folder = os.path.join(model_mother_folder, folder)
+    #        model_dir_list.append(cur_folder)
+    #        data_dir_list.append(os.path.join(data_prefix_name + str(res), 'images'))
+    
+
+
+
+
+    ###################
+    # Gaia specific   #
     # Every 20 meters #
     ###################
     data_dir_list, model_dir_list = [], []
+    for i in range(1, 5):      # Model index
+    # i=4
+       for j in range(1, 5):  # Test index
+           #if i == j:          # Do not make inference for the same resolution
+           #    continue
+           data_dir_list.append('/scratch/sr365/Catalyst_data/every_20m/d{}/images'.format(j, i))
+           model_dir_list.append('/scratch/sr365/models/catalyst_from_ct_d{}/best_model'.format(i))
+        #    data_dir_list.append('/scratch/sr365/Catalyst_data/every_20m_change_res/d{}_change_res_to_d{}/images'.format(j, i))
+        #    model_dir_list.append('/scratch/sr365/models/catalyst_from_ct_d{}/best_model'.format(i))
+           
+    ###################
+    # Gaia specific   #
+    # Every 20 meters for d2 new models #
+    ###################
+    # data_dir_list, model_dir_list = [], []
+    # for i in range(0, 4):      # Model index
+    # # i=4
+    #    for j in range(1, 5):  # Test index
+    #        data_dir_list.append('/scratch/sr365/Catalyst_data/every_20m/d{}/images'.format(j))
+    #        model_dir_list.append('/scratch/sr365/models/catalyst_from_ct_d2/updated_0818_models/class_weight_50_loss_weight_1_trail_{}'.format(i))
+
+
+    ###################
+    # Gaia specific   #
+    # Every 20 meters #
+    # Motion blur     #
+    ###################
+    # data_dir_list, model_dir_list = [], []
     # for i in range(1, 5):      # Model index
-    i=4
-    for j in range(1, 5):  # Test index
-        if i == j:          # Do not make inference for the same resolution
-            continue
-        data_dir_list.append('/scratch/sr365/Catalyst_data/every_20m_change_res/d{}_change_res_to_d{}/images'.format(j, i))
-        model_dir_list.append('/scratch/sr365/models/catalyst_from_ct_d{}/best_model'.format(i))
+    #     for mb in [2, 4, 6, 8, 10, 20]:
+    #         data_dir_list.append('/scratch/sr365/Catalyst_data/every_20m/motion_blur/d{}_mb_{}/images'.format(i, mb))
+    #         model_dir_list.append('/scratch/sr365/models/catalyst_from_ct_d{}/best_model'.format(i))
+
 
     
     ###################
@@ -281,20 +334,32 @@ def aggregate_infer():
     # for DATA_DIR in data_dir_list:
     #     for MODEL_DIR in model_dir_list:
     
+    
+    ###################
+    # Gaia specific   #
+    # Exp 2 dx speed  #
+    ###################
+    #data_dir_list, model_dir_list = [], []
+    #for i in range(1, 5):      # Model index
+    #    for mode in ['Normal','Sports']:  # Test index
+    #        data_dir_list.append('/scratch/sr365/Catalyst_data/test_moving_imgs/{}/d{}/images'.format(mode, i))
+    #        model_dir_list.append('/scratch/sr365/models/catalyst_from_ct_d{}/best_model'.format(i))
+
     # The single loop is for the within-domain evaluation
     for DATA_DIR, MODEL_DIR in zip(data_dir_list, model_dir_list):
             DS_NAME = 'catalyst_dx'
             LOAD_EPOCH = 80
-            SAVE_ROOT = os.path.join(DATA_DIR, 'from_catalyst') # Parent directory of input images in .jpg format
-
+            #SAVE_ROOT = os.path.join(DATA_DIR, 'from_best_catalyst') # Parent directory of input images in .jpg format
+            SAVE_ROOT = os.path.join(DATA_DIR, MODEL_DIR.split('/')[-2]) # Parent directory of input images in .jpg format
+            #SAVE_ROOT = os.path.join(DATA_DIR, 'd2_new_trained' + MODEL_DIR.split('/')[-1])
             FILE_LIST = os.path.join(DATA_DIR, 'file_list_raw.txt') # A list of full path of images to be tested on in DATA_DIR 
             print('evaluating for {}'.format(DATA_DIR))
             infer_confidence_map(DATA_DIR=DATA_DIR, SAVE_ROOT=SAVE_ROOT, FILE_LIST=FILE_LIST,
                                 DS_NAME=DS_NAME, MODEL_DIR=MODEL_DIR ,LOAD_EPOCH=LOAD_EPOCH, extra_save_name=os.path.basename(MODEL_DIR))
-
+    
 if __name__ == '__main__':
     # # The individual evaluation
-    # infer_confidence_map()
+    #infer_confidence_map()
 
     # The bulk evaluation
     aggregate_infer()

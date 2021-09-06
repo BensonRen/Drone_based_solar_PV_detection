@@ -18,10 +18,14 @@ def ensemble_maps(input_folder_list, output_dir):
     print('the ensembled list of folder is {}'.format(input_folder_list))
     # Loop over all the images in the folder
     for conf_map_name in os.listdir(input_folder_list[0]):
+        # Make sure this is a confidence map
+        if not conf_map_name.endswith('.png'):
+            continue
         sum_conf_map = None
         # Loop over the input folder list
         for input_folder in input_folder_list:
             cur_conf_map_name = os.path.join(input_folder, conf_map_name)
+            # print('cur_conf_map_name', cur_conf_map_name)
             cur_conf_map = io.imread(cur_conf_map_name).astype('float')
             # Sum the conf maps
             if sum_conf_map is None:
@@ -55,18 +59,22 @@ def ensemble_cross_domain_matrix_prediction():
         # Get from d1 to d4 images
         for i in range(1, 5):
             # Loop over the model list from d1 to d4
-            for j in range(1, 5):
+            for j in range(2, 3):
                 print('working on d{} imagery, model {}'.format(i, j))
-                model_name = 'ecresnet50_dcdlinknet_dscatalyst_d{}_lre1e-03_lrd1e-02_ep80_bs16_ds50_75_dr0p1_crxent1p0_softiou0p5'.format(j)
-                output_dir = os.path.join(mother_dir, 'd{}/images/'.format(i), 'train_domain_ensembled_img_d{}_model_d{}'.format(i, j))
+                #model_name = 'ecresnet50_dcdlinknet_dscatalyst_d{}_lre1e-03_lrd1e-02_ep80_bs16_ds50_75_dr0p1_crxent1p0_softiou0p5'.format(j)
+                # output_dir = os.path.join(mother_dir, '/every_20m/d{}/images/'.format(i), 'train_domain_ensembled_img_d{}_model_d{}'.format(i, j))
+                model_name = 'd2_new_trainedclass_weight_50_loss_weight_1_trail_'
+                output_dir = os.path.join(mother_dir, 'every_20m/d{}/images/'.format(i), 'test_domain_ensemble_d{}_redo_'.format(j))
                 folder_list = []
                 # Loop over the number of trails
-                for trail in range(5):
+                for trail in range(4):
                     # Add the folder name to the folder list
-                    folder = os.path.join(mother_dir, 'd{}/images/'.format(i), prediction_folder_prefix + '{}'.format(trail), model_name)
+                    #folder = os.path.join(mother_dir, 'd{}/images/'.format(i), prediction_folder_prefix + '{}'.format(trail), model_name)
+                    folder = os.path.join(mother_dir, 'every_20m/d{}/images/'.format(i),  model_name + '{}'.format(trail))
                     folder_list.append(folder)
                 args_list.append((folder_list, output_dir))
             #ensemble_maps(folder_list, output_dir)
+        print(args_list)
         pool.starmap(ensemble_maps, args_list)
     finally:
         pool.close()

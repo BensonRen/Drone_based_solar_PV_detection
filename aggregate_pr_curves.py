@@ -5,7 +5,7 @@ from numpy.lib.npyio import save
 import pandas as pd
 import numpy as np
 import os
-
+import glob
 from sklearn.utils.extmath import _incremental_mean_and_var
 from adjustText import adjust_text
 from seaborn.matrix import heatmap
@@ -89,12 +89,12 @@ def get_num_rows_index_start_from_dir_name(PR_curve_dir):
     This function gives the number of rows and starting index by looking at the directory name
     :dx means this is a 20m interval, 10_meter means this is a 10m interval
     """   
-    if 'dx' in PR_curve_dir:
+    if 'dx' in PR_curve_dir or '20m' in PR_curve_dir:
         # The 20m group
         num_rows = 4        # Number of rows in the plot
         index_start = 1     # The start of the index
         return 4, 1
-    elif '10_meter' in PR_curve_dir:
+    elif '10_meter' in PR_curve_dir or '10m' in PR_curve_dir:
         # The 10m group
         num_rows = 8        # Number of rows in the plot
         index_start = 5     # The start of the index
@@ -104,7 +104,7 @@ def get_num_rows_index_start_from_dir_name(PR_curve_dir):
 
 
 def draw_pairwise_PR_curves(PR_curve_dir, mode='PR', save_name='pair_wise_PR.png', 
-                dial=10, minreg=30, mith=2, iou_th=0.8, plot_pairwise=False, fpr_threshold=FPR_THRESHOLD):
+                dial=10, minreg=-1, mith=2, iou_th=0.8, plot_pairwise=False, fpr_threshold=FPR_THRESHOLD):
     """
     The function that does the pairwise plot of PR curve
     :param: mode= One of the rests:
@@ -126,8 +126,16 @@ def draw_pairwise_PR_curves(PR_curve_dir, mode='PR', save_name='pair_wise_PR.png
         for j in range(index_start, index_start + num_rows, 1):
             #name = 'd{}_model_test_d{}ecresnet50_dcdlinknet_dscatalyst_d{}_lre1e-03_lrd1e-02_ep80_bs16_ds50_75_dr0p1_crxent1p0_softiou0p5_dialation_10_min_region_10_min_th125.txt'.format(i, j, i) 
             if num_rows == 4:
-                # The 20m groups
-                name = 'model_d{}_test_d{}_dial_{}_mireg_{}_mith_{}_iou_th_{}.txt'.format(i, j, dial, minreg, mith, iou_th)
+                if minreg != -1:
+                    # The 20m groups
+                    name = 'model_d{}_test_d{}_dial_{}_mireg_{}_mith_{}_iou_th_{}.txt'.format(i, j, dial, minreg, mith, iou_th)
+                else:
+                    print('min_reg ==  -1')
+                    list_files = glob.glob(os.path.join(PR_curve_dir, 'model_d{}_test_d{}_dial_{}_mireg_*_mith_{}_iou_th_{}.txt'.format(i, j, dial, mith, iou_th)))
+                    name = os.path.basename(list_files[0])
+                    print('name = ', name)
+                if 'change_res' in PR_curve_dir:
+                    name = 'd{}_change_res_to_d{}_dial_{}_mireg_{}_mith_{}_iou_th_{}.txt'.format(j, i, dial, minreg, mith, iou_th)
             elif num_rows == 8:
                 # The 10m groups
                 # name = 'model_{}0m_test_{}0m_dial_{}_mireg_{}_mith_{}_iou_th_{}.txt'.format(i, j, dial, minreg, mith, iou_th)
@@ -135,7 +143,11 @@ def draw_pairwise_PR_curves(PR_curve_dir, mode='PR', save_name='pair_wise_PR.png
             if 'ROC' in mode:
                 # name = 'model_{}0m_test_{}0m_dial_10_mireg_10_mith5_conf_label_pair.txt'.format(i, j)
                 name = name.replace('.txt', '_conf_label_pair.txt')
-            value = pd.read_csv(os.path.join(PR_curve_dir, name), header=None, sep=' ').values
+            try:
+                value = pd.read_csv(os.path.join(PR_curve_dir, name), header=None, sep=' ').values
+            except:
+                print('In aggregate PR curve, your value is empty, check exist: ',os.path.join(PR_curve_dir, name)) 
+                continue
             if plot_pairwise:           # Save time 
                 ax = plt.subplot(num_rows, num_rows,z)
             ###########
@@ -421,8 +433,7 @@ def plot_RTI_aggregate(mother_folder, mode='PR'):
                 value = pd.read_csv(os.path.join(PR_curve_dir, name), header=None, sep=' ').values
                 if 'PR' in mode:
                     r, p = value[:, 0], value[:, 1]       # Get P, R values
-                    # ap = metrics.auc(r[1:], p[1:])    # Aera under PR curve, which is the Average Precision
-                    ap = metrics.auc(r, p)
+                    ap = metrics.auc(r[1:], p[1:])    # Aera under PR curve, which is the Average Precision
                     max_recall = r[1]
                     precision_at_max_recall = p[1]
                     f1  = 2 * (p * r) / (p + r + 0.000001)
@@ -460,6 +471,18 @@ def plot_RTI_aggregate(mother_folder, mode='PR'):
             np.savetxt(heatmap_name +'.txt', eval(table))
             plt.close('all')
         
+def get_min_region(folder):
+    """
+    Getting the min region from the text
+    """
+    for file in os.listdir(folder):
+        if 'mireg' not in file:
+            continue
+        min_region = int(file.split('mireg_')[-1].split('_')[0])
+        print('min_region detected is:', min_region)
+        return min_region
+
+
 if __name__ == '__main__':
     # The function to plot all the curves on one plot
     #draw_on_one_plot()
@@ -467,24 +490,25 @@ if __name__ == '__main__':
     #                     '/scratch/sr365/PR_curves/dx_test_trail_1',
     #                     '/scratch/sr365/PR_curves/dx_test_trail_2']
     
-    # # Comparing various PR curve values
-    compare_dir_list = ['/scratch/sr365/PR_curves/dx_train_trail_{}'.format(i) for i in range(4)]
-    # compare_dir_list = ['/scratch/sr365/PR_curves/dx_train_trail_0',
-    #                     '/scratch/sr365/PR_curves/dx_train_trail_1',
-    #                     '/scratch/sr365/PR_curves/dx_train_trail_2']
-    fpr_threshold_list = [1e-4, 2e-4, 3e-4, 4e-4, 5e-4]
+    # # # Comparing various PR curve values
+    # compare_dir_list = ['/scratch/sr365/PR_curves/dx_train_trail_{}'.format(i) for i in range(4)]
+    # # compare_dir_list = ['/scratch/sr365/PR_curves/dx_train_trail_0',
+    # #                     '/scratch/sr365/PR_curves/dx_train_trail_1',
+    # #                     '/scratch/sr365/PR_curves/dx_train_trail_2']
+    fpr_threshold_list = [3e-4]
+    #fpr_threshold_list = [1e-4, 2e-4, 3e-4, 4e-4, 5e-4]
 
-    draw_type_list = ['AUPR', 'F1PR','max_recall_recall_PR','max_recall_precision_PR']
-    # for fpr_thres in fpr_threshold_list:
-    #     draw_things_into_one_plot('/scratch/sr365/PR_curves/dx_dx_test_set_ensemble', 
-    #                             draw_type='normalized_fpr_ROC', fpr_threshold=fpr_thres)
-    #     draw_things_into_one_plot('/scratch/sr365/PR_curves/dx_dx_train_set_ensemble',
-    #                             draw_type='normalized_fpr_ROC', fpr_threshold=fpr_thres)
-    for draw_type in draw_type_list:
-        # draw_things_into_one_plot('/scratch/sr365/PR_curves/dx_dx_test_set_ensemble', draw_type=draw_type)
-        # draw_things_into_one_plot('/scratch/sr365/PR_curves/dx_dx_train_set_ensemble', draw_type=draw_type)
-        plot_mean_variance_from_aggregate(compare_dir_list, save_dir='/scratch/sr365/PR_curves/compare_plot_dx_train/',
-                                            draw_type=draw_type)
+    # draw_type_list = ['AUPR', 'F1PR','max_recall_recall_PR','max_recall_precision_PR']
+    # # for fpr_thres in fpr_threshold_list:
+    # #     draw_things_into_one_plot('/scratch/sr365/PR_curves/dx_dx_test_set_ensemble', 
+    # #                             draw_type='normalized_fpr_ROC', fpr_threshold=fpr_thres)
+    # #     draw_things_into_one_plot('/scratch/sr365/PR_curves/dx_dx_train_set_ensemble',
+    # #                             draw_type='normalized_fpr_ROC', fpr_threshold=fpr_thres)
+    # for draw_type in draw_type_list:
+    #     # draw_things_into_one_plot('/scratch/sr365/PR_curves/dx_dx_test_set_ensemble', draw_type=draw_type)
+    #     # draw_things_into_one_plot('/scratch/sr365/PR_curves/dx_dx_train_set_ensemble', draw_type=draw_type)
+    #     plot_mean_variance_from_aggregate(compare_dir_list, save_dir='/scratch/sr365/PR_curves/compare_plot_dx_train/',
+    #                                         draw_type=draw_type)
     
     # mother_dir = '/scratch/sr365/PR_curves/dx_dx_test_set'
     # mother_dir = '/scratch/sr365/PR_curves/every_10_meter_test'
@@ -498,35 +522,39 @@ if __name__ == '__main__':
     #################
     # Gaia specific #
     #################
-    mother_dir_list = ['/scratch/sr365/PR_curves/dx_dx_test_set_ensemble']#,
-    #                   '/scratch/sr365/PR_curves/dx_dx_train_set_ensemble']
-    num_cpu = 64
+    mother_dir_list = ['/scratch/sr365/PR_curves/dx_dx_test_set_best_model/']
+                        # '/scratch/sr365/PR_curves/dx_dx_test_set_ensemble']#,
+    #                  '/scratch/sr365/PR_curves/dx_dx_train_set_ensemble']
+    # mother_dir_list = ['/scratch/sr365/PR_curves/dx_20m_change_res']
+    num_cpu = 1
 
-    # # Trying different iou_threshold and min threshold for confidence intensity
-    # if num_cpu > 1:
-    #     try: 
-    #         pool = Pool(num_cpu)
-    #         # The value agnostic version where directory is provided
-    #         args_list = []
-    #         for mother_dir in mother_dir_list:
-    #             for folder in os.listdir(mother_dir):
-    #                 if 'iou_th' not in folder:      # Make sure this is a iou_th and hyper-param sweeping folder
-    #                         continue
-    #                 for fpr_threshold in fpr_threshold_list:
-    #                     iou_th, min_th, dila = get_iou_th_min_th_dila_from_name(folder)
-    #                     args_list.append((os.path.join(mother_dir, folder), dila, 30, min_th, iou_th, fpr_threshold))         # 30 is the min region parameter
-    #         pool.starmap(draw_a_lot_of_curves, args_list)
-    #     finally:
-    #         pool.close()
-    #         pool.join()
-    # else:
-    #     for mother_dir in mother_dir_list:
-    #         for folder in os.listdir(mother_dir):
-    #             if 'iou_th' not in folder:      # Make sure this is a iou_th and hyper-param sweeping folder
-    #                 continue
-    #             for fpr_threshold in fpr_threshold_list:
-    #                 iou_th, min_th, dila = get_iou_th_min_th_dila_from_name(folder)
-    #                 draw_a_lot_of_curves(os.path.join(mother_dir, folder), dila, 30, min_th, iou_th, fpr_threshold)          # 30 is the min region parameter
+    # Trying different iou_threshold and min threshold for confidence intensity
+    if num_cpu > 1:
+        try: 
+            pool = Pool(num_cpu)
+            # The value agnostic version where directory is provided
+            args_list = []
+            for mother_dir in mother_dir_list:
+                for folder in os.listdir(mother_dir):
+                    if 'iou_th' not in folder:      # Make sure this is a iou_th and hyper-param sweeping folder
+                            continue
+                    print('entering folder', folder)
+                    for fpr_threshold in fpr_threshold_list:
+                        iou_th, min_th, dila = get_iou_th_min_th_dila_from_name(folder)
+                        # min_region = get_min_region(os.path.join(mother_dir, folder))
+                        args_list.append((os.path.join(mother_dir, folder), dila, -1, min_th, iou_th, fpr_threshold))         # 30/-1 is the min region parameter
+            pool.starmap(draw_a_lot_of_curves, args_list)
+        finally:
+            pool.close()
+            pool.join()
+    else:
+        for mother_dir in mother_dir_list:
+            for folder in os.listdir(mother_dir):
+                if 'iou_th' not in folder:      # Make sure this is a iou_th and hyper-param sweeping folder
+                    continue
+                for fpr_threshold in fpr_threshold_list:
+                    iou_th, min_th, dila = get_iou_th_min_th_dila_from_name(folder)
+                    draw_a_lot_of_curves(os.path.join(mother_dir, folder), dila, -1, min_th, iou_th, fpr_threshold)          # 30 is the min region parameter
 
     
     #################
