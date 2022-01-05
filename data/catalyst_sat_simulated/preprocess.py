@@ -17,31 +17,23 @@ from data import data_utils
 from mrs_utils import misc_utils, process_block
 
 # Settings
-DS_NAME = 'catalyst_d2'
+height=840
+DS_NAME = 'catalyst_sat_simulated_{}'.format(height)
 
-
-def get_images(data_dir, valid_percent=0.1, split=False, test_set_keyword='BW'):
+def get_images(data_dir, valid_percent=0.1, split=False):
     rgb_files = natsorted(glob(os.path.join(data_dir, 'images', '*.JPG')))
     lbl_files = natsorted(glob(os.path.join(data_dir, 'annotations', '*.png')))
     assert len(rgb_files) == len(lbl_files)
     train_files, valid_files = [], []
     # Ben added 2021.03.18: Get a random permutation so that the split is random
     rand_permutation = np.random.permutation(len(rgb_files))
-    # Ben added 2021.06.03: If the test_set_keyword is on, only take those with keyword to test set
-    if test_set_keyword is not None:
-        for i, pair in enumerate(zip(rgb_files, lbl_files)):
-            if test_set_keyword in pair[0]:
-                valid_files.append(pair)
-            else:
-                train_files.append(pair)
-        return train_files, valid_files
-
     for i, pair in enumerate(zip(rgb_files, lbl_files)):
         if rand_permutation[i] <= int(valid_percent * len(rgb_files)):
             valid_files.append(pair)
         else:
             train_files.append(pair)
     return train_files, valid_files
+
 
 def create_dataset(data_dir, save_dir, patch_size, pad, overlap, visualize=False):
     # create folders and files
@@ -106,5 +98,5 @@ if __name__ == '__main__':
     ps = 512
     ol = 0
     pd = 0
-    create_dataset(data_dir=r'/scratch/sr365/Catalyst_data/every_20m/d2/',
-                   save_dir=r'/scratch/sr365/Catalyst_data/every_20m/d2/', patch_size=(ps, ps), pad=pd, overlap=ol, visualize=False)
+    create_dataset(data_dir=r'/scratch/sr365/Catalyst_data/simulated_satellite_height_{}'.format(height),
+                   save_dir=r'/scratch/sr365/Catalyst_data/simulated_satellite_height_{}/'.format(height), patch_size=(ps, ps), pad=pd, overlap=ol, visualize=False)

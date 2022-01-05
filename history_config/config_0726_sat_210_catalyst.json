@@ -1,20 +1,20 @@
 {
-    "gpu": "0",
+    "gpu": "3",
     "encoder_name": "resnet50",
     "decoder_name": "dlinknet",
     "random_seed": 1,
     "dataset": {
-      "ds_name": "catalyst_d4",
+      "ds_name": "rwanda_rti",
       "input_size": "(512, 512)",
       "crop_size": "(512, 512)",
       "class_num": 2,
       "mean" : "(0.485, 0.456, 0.406)",
       "std" : "(0.229, 0.224, 0.225)",
-      "data_dir": "/scratch/sr365/Catalyst_data/d4/patches",
-      "train_file": "/scratch/sr365/Catalyst_data/d4/file_list_train.txt",
-      "valid_file": "/scratch/sr365/Catalyst_data/d4/file_list_valid.txt",
+      "data_dir": "/scratch/sr365/Catalyst_data/simulated_satellite_height_210/patches",
+      "train_file": "/scratch/sr365/Catalyst_data/simulated_satellite_height_210/file_list_train.txt",
+      "valid_file": "/scratch/sr365/Catalyst_data/simulated_satellite_height_210/file_list_valid.txt",
       "batch_size": 16,
-      "num_workers": 8
+      "num_workers": 16
     },
     "optimizer": {
       "learn_rate_encoder": 1e-3,
@@ -27,13 +27,13 @@
       "gamma": 2,
       "loss_weights": "(1, 0.5)",
       "bp_loss_idx": "(0, 1)",
-      "class_weight": "(1, 150)",
+      "class_weight": "(1,1000)",
       "criterion_name": "xent,softiou,iou",
       "epochs": 80,
       "save_epoch": 40,
       "resume_epoch": 0,
       "finetune_dir": "/scratch/wh145/models/solarmapper_final/ct/epoch-80.pth.tar",
-      "save_root": "/scratch/sr365/models/catalyst_from_ct_d4"
+      "save_root": "/scratch/sr365/models/catalyst_simulated_sate_res_210/"
     }
   }
   

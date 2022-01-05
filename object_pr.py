@@ -74,7 +74,8 @@ def plot_PR_curve(min_region, dilation_size, link_r, min_th, iou_th, conf_dir_li
             # print('the save confusion plot name is :', save_confusion_map)
             conf_tile, true_tile = eval_utils.score(                                                        # Call a function in utils.score to score this
                 conf_img, lbl_img, min_region=min_region, min_th=min_th/255, 
-                dilation_size=dilation_size, link_r=link_r, iou_th=iou_th)#, save_confusion_map=save_confusion_map)    
+                dilation_size=dilation_size, link_r=link_r, iou_th=iou_th, 
+                tile_name=os.path.join('post_process_understanding', tile))#, save_confusion_map=save_confusion_map)    
             conf_list.extend(conf_tile)
             true_list.extend(true_tile)
             if calculate_area:              # For RTI data this  is off
@@ -319,40 +320,43 @@ def take_object_pr_RTI(output_dir, conf_dir, gt_dir, prefix,  min_region, dilati
 
 if __name__ == '__main__':
     # For the Exp 1 & 2
-    num_cpu = 64
+    num_cpu = 1
     try: 
-       pool = Pool(num_cpu)
-       min_region = [100, 90, 60, 40]
-       #min_region = [40, 40, 40, 40]
-       dilation_size = 10
-       min_th = 127.5
-       iou_th = 0.2
-       args_list = []
-       min_th_list = np.array([0.1, 0.3, 0.5])
-       #min_th_list = np.array([0.5])
-       min_th_list = min_th_list * 255   
-       print(min_th_list)
-       for min_th in min_th_list:
-           for iou_th in [0.2]:
-           #for iou_th in [0.4]:
-               min_th = int(min_th)        # Make sure it is a integer
-               # Every 10 meters
-               # for i in range(5, 13):
-               #     for j in range(5, 13):
-               # Every 20 meters
-               for i in range(1, 5):
-                   for j in range(1, 5):
+        pool = Pool(num_cpu)
+        min_region = [100, 90, 60, 40]
+        # min_region = [40, 40, 40, 40]
+        #min_region = [20, 20, 20, 20]
+        dilation_size = 10
+        min_th = 127.5
+        iou_th = 0.2
+        args_list = []
+        #min_th_list = np.array([0.1, 0.3, 0.5])
+        min_th_list = np.array([0.5])
+        min_th_list = min_th_list * 255   
+        print(min_th_list)
+        for min_th in min_th_list:
+            for iou_th in [0.2]:
+            #for iou_th in [0.4]:
+                min_th = int(min_th)        # Make sure it is a integer
+                # Every 10 meters
+                # for i in range(5, 13):
+                #     for j in range(5, 13):
+                # Every 20 meters
+                #for i in range(1, 5):
+                #    for j in range(1, 5):
+                for i in range(2, 3):
+                    for j in range(3, 4):
                        ######################################
                        # This if for the change res setting #
                        ######################################
                        # if i != j:
                        #     continue
                        args_list.append((i, j, min_region[i-1], dilation_size, min_th, iou_th))
-       print(args_list)
-       pool.starmap(take_pair_wise_object_pr, args_list)
+        print(args_list)
+        pool.starmap(take_pair_wise_object_pr, args_list)
     finally:
-       pool.close()
-       pool.join()
+        pool.close()
+        pool.join()
     
 
     """

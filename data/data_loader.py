@@ -172,6 +172,7 @@ def get_loader(data_path, file_name, transforms=None, n_class=2, with_aux=False)
         # multi dataset
         return RSDataLoader(data_path, file_name, transforms, n_class, with_aux=with_aux)
     else:
+        print('error!, your file name is', file_name)
         raise NotImplementedError('File extension {} is not supportted yet'.format(os.path.splitext(file_name))[-1])
 
 

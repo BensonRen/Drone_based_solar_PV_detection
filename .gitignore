@@ -3,13 +3,15 @@
 
 *.err
 *.out
-waitandrun.sh
+waitandrun*.sh
 workspace*
 
 # Customize
 tasks
 pytest/.pytest_cache
 /pytest/
+
+post_process_understanding/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -194,7 +194,7 @@ class ObjectScorer(object):
             reg_groups.append([reg_props[g] for g in group])
         return reg_groups
 
-    def get_object_groups(self, conf_map):
+    def get_object_groups(self, conf_map, tile_name=None):
         """
         Group objects within certain radius
         :param conf_map:
@@ -202,11 +202,24 @@ class ObjectScorer(object):
         """
         # get connected components
         im_binary = conf_map >= self.min_th
+        if tile_name is not None:
+            np.save(tile_name + '1_conf_map_threshold.npy', im_binary)       # Ben 0909 understanding Post-processing
+        #io.imsave('post_process_understanding/1_conf_map_threshold.png', im_binary)
         # do min_region thresholding before adding dilation
         im_label = measure.label(im_binary)
+        if tile_name is not None:
+            np.save(tile_name + '2_grouped.npy', im_label)       # Ben 0909 understanding Post-processing
+        #io.imsave('post_process_understanding/2_grouped.png', im_label)       # Ben 0909 understanding Post-processing
         reg_props = [a for a in measure.regionprops(im_label, conf_map) if a.area >= self.min_region]
         # rasterize post min_region map
         im_binary = dummyfy(im_label, reg_props)
+        ####################################
+        # this is all understanding process
+        im_label_post_3 = measure.label(im_binary)
+        if tile_name is not None:
+            np.save(tile_name + '3_grouped_thresholded.npy', im_label_post_3)       # Ben 0909 understanding Post-processing
+        #io.imsave('post_process_understanding/3_grouped_thresholded.png', im_label_post_3)       # Ben 0909 understanding Post-processing
+        ############################################################
         # dummy = np.zeros(im_label.shape, dtype=int)
         # for reg in reg_props:
         #     coords = np.array(reg.coords)
@@ -218,13 +231,29 @@ class ObjectScorer(object):
         elif self.dilation_size > 0:
             im_dilated = dilation(im_binary, disk(self.dilation_size))
             # im_dilated = erosion(im_dilated, disk(self.dilation_size))  # Ben added for original algorithm
-        dilated_label = measure.label (im_dilated)
+        if tile_name is not None:
+            np.save(tile_name + '4_dialated.npy', im_dilated)       # Ben 0909 understanding Post-processing
+        #io.imsave('post_process_understanding/4_dialated.png', im_dilated)       # Ben 0909 understanding Post-processing
+        dilated_label = measure.label(im_dilated)
+        if tile_name is not None:
+            np.save(tile_name + '5_dialated_group.npy', dilated_label)       # Ben 0909 understanding Post-processing
+        #io.imsave('post_process_understanding/5_dialated_group.png', dilated_label)       # Ben 0909 understanding Post-processing
         # reg_props = measure.regionprops(dilated_label)              # Ben added for original one
         pixel_grouped = np.multiply(im_binary, dilated_label)
         pixel_grouped_reg_props = measure.regionprops(pixel_grouped)
+        ####################################
+        # This is all understanding process
+        #dilated_label = measure.label(pixel_grouped)
+        if tile_name is not None:
+            np.save(tile_name + '6_Assign_original_confidence.npy', pixel_grouped)       # Ben 0909 understanding Post-processing
+        #io.imsave('post_process_understanding/6_Assign_original_confidence.png', dilated_label)       # Ben 0909 understanding Post-processing
+        ##########################################
         # Remove regions whose un-dilated area are lower than threshold
-        pixel_grouped_reg_props = [a for a in pixel_grouped_reg_props if a.area >= self.min_region]
-        return reg_props
+        # pixel_grouped_reg_props = [a for a in pixel_grouped_reg_props if a.area >= self.min_region]
+        # print("There is error, stop", jibberish)
+        # quit()
+        
+        return pixel_grouped_reg_props
 
 def dummyfy(original_img, reg_props):
     """
@@ -237,18 +266,27 @@ def dummyfy(original_img, reg_props):
         dummy[coords[:, 0], coords[:, 1]] = 1
     return dummy
 
-def score(pred, lbl, min_region=5, min_th=0.5, dilation_size=5, link_r=20, eps=2, iou_th=0.5):
+def score(pred, lbl, min_region=5, min_th=0.5, dilation_size=5, link_r=20, eps=2, iou_th=0.5, tile_name=None):
     obj_scorer = ObjectScorer(min_region, min_th, dilation_size, link_r, eps)
-
+    
     # Get the list of groups (each group represent a group of pixels that are connected)
     ################################################
     # 2021.06.10 added for understanding PR process#
     ################################################
     # print('doing object group for prediction')        # Ben added
+    if tile_name is not None:
+            np.save(tile_name + '0_conf_map_raw.npy', pred)
+    #np.savetxt('post_process_understanding/0_conf_map_raw.txt', pred)
+    #f = plt.figure(figsize=[5, 5])
+    #io.imshow(pred)
+    #print('saving image down')
+    #plt.savefig('post_process_understanding/0_conf_map_raw.png')
+    #io.imsave('post_process_understanding/0_conf_map_raw.npy', pred)
     # group_pred = obj_scorer.get_object_groups(pred)
-    group_pred = obj_scorer.get_object_groups(pred)  # Ben added
+    group_pred = obj_scorer.get_object_groups(pred, tile_name=tile_name)  # Ben added
+    return 0, 0
     # print('doing object group for labels')        # Ben added
-    group_lbl = obj_scorer. get_object_groups(lbl)
+    group_lbl = obj_scorer. get_object_groups(lbl, tile_name=None)
     # # Plotting the 
     # pred_map = dummyfy(pred, group_pred)
     # # f = plt.figure()
