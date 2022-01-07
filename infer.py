@@ -18,68 +18,18 @@ from make_file_list import make_file_list
 # Settings
 
 GPU = 0
-#general_folder = r'/scratch/sr365/Catalyst_data/'
-#general_folder = r'/scratch/sr365/RTI_data/positive_class'
-#general_folder = r'/scratch/sr365/Catalyst_data/moving_imgs/labelled/img'
-#general_folder = r'/scratch/sr365/Catalyst_data/2021_03_21_15_C_90_test_set/H3_raw'
-#general_folder = r'/scratch/sr365/RTI_Rwanda_full/cut_tiles_ps_8000/rti_rwanda_crop_type_raw_Ngarama_Processed_Phase3'
-#general_folder = r'/scratch/sr365/RTI_Rwanda_full/cut_tiles_ps_8000/rti_rwanda_crop_type_raw_Rwakigarati_Processed_Phase1'
-#general_folder = r'/scratch/sr365/RTI_data/'
-# general_folder = r'/scratch/sr365/Catalyst_data/simulated_satellite_height_210/images'
-#general_folder = r'/scratch/sr365/Catalyst_data/simulated_satellite_height_210/images'
-general_folder = r'/scratch/sr365/Catalyst_data/example_plot_for_flow_chart'
+# !!!CHANGE THIS!!! The folder where the images are stored
+general_folder = r'data_raw/Exp1_1_resolution_buckets/test/d1/images'
+# In case under the general folder you would like to evaluate on another
 data_specific_folder = r'.'
-
-# Simulated satellite resolution
-#MODEL_DIR = r'/scratch/sr365/models/catalyst_simulated_sate_res_210_cw_500/ecresnet50_dcdlinknet_dsrwanda_rti_lre1e-03_lrd1e-02_ep80_bs16_ds50_75_dr0p1_crxent1p0_softiou0p5'
-#LOAD_EPOCH = 80 
-
-#MODEL_DIR = r'/scratch/wh145/models/solarmapper_final/ct' # Parent directory of trained model
-#LOAD_EPOCH = 180 
-
-# MODEL_DIR = r'/scratch/wh145/models/solarmapper_final/sd' # Parent directory of trained model
-#LOAD_EPOCH = 180 
-
-# H3 best model
-MODEL_DIR = '/scratch/sr365/models/catalyst/loss_weight/catalystloss_weight=0.5/ecresnet50_dcdlinknet_dscatalyst_h3_lre1e-03_lrd1e-02_ep80_bs16_ds50_100_dr0p1_crxent1p0_softiou0p5'
+# !!!CHANGE THIS!!! Your model directory here
+MODEL_DIR = '../models/catalyst/loss_weight/catalystloss_weight=0.5/ecresnet50_dcdlinknet_dscatalyst_h3_lre1e-03_lrd1e-02_ep80_bs16_ds50_100_dr0p1_crxent1p0_softiou0p5'
+# The epoch number to be loaded here
 LOAD_EPOCH = 80
-
-# H2 best model
-#MODEL_DIR = '/scratch/sr365/models/catalyst/loss_weight/catalystloss_weight=0.5/ecresnet50_dcdlinknet_dscatalyst_h2_lre1e-03_lrd1e-02_ep80_bs16_ds50_50_dr0p1_crxent1p0_softiou0p5'
-#LOAD_EPOCH = 80
-
-# H2 trained, RTI blank finetuned model
-#MODEL_DIR = '/scratch/sr365/models/RTI/RTI_finetune_h2/ecresnet50_dcdlinknet_dsRTI_negative_lre1e-03_lrd1e-02_ep30_bs16_ds50_50_dr0p1_crxent7p0_softiou3p0'
-#LOAD_EPOCH = 30
-
-# H3 trained, RTI blank finetuned model
-#MODEL_DIR = '/scratch/sr365/models/RTI/RTI_finetune_h3/ecresnet50_dcdlinknet_dsRTI_negative_lre1e-03_lrd1e-02_ep30_bs16_ds50_50_dr0p1_crxent7p0_softiou3p0'
-#LOAD_EPOCH = 30
-
-# Catalyst_h2 and RTI mixed training result
-#MODEL_DIR = '/scratch/sr365/models/catalyst_h2RTI_mixed/class_weight_40/ecresnet50_dcdlinknet_dscatalyst_h2_RTI_negative_ft_lre1e-03_lrd1e-02_ep80_bs16_ds50_50_dr0p1_crxent1p0_softiou0p5'
-#LOAD_EPOCH = 80
-
-# Catalyst_h3 and RTI mixed training result
-#MODEL_DIR = '/scratch/sr365/models/catalyst_h3RTI_mixed/class_weight_100/ecresnet50_dcdlinknet_dscatalyst_h3_RTI_negative_ft_lre1e-03_lrd1e-02_ep80_bs16_ds50_50_dr0p1_crxent1p0_softiou0p5'
-#MODEL_DIR='/scratch/sr365/models/catalyst_h3RTI_mixed/class_weight_150/ecresnet50_dcdlinknet_dscatalyst_h3_RTI_negative_ft_lre1e-03_lrd1e-02_ep80_bs16_ds50_50_dr0p1_crxent1p0_softiou0p5'
-#LOAD_EPOCH = 80
-
-
-# RTI_positive_sample_from_ct
-#MODEL_DIR = '/scratch/sr365/models/RTI_sample_positive/RTI_sample_positive_from_ct/class_weight_100/RTI_positive_from_ct_weight_100'
-#LOAD_EPOCH = 80
-
-# RTI_positive_sample_from_h3
-#MODEL_DIR = '/scratch/sr365/models/RTI_sample_positive/RTI_sample_positive_from_h3/class_weight_5/RTI_positive_from_h3_weight_5'
-#LOAD_EPOCH = 80
-
-#MODEL_DIR = '/scratch/sr365/models/catalyst/ecresnet50_dcdlinknet_dscatalyst_lre1e-03_lrd1e-02_ep20_bs5_ds15_dr0p1_crxent'
-#LOAD_EPOCH = 20
 DATA_DIR = os.path.join(general_folder, data_specific_folder)  # Parent directory of input images in .jpg format
 SAVE_ROOT = os.path.join(DATA_DIR, 'save_root/') # Parent directory of input images in .jpg format
 FILE_LIST = os.path.join(DATA_DIR, 'file_list_raw.txt') # A list of full path of images to be tested on in DATA_DIR
-DS_NAME = 'Catalyst_sat' # Whatever you like to name it
+DS_NAME = 'Catalyst' # Whatever you like to name it
 
 
 PATCH_SIZE = (512, 512)
@@ -236,131 +186,7 @@ def infer_confidence_map(DATA_DIR=DATA_DIR, SAVE_ROOT=SAVE_ROOT, FILE_LIST=FILE_
                 gt_max=1, conf_max=255, gt_postfix='.png', conf_postfix='_conf.png'
             )
         )
-        # Ben's comment here
 
-
-
-def aggregate_infer():
-    # # Re-sampled list
-    ###################
-    # Gaia specific   #
-    # Every 10 meters #
-    ###################
-    # data_dir_list, model_dir_list = [], []
-    # for i in range(9, 13):      # Model index
-    #     for j in range(5, 13):  # Test index
-    #         if i == j:          # Do not make inference for the same resolution
-    #             continue
-    #         data_dir_list.append('/scratch/sr365/Catalyst_data/every_10m_change_res/{}0m_resample_to_{}0m/images'.format(j, i))
-    #         model_dir_list.append('/scratch/sr365/models/catalyst_10m/catalyst_from_ct_{}0m/best_model'.format(i))
-
-    # data_dir_list = ['/scratch/sr365/Catalyst_data/every_10m/{}0m/images/'.format(i) for i in range(9, 13)]
-    # model_dir_list = ['/scratch/sr365/models/catalyst_10m/catalyst_from_ct_{}0m/best_model'.format(i) for i in range(5, 13)]
-    
-    ###################
-    # Gaia specific   #
-    # Every 20 meters
-    # Extra resolution simulated #
-    ###################
-    #data_dir_list, model_dir_list = [], []
-    #model_prefix_name ='/scratch/sr365/models/catalyst_simulated_sate_res_'
-    #data_prefix_name = '/scratch/sr365/Catalyst_data/simulated_satellite_height_'
-    #for res in [210, 420, 840]:
-    #    # Get the model folder name
-    #    model_mother_folder = model_prefix_name+str(res)
-    #    # list the subfolders and add them into  
-    #    for folder in os.listdir(model_mother_folder):
-    #        cur_folder = os.path.join(model_mother_folder, folder)
-    #        model_dir_list.append(cur_folder)
-    #        data_dir_list.append(os.path.join(data_prefix_name + str(res), 'images'))
-    
-
-
-
-
-    ###################
-    # Gaia specific   #
-    # Every 20 meters #
-    ###################
-    # data_dir_list, model_dir_list = [], []
-    # for i in range(1, 5):      # Model index
-    # # i=4
-    #    for j in range(1, 5):  # Test index
-    #        #if i == j:          # Do not make inference for the same resolution
-    #        #    continue
-    #        data_dir_list.append('/scratch/sr365/Catalyst_data/every_20m/d{}/images'.format(j, i))
-    #        model_dir_list.append('/scratch/sr365/models/catalyst_from_ct_d{}/best_model'.format(i))
-    #     #    data_dir_list.append('/scratch/sr365/Catalyst_data/every_20m_change_res/d{}_change_res_to_d{}/images'.format(j, i))
-    #     #    model_dir_list.append('/scratch/sr365/models/catalyst_from_ct_d{}/best_model'.format(i))
-           
-    ###################
-    # Gaia specific   #
-    # Every 20 meters for d2 new models #
-    ###################
-    # data_dir_list, model_dir_list = [], []
-    # for i in range(0, 4):      # Model index
-    # # i=4
-    #    for j in range(1, 5):  # Test index
-    #        data_dir_list.append('/scratch/sr365/Catalyst_data/every_20m/d{}/images'.format(j))
-    #        model_dir_list.append('/scratch/sr365/models/catalyst_from_ct_d2/updated_0818_models/class_weight_50_loss_weight_1_trail_{}'.format(i))
-
-
-    ###################
-    # Gaia specific   #
-    # Every 20 meters #
-    # Motion blur     #
-    ###################
-    # data_dir_list, model_dir_list = [], []
-    # for i in range(1, 5):      # Model index
-    #     for mb in [2, 4, 6, 8, 10, 20]:
-    #         data_dir_list.append('/scratch/sr365/Catalyst_data/every_20m/motion_blur/d{}_mb_{}/images'.format(i, mb))
-    #         model_dir_list.append('/scratch/sr365/models/catalyst_from_ct_d{}/best_model'.format(i))
-
-
-    
-    ###################
-    # quad specific   #
-    # Rwanda RTI data #
-    ###################
-    # data_dir_list = ['/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/train_object_only',
-    #                  '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/test_object_only']
-    # # model_mother_folder_list = ['/home/sr365/Gaia/models/rwanda_rti_from_ct']
-    # model_mother_folder_list = [ '/home/sr365/Gaia/models/rwanda_rti_from_catalyst']
-    # model_dir_list = []
-    # for mother_folder in model_mother_folder_list:
-    #     for folder in os.listdir(mother_folder):
-    #         model_dir_list.append(os.path.join(mother_folder, folder))
-
-    # For the pair-wise evaluations
-    # for DATA_DIR in data_dir_list:
-    #     for MODEL_DIR in model_dir_list:
-    
-    
-    ###################
-    # Gaia specific   #
-    # Exp 2 dx speed  #
-    ###################
-    #data_dir_list, model_dir_list = [], []
-    #for i in range(1, 5):      # Model index
-    #    for mode in ['Normal','Sports']:  # Test index
-    #        data_dir_list.append('/scratch/sr365/Catalyst_data/test_moving_imgs/{}/d{}/images'.format(mode, i))
-    #        model_dir_list.append('/scratch/sr365/models/catalyst_from_ct_d{}/best_model'.format(i))
-
-    # The single loop is for the within-domain evaluation
-    for DATA_DIR, MODEL_DIR in zip(data_dir_list, model_dir_list):
-            DS_NAME = 'catalyst_dx'
-            LOAD_EPOCH = 80
-            #SAVE_ROOT = os.path.join(DATA_DIR, 'from_best_catalyst') # Parent directory of input images in .jpg format
-            SAVE_ROOT = os.path.join(DATA_DIR, MODEL_DIR.split('/')[-2]) # Parent directory of input images in .jpg format
-            #SAVE_ROOT = os.path.join(DATA_DIR, 'd2_new_trained' + MODEL_DIR.split('/')[-1])
-            FILE_LIST = os.path.join(DATA_DIR, 'file_list_raw.txt') # A list of full path of images to be tested on in DATA_DIR 
-            print('evaluating for {}'.format(DATA_DIR))
-            infer_confidence_map(DATA_DIR=DATA_DIR, SAVE_ROOT=SAVE_ROOT, FILE_LIST=FILE_LIST,
-                                DS_NAME=DS_NAME, MODEL_DIR=MODEL_DIR ,LOAD_EPOCH=LOAD_EPOCH, extra_save_name=os.path.basename(MODEL_DIR))
-    
 if __name__ == '__main__':
     # # The individual evaluation
     infer_confidence_map()
-
-    # The bulk evaluation
-    #aggregate_infer()

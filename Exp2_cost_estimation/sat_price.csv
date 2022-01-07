@@ -1,0 +1,12 @@
+Satellite name,Company name,Resolution (m),Spectra,Price_low,Price_high,Smallest area,source
+QuickBird,DigitalGlobe,0.61,pan,17,23,25,https://www.aaas.org/resources/high-resolution-satellite-imagery-ordering-and-analysis-handbook#VI.%20Image%20Ordering
+WV-1/2,DigitalGlobe,0.5,pan,14,23,25,https://www.aaas.org/resources/high-resolution-satellite-imagery-ordering-and-analysis-handbook#VI.%20Image%20Ordering
+WV-3,Maxar,0.31,pan,23,50,25,https://apollomapping.com/worldview-3-satellite-imagery
+EROS-B,ImageSat Int,0.7,pan,13,25,50,https://www.aaas.org/resources/high-resolution-satellite-imagery-ordering-and-analysis-handbook#VI.%20Image%20Ordering
+IKONOS,GeoEye,0.82,pan,10,20,50,https://www.aaas.org/resources/high-resolution-satellite-imagery-ordering-and-analysis-handbook#VI.%20Image%20Ordering
+GeoEye-1,GeoEye,0.41,pan,10,14,50,https://www.aaas.org/resources/high-resolution-satellite-imagery-ordering-and-analysis-handbook#VI.%20Image%20Ordering
+Pleiades,AIRBUS,0.51,all band,13,21,25,Airbus_defence_space
+SPOT6&7,AIRBUS,1.5,pan,4.75,5.25,100,Airbus_defence_space
+HxGN*,Hexagon,0.15,RGB,6.8,6.8,,https://services.hxgncontent.com/admin/shop.do?cID=10023&pID=10953&zoomaction=minus&imageformat=geotif
+Com*,NC,0.3,,96,96,,https://files.nc.gov/ncdit/documents/files/OrthoImageryBusinessPlan-NC-20101029.pdf
+Com*,CT,0.075,,170,170,,https://portal.ct.gov/-/media/Office-of-the-Governor/News/2021/20210426-Governor-Lamont-ARPA-allocation-plan.pdf

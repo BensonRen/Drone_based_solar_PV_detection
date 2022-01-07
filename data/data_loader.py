@@ -67,6 +67,7 @@ class RSDataLoader(data.Dataset):
         self.with_label = with_label
         try:
             file_list = misc_utils.load_file(file_list)
+            print('file loaded', file_list)
             self.img_list, self.lbl_list = get_file_paths(parent_path, file_list, self.with_label)
         except OSError:
             file_list = eval(file_list)

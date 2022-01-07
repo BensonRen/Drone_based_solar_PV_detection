@@ -58,7 +58,7 @@ if __name__ == '__main__':
     #src_dir_list = ['/scratch/sr365/Catalyst_data/2021_03_21_15_C_90_test_set/H2_raw', '/scratch/sr365/Catalyst_data/2021_03_21_15_C_90_test_set/H3_raw']
     src_dir_list = ['/scratch/sr365/Catalyst_data/every_20m/d{}'.format(i) for i in range(1, 5)]
     
-    motion_blur_list = [3, 5, 7, 9, 11, 21]
+    motion_blur_list = [3, 5]#, 7, 9, 11, 21]
 
     for src_dir in src_dir_list:
         for motion_blur in motion_blur_list:

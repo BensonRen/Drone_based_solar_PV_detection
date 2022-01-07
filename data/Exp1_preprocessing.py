@@ -16,19 +16,20 @@ from natsort import natsorted
 from data import data_utils
 from mrs_utils import misc_utils, process_block
 
-height = 120
-
 # Settings
-DS_NAME = 'catalyst_{}m'.format(height)
+DS_NAME = 'catalyst'
 
-
-def get_images(data_dir, valid_percent=0.1, split=False, test_set_keyword='BW'):
-    rgb_files = natsorted(glob(os.path.join(data_dir, 'images', '*.JPG')))
-    lbl_files = natsorted(glob(os.path.join(data_dir, 'annotations', '*.png')))
+def get_images(data_dir, valid_percent=0.2, test_set_keyword=None):
+    rgb_files = natsorted(glob(os.path.join(data_dir, 'img', '*.JPG')))
+    if 'Exp1_4' in data_dir:            # The moving image cut from video are .png files
+        rgb_files = natsorted(glob(os.path.join(data_dir, 'img', '*.png')))
+    lbl_files = natsorted(glob(os.path.join(data_dir, 'labels', '*.png')))
     assert len(rgb_files) == len(lbl_files)
     train_files, valid_files = [], []
     # Ben added 2021.03.18: Get a random permutation so that the split is random
     rand_permutation = np.random.permutation(len(rgb_files))
+    if 'test' in data_dir:
+        rand_permutation = np.zeros_like(rand_permutation)
     # Ben added 2021.06.03: If the test_set_keyword is on, only take those with keyword to test set
     if test_set_keyword is not None:
         for i, pair in enumerate(zip(rgb_files, lbl_files)):
@@ -106,8 +107,68 @@ def get_stats_pb(img_dir):
 
 
 if __name__ == '__main__':
-    ps = 512
-    ol = 0
-    pd = 0
-    create_dataset(data_dir=r'/scratch/sr365/Catalyst_data/every_10m/{}m/'.format(height),
-                   save_dir=r'/scratch/sr365/Catalyst_data/every_10m/{}m/'.format(height), patch_size=(ps, ps), pad=pd, overlap=ol, visualize=False)
+    # ###############################
+    # # Exp 1_1 Various resolution  #
+    # ###############################
+    for i in range(1, 5):
+        ps = 512
+        ol = 0
+        pd = 0
+        target_dir = r'../data_raw/Exp1_1_resolution_buckets/train_val/d{}'.format(i)
+        create_dataset(data_dir=target_dir, save_dir=target_dir, patch_size=(ps, ps), 
+                        pad=pd, overlap=ol, visualize=False)
+        target_dir = r'../data_raw/Exp1_1_resolution_buckets/test/d{}'.format(i)
+        create_dataset(data_dir=target_dir, save_dir=target_dir, patch_size=(ps, ps), 
+                        pad=pd, overlap=ol, visualize=False)
+    ###########################################
+    # Exp 1_2 Satellite resolution simulation #
+    ###########################################
+    for res in [7.5, 15, 30, 60]:
+        ps = 512
+        ol = 0
+        pd = 0
+        target_dir = r'../data_raw/Exp1_2_sat_res/res_{}/train_val/'.format(res)
+        create_dataset(data_dir=target_dir, save_dir=target_dir, patch_size=(ps, ps), 
+                        pad=pd, overlap=ol, visualize=False)
+                        
+        target_dir = r'../data_raw/Exp1_2_sat_res/res_{}/test/'.format(res)
+        create_dataset(data_dir=target_dir, save_dir=target_dir, patch_size=(ps, ps), 
+                        pad=pd, overlap=ol, visualize=False)
+    # ###########################################
+    # # Exp 1_3 changed resolution to test set  #
+    # ###########################################
+    for i in range(1, 5):
+        for j in range(1, 5):
+            if i == j:      # skip when training res match test res
+                continue
+            ps = 512
+            ol = 0
+            pd = 0
+            target_dir = r'../data_raw/Exp1_3_changed_testset/d{}_changed_to_d{}/test/'.format(i, j)
+            create_dataset(data_dir=target_dir, save_dir=target_dir, patch_size=(ps, ps), 
+                            pad=pd, overlap=ol, visualize=False)
+    
+    ###################################
+    # Exp 1_4 moving images test set  #
+    ###################################
+    for i in range(1, 5):
+        for mode in ['S','N']:
+            ps = 512
+            ol = 0
+            pd = 0
+            target_dir = r'../data_raw/Exp1_4_moving_imgs/d{}_{}_mode/test/'.format(i, mode)
+            create_dataset(data_dir=target_dir, save_dir=target_dir, patch_size=(ps, ps), 
+                            pad=pd, overlap=ol, visualize=False)
+    
+    ##########################################
+    # Exp 1_5 adding aritificial motion blur #
+    ##########################################
+    for i in range(1, 5):
+        for mb in [2, 4]:
+            ps = 512
+            ol = 0
+            pd = 0
+            target_dir = r'../data_raw/Exp1_5_artificial_motion_blur/d{}_mb_{}/test/'.format(i, mb)
+            create_dataset(data_dir=target_dir, save_dir=target_dir, patch_size=(ps, ps), 
+                            pad=pd, overlap=ol, visualize=False)
+    

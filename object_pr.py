@@ -158,127 +158,17 @@ def plot_PR_curve(min_region, dilation_size, link_r, min_th, iou_th, conf_dir_li
             np.savetxt(save_path.replace('.png','_nfpr_tpr_pair.txt'), nfpr_tpr_pair)
 
 
-def bulk_object_pr():
-    # Some parameters to swipe
-    #gt_dir = '/scratch/sr365/RTI_data/positive_class'
-    #gt_dir = '/scratch/sr365/Catalyst_data/2021_03_21_15_C_90_test_set'
-    #gt_dir = '/scratch/sr365/Catalyst_data/moving_imgs/labelled/cvs'
-    gt_dir = '/scratch/sr365/Catalyst_data/d1/images'
-    #gt_dir = '/scratch/sr365/Catalyst_data/d2/images'
-    #gt_dir = '/scratch/sr365/Catalyst_data/d3/images'
-    #gt_dir = '/scratch/sr365/Catalyst_data/d4/images'
-    gt_dir_list = ['/scratch/sr365/Catalyst_data/every_10m/{}m/annotations'.format(i) for i in range(5, 13)]
-    prefix = 'd1_model_test_d1'
-    #model_img_pair = 'ecresnet50_dcunet_dsct_new_non_random_3_splits_lre1e-03_lrd1e-02_ep180_bs7_ds30_dr0p1_crxent7p0_softiou3p0'
-    #model_img_pair = 'ecresnet50_dcunet_dsSDhist_lre1e-02_lrd1e-02_ep180_bs5_ds30_100_150_dr0p1_crxent0p7_softiou0p3'
-    #model_img_pair='h3_moving'
-    #model_img_pair = ''
-    #model_img_pair = 'RTI_h3_mixed_training_150_class_weight'
-    #model_img_pair = 'RTI_h2_mixed_training_best_hyper'
-    # min_region_list = [10]
-    # dilation_size_list = [10]
-    # min_th_list = [200]
-    output_dir = '/scratch/sr365/PR_curves/'
-    #conf_dir_list = [
-        # Catalyst dx part
-    #    os.path.join(gt_dir, 'save_root', 'ecresnet50_dcdlinknet_dscatalyst_d1_lre1e-03_lrd1e-02_ep80_bs16_ds50_75_dr0p1_crxent1p0_softiou0p5')
-        #os.path.join(gt_dir, 'save_root', 'ecresnet50_dcdlinknet_dscatalyst_d2_lre1e-03_lrd1e-02_ep80_bs16_ds50_75_dr0p1_crxent1p0_softiou0p5')
-        #os.path.join(gt_dir, 'save_root', 'ecresnet50_dcdlinknet_dscatalyst_d3_lre1e-03_lrd1e-02_ep80_bs16_ds50_75_dr0p1_crxent1p0_softiou0p5')
-        #os.path.join(gt_dir, 'save_root', 'ecresnet50_dcdlinknet_dscatalyst_d4_lre1e-03_lrd1e-02_ep80_bs16_ds50_75_dr0p1_crxent1p0_softiou0p5')
-        
-        # Motion part 
-        #'/scratch/sr365/Catalyst_data/moving_imgs/labelled/img/save_root/h2_model_h2_img'
-        #'/scratch/sr365/Catalyst_data/moving_imgs/labelled/img/save_root/h3_model_h3_img'
-        #'/scratch/sr365/Catalyst_data/moving_imgs/labelled/img/save_root/h2',
-        #'/scratch/sr365/Catalyst_data/moving_imgs/labelled/img/save_root/h3'
-        # Motion N mode
-        #'/scratch/sr365/Catalyst_data/moving_imgs/labelled/img/save_root/h3_model_h3_img_N_mode',
-        #'/scratch/sr365/Catalyst_data/moving_imgs/labelled/img/save_root/h2_model_h2_img_N_mode'
-        # Motion S mode
-        #'/scratch/sr365/Catalyst_data/moving_imgs/labelled/img/save_root/h3_model_h3_img_S_mode',
-        #'/scratch/sr365/Catalyst_data/moving_imgs/labelled/img/save_root/h2_model_h2_img_S_mode'
-        # stationary part
-        #'/scratch/sr365/Catalyst_data/2021_03_21_15_C_90_test_set/save_root/H2_img_H2_model'
-        #'/scratch/sr365/Catalyst_data/2021_03_21_15_C_90_test_set/save_root/H3_img_H3_model'
-        #'/scratch/sr365/Catalyst_data/2021_03_21_15_C_90_test_set/save_root/test'
-        #'/scratch/sr365/Catalyst_data/2021_03_21_15_C_90_test_set/H3_raw_mb_{}/save_root/ecresnet50_dcdlinknet_dscatalyst_h3_lre1e-03_lrd1e-02_ep80_bs16_ds50_100_dr0p1_crxent1p0_softiou0p5'.format(i) for i in range(1, 6)
-        #'/scratch/sr365/Catalyst_data/2021_03_21_15_C_90_test_set/H2_raw_mb_1/save_root/ecresnet50_dcdlinknet_dscatalyst_h2_lre1e-03_lrd1e-02_ep80_bs16_ds50_50_dr0p1_crxent1p0_softiou0p5'.format(i) for i in range(1, 6)
-        #'/scratch/sr365/RTI_data/positive_class/save_root/' + model_img_pair
-    #]
-    #save_name_list = ['H3_raw_mb_{}'.format(i) for i in range(1, 6)]
-    #save_name_list = ['H2_raw_mb_{}'.format(i) for i in range(1, 6)]
-    link_r = 10
-    min_region = 30
-    dilation_size = 5
-    min_th = 122
-    iou_th = 0.6
-    # Looping
-    # for min_region in min_region_list:
-    #     for dilation_size in dilation_size_list:
-    #         for min_th in min_th_list:
-    #             for conf_dir in conf_dir_list:
-                    #save_title = model_img_pair + '_dialation_{}_min_region_{}_min_th{}'.format(dilation_size, min_region, min_th)
-   
-    # for i in range(5, 13):      # The image folder name
-    #     for j in range(5, 13):  # The model folder name
-    # for i in range(1, 5):      # The image folder name
-    #      for j in range(1, 5):  # The model folder name
-    
-    ################################################
-    # 2021.06.10 added for understanding PR process#
-    ################################################
-    # gt_list = [io.imread('/scratch/sr365/Catalyst_data/tmp_PR_test/2021_05_11_10_C_90DJI_0452_height_121m.png')]
-    # tile_name_list = ['/scratch/sr365/Catalyst_data/tmp_PR_test/img/2021_05_11_10_C_90DJI_0452_height_121m']
-    # conf_dir = '/scratch/sr365/Catalyst_data/tmp_PR_test/img'
-    # gt_dict = dict(zip(tile_name_list, gt_list))
-    # conf_dir_list = [conf_dir]
-    # prefix = 'test_PR'
-    # save_title = 'single_image'
-    # plot_PR_curve(min_region, dilation_size, link_r, min_th)
-
 def take_pair_wise_object_pr(i, j, min_region, dilation_size, min_th, iou_th, trail=0):
-    # # Every 10 meters
-    # output_dir = '/scratch/sr365/PR_curves/every_10_meter_train/iou_th_{}_min_th_{}_dila_{}'.format(iou_th, min_th, dilation_size)
-    # # output_dir = '/scratch/sr365/PR_curves/every_10_meter_test/iou_th_{}_min_th_{}_dila_{}'.format(iou_th, min_th, dilation_size)
-    # gt_dir = '/scratch/sr365/Catalyst_data/every_10m/{}0m/annotations'.format(i)
-    # conf_dir = '/scratch/sr365/Catalyst_data/every_10m/{}0m/images/save_root/{}0m_model'.format(i, j)
-    # # conf_dir = '/scratch/sr365/Catalyst_data/every_10m/{}0m/images/test_set_BW_save_root/{}0m_model'.format(i, j)
-    # #prefix = 'BW_test_model_{}0m_test_{}0m'.format(j, i)
-    # prefix = 'train_model_{}0m_test_{}0m'.format(j, i)
-
-    # Every 20 meters
     ###############################
     # The 20m ensemble test group #
     ###############################
     prefix = 'model_d{}_test_d{}'.format(j, i)
-    gt_dir = '/scratch/sr365/Catalyst_data/every_20m/d{}/annotations'.format(i)
-    # The ensemble version
-    # output_dir = '/scratch/sr365/PR_curves/dx_dx_test_set_ensemble/iou_th_{}_min_th_{}_dila_{}'.format(iou_th, min_th, dilation_size)
-    # conf_dir = '/scratch/sr365/Catalyst_data/every_20m/d{}/images/test_domain_ensembled_img_d{}_model_d{}'.format(i, i, j)
+    gt_dir = '/scratch/sr365/Catalyst_data/every_20m/d{}/annotations'.format(i)  
     output_dir = '/scratch/sr365/PR_curves/dx_dx_test_set_best_model/iou_th_{}_min_th_{}_dila_{}'.format(iou_th, min_th, dilation_size)
     conf_dir = '/scratch/sr365/Catalyst_data/every_20m/d{}/images/catalyst_from_ct_d{}/best_model/'.format(i, j)
-    
-    ############################
-    # The 20m change res group #
-    # ############################
-    # prefix = 'd{}_change_res_to_d{}'.format(j, i)
-    # gt_dir = '/scratch/sr365/Catalyst_data/every_20m_change_res/d{}_change_res_to_d{}/annotations'.format(j, i)
-    # output_dir = '/scratch/sr365/PR_curves/d{}_change_res_to_d{}/iou_th_{}_min_th_{}_dila_{}'.format(j, i, iou_th, min_th, dilation_size)
-    # conf_dir = '/scratch/sr365/Catalyst_data/every_20m_change_res/d{}_change_res_to_d{}/images/from_best_catalyst/best_model/'.format(j, i)
-    
-    # output_dir = '/scratch/sr365/PR_curves/dx_dx_test_set/iou_th_{}_min_th_{}_dila_{}'.format(iou_th, min_th, dilation_size)
-    # output_dir = '/scratch/sr365/PR_curves/dx_test_trail_{}/iou_th_{}_min_th_{}_dila_{}'.format(trail, iou_th, min_th, dilation_size)
-    # conf_dir = '/scratch/sr365/Catalyst_data/d{}/images/train_set/ecresnet50_dcdlinknet_dscatalyst_d{}_lre1e-03_lrd1e-02_ep120_bs16_ds50_75_dr0p1_crxent1p0_softiou0p5'.format(i, j)
-    
-    # conf_dir = '/scratch/sr365/Catalyst_data/d{}/images/test_domain_trail_{}/ecresnet50_dcdlinknet_dscatalyst_d{}_lre1e-03_lrd1e-02_ep80_bs16_ds50_75_dr0p1_crxent1p0_softiou0p5'.format(i, trail, j)
-    #output_dir = '/scratch/sr365/PR_curves/dx_dx_test_set/iou_th_{}_min_th_{}_dila_{}'.format(iou_th, min_th, dilation_size)
-    #conf_dir = '/scratch/sr365/Catalyst_data/d{}/images/train_set/ecresnet50_dcdlinknet_dscatalyst_d{}_lre1e-03_lrd1e-02_ep120_bs16_ds50_75_dr0p1_crxent1p0_softiou0p5'.format(i, j)
-    
+
     save_title = prefix + '_dial_{}_mireg_{}_mith_{}_iou_th_{}'.format(dilation_size, min_region, min_th, iou_th)
     conf_dir_list = [conf_dir]
-    #for conf_dir, save_name in zip(conf_dir_list, save_name_list):
-    #    save_title = prefix + model_img_pair + '{}_dialation_{}_min_region_{}_min_th{}'.format(save_name, dilation_size, min_region, min_th)
-        
     # creat folder if not exist
     if not os.path.exists(output_dir):
         try:
@@ -300,9 +190,6 @@ def take_pair_wise_object_pr(i, j, min_region, dilation_size, min_th, iou_th, tr
 def take_object_pr_RTI(output_dir, conf_dir, gt_dir, prefix,  min_region, dilation_size, min_th, iou_th):
     save_title = prefix + '_dial_{}_mireg_{}_mith_{}_iou_th_{}'.format(dilation_size, min_region, min_th, iou_th)
     conf_dir_list = [conf_dir]
-    #for conf_dir, save_name in zip(conf_dir_list, save_name_list):
-    #    save_title = prefix + model_img_pair + '{}_dialation_{}_min_region_{}_min_th{}'.format(save_name, dilation_size, min_region, min_th)
-        
     # creat folder if not exist
     if not os.path.exists(output_dir):
         try:
@@ -319,183 +206,26 @@ def take_object_pr_RTI(output_dir, conf_dir, gt_dir, prefix,  min_region, dilati
                 save_title=save_title, output_dir=output_dir, calculate_area=False)
 
 if __name__ == '__main__':
-    # For the Exp 1 & 2
-    num_cpu = 1
-    try: 
-        pool = Pool(num_cpu)
-        min_region = [100, 90, 60, 40]
-        # min_region = [40, 40, 40, 40]
-        #min_region = [20, 20, 20, 20]
-        dilation_size = 10
-        min_th = 127.5
-        iou_th = 0.2
-        args_list = []
-        #min_th_list = np.array([0.1, 0.3, 0.5])
-        min_th_list = np.array([0.5])
-        min_th_list = min_th_list * 255   
-        print(min_th_list)
-        for min_th in min_th_list:
-            for iou_th in [0.2]:
-            #for iou_th in [0.4]:
-                min_th = int(min_th)        # Make sure it is a integer
-                # Every 10 meters
-                # for i in range(5, 13):
-                #     for j in range(5, 13):
-                # Every 20 meters
-                #for i in range(1, 5):
-                #    for j in range(1, 5):
-                for i in range(2, 3):
-                    for j in range(3, 4):
-                       ######################################
-                       # This if for the change res setting #
-                       ######################################
-                       # if i != j:
-                       #     continue
-                       args_list.append((i, j, min_region[i-1], dilation_size, min_th, iou_th))
-        print(args_list)
-        pool.starmap(take_pair_wise_object_pr, args_list)
-    finally:
-        pool.close()
-        pool.join()
-    
-
-    """
-    # For the Exp 4 RTI work
-    num_cpu = 64
-    try: 
-        pool = Pool(num_cpu)
-        min_region = 10
-        dilation_size = 5
-        min_th = 2
-        iou_th = 0.2
-        args_list = []
-        min_th_list = np.array([0.3, 0.5, 0.7])
-        min_th_list = min_th_list * 255   
-        print(min_th_list)
-        gt_dir_list = ['/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/train_object_only/patches',
-                     '/home/sr365/Gaia/Rwanda_RTI/RTI_data_set/test_object_only/patches']
-        for min_th in min_th_list:
-            for iou_th in [0.2, 0.5]:
-                min_th = int(min_th)        # Make sure it is a integer
-                ######################
-                # quad 3090 specific #
-                ######################
-                ""
-                for gt_dir in gt_dir_list:
-                    conf_dir_list = []
-                    # Add folder to the confidence directory
-                    mother_folder = os.path.join('/', *gt_dir.split('/')[:-1], 'from_catalyst')
-                    for folder in os.listdir(mother_folder):
-                        conf_dir_list.append(os.path.join(mother_folder, folder))
-                    mother_folder = os.path.join('/', *gt_dir.split('/')[:-1], 'from_ct')
-                    for folder in os.listdir(mother_folder):
-                        conf_dir_list.append(os.path.join(mother_folder, folder))
-
-                    # Loop through the confidence directory
-                    for conf_dir in conf_dir_list:
-                        output_folder = os.path.join('/home/sr365/Gaia/PR_curves/', gt_dir.split('/')[-2], os.path.basename(conf_dir))
-                        # Make sure printing the right thing
-                        print('gt folder ', gt_dir)
-                        print('conf dir ', conf_dir)
-                        print('output dir ', output_folder)
-                        args_list.append((output_folder, conf_dir, gt_dir, '', min_region, dilation_size, min_th, iou_th))
-                ""
-        print(args_list)
-        pool.starmap(take_object_pr_RTI, args_list)
-    finally:
-        pool.close()
-        pool.join()
-    """
-
-
-    ##################################
-    # Gaia specific                  #
-    # Exp 1 extension                #
-    # Simulated satellite resolution #
-    ##################################
-    # height_list = [210, 420, 840]
-    # # gt_dir = '/scratch/sr365/Catalyst_data/simulated_satellite_height_210/images'
-    
-    # conf_dir_list = []
-    # # for cw in [50, 200, 1000]:
-    # for iou_th in [0.2]:
-    #     for height in height_list:
-    #         conf_dir_mother = '/scratch/sr365/Catalyst_data/simulated_satellite_height_{}/images/from_best_catalyst/'.format(height)
-    #         for folder in os.listdir(conf_dir_mother):
-    #             conf_dir = os.path.join(conf_dir_mother, folder)
-    #             conf_dir_list = [conf_dir]
-    #             #print('entering cw {}, iou th {}, height {}'.format(cw, iou_th, height))
-    #             gt_dir = '/scratch/sr365/Catalyst_data/simulated_satellite_height_{}/annotations'.format(height)
-    #             cw = int(folder.split('weight')[1].split('_')[1])
-    #             #conf_dir = conf_dir_list[0]
-    #             tile_name_list = ['_'.join(f.split('_')[:-1]) for f in os.listdir(conf_dir)]
-    #             gt_list = [io.imread(os.path.join(gt_dir, f+'.png')) for f in tile_name_list]
-    #             gt_dict = dict(zip(tile_name_list, gt_list))
-    #             output_dir = '/scratch/sr365/PR_curves/simulated_satellite_res/'
-    #             min_region=5
-    #             dilation_size=5
-    #             min_th=0.5*255
-    #             save_title = '_{}_cw_{}_min_region_{}_dial_{}_min_th_{}_iou_th_{}'.format(height, cw, min_region, dilation_size, min_th, iou_th)
-    #             plot_PR_curve(min_region=min_region, dilation_size=dilation_size, link_r=0, min_th=min_th, iou_th=iou_th, 
-    #                         conf_dir_list=conf_dir_list, tile_name_list=tile_name_list, gt_dict=gt_dict, 
-    #                         save_title=save_title, output_dir=output_dir)
-
-
-    ##################################
-    # Gaia specific                  #
-    # Exp 2                          #
-    ##################################
-    # for i in range(1, 5):      # Model index
-    #     for mode in ['Normal','Sports']:  # Test index
-    #         data_dir_list.append('/scratch/sr365/Catalyst_data/test_moving_imgs/{}/d{}/images'.format(mode, i))
-    #         model_dir_list.append('/scratch/sr365/models/catalyst_from_ct_d{}/best_model'.format(i))
-
-    # conf_dir_list = []
-    # for i in range(1, 5):      # Model index
-    #     for mode in ['Normal','Sports']:  # Test index
-    #         for iou_th in [0.2, 0.5]: 
-    #             print('entering d{}, mode {}'.format(i, mode))
-    #             gt_dir = '/scratch/sr365/Catalyst_data/test_moving_imgs/{}/d{}/annotations'.format(mode, i)
-    #             conf_dir_list = ['/scratch/sr365/Catalyst_data/test_moving_imgs/{}/d{}/images/from_catalyst_stationary/best_model'.format(mode, i)]
-    #             conf_dir = conf_dir_list[0]
-    #             tile_name_list = ['_'.join(f.split('_')[:-1]) for f in os.listdir(conf_dir)]
-    #             gt_list = [io.imread(os.path.join(gt_dir, f+'.png')) for f in tile_name_list]
-    #             gt_dict = dict(zip(tile_name_list, gt_list))
-    #             output_dir = '/scratch/sr365/PR_curves/simulated_satellite_res/'
-    #             min_region=5
-    #             dilation_size=5
-    #             min_th=0.5*255
-    #             save_title = '_d{}_moving_{}_min_region_{}_dial_{}_min_th_{}_iou_th_{}'.format(i, mode, min_region, dilation_size, min_th, iou_th)
-    #             plot_PR_curve(min_region=min_region, dilation_size=dilation_size, link_r=0, min_th=min_th, iou_th=iou_th, 
-    #                         conf_dir_list=conf_dir_list, tile_name_list=tile_name_list, gt_dict=gt_dict, 
-    #                         save_title=save_title, output_dir=output_dir)
-    # temporary for visualizatin purpose
-    # take_pair_wise_object_pr(5, 5, 30, 5, 127, 0.3)
-
-    ##################################
-    # Gaia specific                  #
-    # Exp 2   artificial motion blur # 
-    ##################################
-    # gt_dir = '/scratch/sr365/Catalyst_data/simulated_satellite_height_210/images'
-    
-    # conf_dir_list = []
-    # # for cw in [50, 200, 1000]:
-    # for iou_th in [0.2]:
-    #     for mb in [2, 4, 6, 8, 10, 20]:
-    #         for i in range(1, 5):
-    #             # Get the confidence map prediction folder
-    #             conf_dir = '/scratch/sr365/Catalyst_data/every_20m/motion_blur/d{}_mb_{}/images/from_best_catalyst/best_model'.format(i, mb)
-    #             conf_dir_list = [conf_dir]
-    #             # Get the ground truth folder
-    #             gt_dir = '/scratch/sr365/Catalyst_data/every_20m/motion_blur/d{}_mb_{}/annotations'.format(i, mb)
-    #             tile_name_list = ['_'.join(f.split('_')[:-1]) for f in os.listdir(conf_dir)]
-    #             gt_list = [io.imread(os.path.join(gt_dir, f+'.png')) for f in tile_name_list]
-    #             gt_dict = dict(zip(tile_name_list, gt_list))
-    #             output_dir = '/scratch/sr365/PR_curves/motion_blur/'
-    #             min_region=30
-    #             dilation_size=5
-    #             min_th=0.5*255
-    #             save_title = '_d{}_mb_{}_min_region_{}_dial_{}_min_th_{}_iou_th_{}'.format(i, mb, min_region, dilation_size, min_th, iou_th)
-    #             plot_PR_curve(min_region=min_region, dilation_size=dilation_size, link_r=0, min_th=min_th, iou_th=iou_th, 
-    #                         conf_dir_list=conf_dir_list, tile_name_list=tile_name_list, gt_dict=gt_dict, 
-    #                         save_title=save_title, output_dir=output_dir)
+    # The minimal number of pixels in the group
+    min_region = 30
+    # The dilation size for post-processing
+    dilation_size = 5
+    # The minimal threshold for the first step to eliminate noise
+    min_th = 255*0.5
+    # The threshold in IoU for counting object matching
+    iou_th = 0.2
+    # !!! Change this !!! The confidence map directory that was output from infer.py
+    conf_dir_list = [r'data_raw/Exp1_1_resolution_buckets/test/d1/images/save_root/model1']
+    # Make the tile list from confidence list
+    tile_name_list = ['_'.join(f.split('_')[:-1]) for f in os.listdir(conf_dir_list[0])]
+    # Make the grounth truth list
+    gt_list = [io.imread(os.path.join(gt_dir, f+'.png')) for f in tile_name_list]
+    # combine the ground truth list into a pair 
+    gt_dict = dict(zip(tile_name_list, gt_list))
+    # !!! Change this !!! The title of the saving PR curve
+    save_title = '_dial_{}_mireg_{}_mith_{}_iou_th_{}'.format(dilation_size, min_region, min_th, iou_th)
+    # !! Change this !!! The output directory
+    output_dir = '../PR_curves/'
+    plot_PR_curve(min_region=min_region, dilation_size=dilation_size, link_r=0, min_th=min_th, iou_th=iou_th, 
+                conf_dir_list=conf_dir_list, tile_name_list=tile_name_list, gt_dict=gt_dict, 
+                save_title=save_title, output_dir=output_dir)

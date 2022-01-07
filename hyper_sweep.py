@@ -7,13 +7,6 @@ import numpy as np
 base_json_config = 'config_0529_d2.json'
 #base_json_config = 'config_0726_sat_420_catalyst.json'
 
-
-# The RTI positive data
-#base_json_config = 'config_ben_0509_RTI_sample_positive_from_h3.json'
-#base_json_config = 'config_ben_0509_RTI_sample_positive_from_ct.json'
-
-
-
 def sweep_strength():
     #loss_weight_list = [0.1, 0.5, 1, 5]
     loss_weight_list = [1]

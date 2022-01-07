@@ -1,6 +1,9 @@
 # Created by .ignore support plugin (hsz.mobi)
 ### Python template
 
+data/history*
+data_raw/
+
 *.err
 *.out
 waitandrun*.sh
