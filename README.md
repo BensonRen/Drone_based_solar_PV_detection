@@ -12,6 +12,7 @@ The list of dependencies is listed in the [env.yml](./environment.yml) file.
 ## Flow chart process
 Individual steps to reproduce each of the experiments are illustrated in the flow chart below. This is laying the roadmap for how you can recreate the results in our paper. A more detailed explanation can be found below.
 
+<img src="./demo/flow_chart.png" alt="flow_chart" width="700"/>
 
 ## Sample imagery
 
@@ -43,6 +44,20 @@ The model training is the same as the MRS framework. Simply change the correspon
 ```training_code
 python train --config config.json
 ```
+
+If you do not want to waste your time training the model or hyper-sweeping hyper-parameters, feel free to use ours! Below are the list of models that we trained:
+| Experiment index | Config File | Model |
+|:-------------------------:|:--------------------------:|:--------------------------------:|
+| Exp1_1_d1 | [config](./best_model_config/d1)| [Box]()|
+| Exp1_1_d2 | [config](./best_model_config/d2) | [Box]()|
+| Exp1_1_d3 | [config](./best_model_config/d3) | [Box]()|
+| Exp1_1_d4 | [config](./best_model_config/d4) | [Box]()|
+| Exp1_2_res_7.5 | [config](./best_model_config/res_7.5) | [Box]()|
+| Exp1_2_res_15 | [config](./best_model_config/res_15) | [Box]()|
+| Exp1_2_res_30 | [config](./best_model_config/res_30) | [Box]()|
+| Exp3_rwanda | [config](./best_model_config/rwanda)  | [Box]()|
+
+> For Exp1_2_res_60, we did not learn anything eventually so no model is enclosed. The resized image is also impossible for humans to identify any solar panels inside.
 
 ### Config.json details
 > The positional entries to be changed to user locations:

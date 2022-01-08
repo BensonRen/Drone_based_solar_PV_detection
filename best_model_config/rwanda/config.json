@@ -1,0 +1,50 @@
+{
+    "config": "config_0727_Rwanda_from_catalyst_10_percent.json",
+    "dataset": {
+        "batch_size": 16,
+        "class_num": 2,
+        "crop_size": "(512, 512)",
+        "data_dir": "/scratch/sr365/RTI_data/all_train_10_percent_half/patches",
+        "ds_name": "rwanda_rti",
+        "input_size": "(512, 512)",
+        "mean": "(0.485, 0.456, 0.406)",
+        "num_workers": 16,
+        "std": "(0.229, 0.224, 0.225)",
+        "train_file": "/scratch/sr365/RTI_data/all_train_10_percent_half/file_list_train.txt",
+        "valid_file": "/scratch/sr365/RTI_data/all_train_10_percent_half/file_list_test.txt"
+    },
+    "decoder_name": "dlinknet",
+    "ds_cfgs": [
+        "dataset"
+    ],
+    "encoder_name": "resnet50",
+    "gpu": "6",
+    "imagenet": "True",
+    "optimizer": {
+        "aux_loss": 0,
+        "aux_loss_weight": 0.4,
+        "decay_rate": 0.5,
+        "decay_step": "[50,75]",
+        "learn_rate_decoder": 0.01,
+        "learn_rate_encoder": 0.001,
+        "name": "sgd"
+    },
+    "random_seed": 1,
+    "save_dir": "/scratch/sr365/models/RTI/10percent_half/extend_best_1021_0.45_50_loss_weight_0.1_trail_1/ecresnet50_dcdlinknet_dsrwanda_rti_lre1e-03_lrd1e-02_ep80_bs16_ds50_75_dr0p5_crxent1p0_softiou0p1",
+    "trainer": {
+        "alpha": 0.25,
+        "bp_loss_idx": "(0, 1)",
+        "class_weight": "(1, 50)",
+        "criterion_name": "xent,softiou,iou",
+        "epochs": 80,
+        "finetune_dir": "//scratch/sr365/models/RTI/10percent_half/current_best_1021_0.45/epoch-80.pth.tar",
+        "further_train": false,
+        "gamma": 2,
+        "loss_weights": "(1, 0.1)",
+        "resume_epoch": 0,
+        "save_epoch": 20,
+        "save_root": "/scratch/sr365/models/RTI/10percent_half/extend_best_1021_0.45_50_loss_weight_0.1_trail_1"
+    },
+    "use_emau": false,
+    "use_ocr": false
+}
