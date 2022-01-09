@@ -46,16 +46,16 @@ python train --config config.json
 ```
 
 If you do not want to waste your time training the model or hyper-sweeping hyper-parameters, feel free to use ours! Below are the list of models that we trained:
-| Experiment index | Config File | Model |
-|:-------------------------:|:--------------------------:|:--------------------------------:|
-| Exp1_1_d1 | [config](./best_model_config/d1)| [Box]()|
-| Exp1_1_d2 | [config](./best_model_config/d2) | [Box]()|
-| Exp1_1_d3 | [config](./best_model_config/d3) | [Box]()|
-| Exp1_1_d4 | [config](./best_model_config/d4) | [Box]()|
-| Exp1_2_res_7.5 | [config](./best_model_config/res_7.5) | [Box]()|
-| Exp1_2_res_15 | [config](./best_model_config/res_15) | [Box]()|
-| Exp1_2_res_30 | [config](./best_model_config/res_30) | [Box]()|
-| Exp3_rwanda | [config](./best_model_config/rwanda)  | [Box]()|
+| Experiment index | Details | Config File | Model |
+|:-------------------------:|:----------------|:-------------------:|:--------------------------------:|
+| Exp1_1_d1 | Final model on main dataset, from 1.6cm to 2.2cm (d1: altitude 45m-65m) | [config](./best_model_config/d1/config.json)| [Box]()|
+| Exp1_1_d2 | Final model on main dataset, from 2.2cm to 3.0cm (d2: altitude 65m-85m)| [config](./best_model_config/d2/config.json) | [Box]()|
+| Exp1_1_d3 | Final model on main dataset, from 3.0cm to 3.7cm (d3: altitude 85m-105m)| [config](./best_model_config/d3/config.json) | [Box]()|
+| Exp1_1_d4 | Final model on main dataset, from 3.7cm to 4.5cm (d4: altitude 105m-125m)| [config](./best_model_config/d4/config.json) | [Box]()|
+| Exp1_2_res_7.5 | Final model on simulated "satellite" imagery for effective resolution of 7.5cm |  [config](./best_model_config/res_7.5/config.json) | [Box]()|
+| Exp1_2_res_15 | Final model on simulated "satellite" imagery for effective resolution of 15cm | [config](./best_model_config/res_15/config.json) | [Box]()|
+| Exp1_2_res_30 | Final model on simulated "satellite" imagery for effective resolution of 30cm | [config](./best_model_config/res_30/config.json) | [Box]()|
+| Exp3_rwanda | Final model on rwanda dataset | [config](./best_model_config/rwanda/config.json)  | [Box]()|
 
 > For Exp1_2_res_60, we did not learn anything eventually so no model is enclosed. The resized image is also impossible for humans to identify any solar panels inside.
 
@@ -147,7 +147,7 @@ the [Alfred P. Sloan Foundation](https://sloan.org/) Grant G-2020-13922 through 
 
 ## Credit 
 
-We would like to express special thanks for [Dr. Leslie Collins](https://ece.duke.edu/faculty/leslie-collins) for providing high level feedbacks. We also would like to thank [Dr. Bohao Huang](https://scholar.google.com/citations?user=TNgWs7oAAAAJ&hl=en&oi=ao) for his [MRS framework](https://github.com/bohaohuang/mrs) code, Mr. [Wei (Wayne) Hu](https://energy.duke.edu/leadership-staff/wei-wayne-hu) for his help in developing the code and discussion, [Mr. Trey Gowdy](https://energy.duke.edu/leadership-staff/trey-gowdy) for his helpful discussions and expertise in energy data and other energy fellows / mentors during the [Duke University Energy Data Analytics Ph.D. Student Fellowship Program](https://energy.duke.edu/energy-data-analytics-phd-student-fellows) for their suggestions, questions and comments!
+We would like to express special thanks for [Dr. Leslie Collins](https://ece.duke.edu/faculty/leslie-collins) for providing useful feedbacks and discussion. We also would like to thank [Dr. Bohao Huang](https://scholar.google.com/citations?user=TNgWs7oAAAAJ&hl=en&oi=ao) for his [MRS framework](https://github.com/bohaohuang/mrs) code, Mr. [Wei (Wayne) Hu](https://energy.duke.edu/leadership-staff/wei-wayne-hu) for his help in developing the code and discussion, [Mr. Trey Gowdy](https://energy.duke.edu/leadership-staff/trey-gowdy) for his helpful discussions and expertise in energy data and other energy fellows / mentors during the [Duke University Energy Data Analytics Ph.D. Student Fellowship Program](https://energy.duke.edu/energy-data-analytics-phd-student-fellows) for their suggestions, questions and comments!
 
 We also thank the [Duke Forest](https://dukeforest.duke.edu/) for their use of the UAV flight zone for data collection!
 
